@@ -1,0 +1,2 @@
+[25-Jul-2025 19:17:15 Europe/Warsaw] PHP Fatal error:  Cannot redeclare get_pdo() (previously declared in /var/www/html/config.php:11) in /var/www/html/config.php on line 11
+[25-Jul-2025 19:29:24 Europe/Warsaw] PHP Fatal error:  Cannot redeclare get_pdo() (previously declared in /var/www/html/config.php:11) in /var/www/html/config.php on line 11

@@ -1,0 +1,117 @@
+[34m
+* Datadog Agent 7 install script v1.39.0
+[0m
+/usr/bin/systemctl
+[34m
+* Installing curl gnupg
+[0m
+Było:1 https://security.debian.org/debian-security trixie-security InRelease
+Było:2 https://deb.debian.org/debian trixie InRelease
+Było:3 https://deb.debian.org/debian trixie-updates InRelease
+Było:4 https://dl.winehq.org/wine-builds/debian trixie InRelease
+Zign:5 https://releases.warp.dev/linux/deb stable InRelease
+Było:6 https://releases.warp.dev/linux/deb stable Release
+Pobr:9 https://sichbopvr.com/releases/debian-12/test bookworm InRelease
+Błąd:9 https://sichbopvr.com/releases/debian-12/test bookworm InRelease
+  Sub-process /usr/bin/sqv returned an error code (1), error message is: Error: Failed to parse keyring "/etc/apt/keyrings/sichbointeractive.gpg"  Caused by:     0: Reading "/etc/apt/keyrings/sichbointeractive.gpg": No such file or directory (os error 2)     1: No such file or directory (os error 2)
+Zign:7 https://apt.newrelic.com/debian newrelic InRelease
+Pobr:10 https://apt.newrelic.com/debian newrelic Release [9 960 B]
+Pobr:11 https://apt.newrelic.com/debian newrelic Release.gpg [963 B]
+Zign:11 https://apt.newrelic.com/debian newrelic Release.gpg
+Czytanie list pakietów...
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/binary-amd64/Packages", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/binary-i386/Packages", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/i18n/Translation-pl_PL", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/i18n/Translation-en", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/i18n/Translation-pl", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/dep11/Components-amd64.yml", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/dep11/Components-all.yml", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/dep11/icons-48x48.tar", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/dep11/icons-64x64.tar", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/dep11/icons-64x64@2.tar", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: Pomijanie pozyskania skonfigurowanego pliku "testing/dep11/icons-128x128.tar", ponieważ repozytorium "https://deb.debian.org/debian trixie InRelease" nie ma komponentu "testing" (pomyłka w nazwie komponentu w pliku sources.list?)
+W: OpenPGP signature verification failed: https://sichbopvr.com/releases/debian-12/test bookworm InRelease: Sub-process /usr/bin/sqv returned an error code (1), error message is: Error: Failed to parse keyring "/etc/apt/keyrings/sichbointeractive.gpg"  Caused by:     0: Reading "/etc/apt/keyrings/sichbointeractive.gpg": No such file or directory (os error 2)     1: No such file or directory (os error 2)
+E: Repozytorium "https://sichbopvr.com/releases/debian-12/test bookworm InRelease" nie jest podpisane.
+W: OpenPGP signature verification failed: https://apt.newrelic.com/debian newrelic Release: Sub-process /usr/bin/sqv returned an error code (1), error message is: Missing key B60A3EC9BC013B9C23790EC8B31B29E5548C16BF, which is needed to verify signature. Missing key 2EA7DB7738A22D92945E8EC732FA4C172DAD550E, which is needed to verify signature.
+E: Repozytorium "http://apt.newrelic.com/debian newrelic Release" nie jest podpisane.
+[31m'apt-get update' failed, the script will not install the latest version of apt-transport-https.[0m
+Czytanie list pakietów...
+Budowanie drzewa zależności...
+Odczyt informacji o stanie...
+curl jest już w najnowszej wersji (8.14.1-2).
+gnupg jest już w najnowszej wersji (2.4.7-21).
+gnupg oznaczono jako zainstalowany ręcznie.
+0 aktualizowanych, 0 nowo instalowanych, 0 usuwanych i 22 nieaktualizowanych.
+[34m
+* Installing APT package sources for Datadog
+[0m
+gpg: katalog „/root/.gnupg” utworzony
+gpg: /root/.gnupg/trustdb.gpg: baza zaufania utworzona
+gpg: klucz E6266D4AC0962C7D: klucz publiczny „Datadog, Inc. APT key (2023-04-20) (APT key) <package+aptkey@datadoghq.com>” wczytano do zbioru
+gpg: Ogółem przetworzonych kluczy: 1
+gpg:          dołączono do zbioru: 1
+gpg: klucz 0D826EB906462314: klucz publiczny „Datadog, Inc. APT key (2024-05-15) (APT key) <package+aptkey@datadoghq.com>” wczytano do zbioru
+gpg: Ogółem przetworzonych kluczy: 1
+gpg:          dołączono do zbioru: 1
+gpg: klucz E6266D4AC0962C7D: „Datadog, Inc. APT key (2023-04-20) (APT key) <package+aptkey@datadoghq.com>” bez zmian
+gpg: Ogółem przetworzonych kluczy: 1
+gpg:                    bez zmian: 1
+gpg: klucz 32637D44F14F620E: klucz publiczny „Datadog, Inc. Master key (2020-09-08) <package+masterkey@datadoghq.com>” wczytano do zbioru
+gpg: Ogółem przetworzonych kluczy: 1
+gpg:          dołączono do zbioru: 1
+gpg: klucz D3A80E30382E94DE: klucz publiczny „Datadog, Inc <package@datadoghq.com>” wczytano do zbioru
+gpg: Ogółem przetworzonych kluczy: 1
+gpg:          dołączono do zbioru: 1
+Zign:1 https://apt.datadoghq.com stable InRelease
+Pobr:2 https://apt.datadoghq.com stable Release [26,0 kB]
+Pobr:3 https://apt.datadoghq.com stable Release.gpg [801 B]
+Pobr:4 https://apt.datadoghq.com stable/7 i386 Packages [1 184 B]
+Pobr:5 https://apt.datadoghq.com stable/7 amd64 Packages [106 kB]
+Pobr:6 https://apt.datadoghq.com stable/7 all Packages [1 184 B]
+Pobrano 135 kB w 1s (191 kB/s)
+Czytanie list pakietów...
+  [33mInstalling package(s): datadog-agent datadog-signing-keys
+[0m
+Czytanie list pakietów...
+Budowanie drzewa zależności...
+Odczyt informacji o stanie...
+datadog-signing-keys jest już w najnowszej wersji (1:1.4.0-1).
+datadog-signing-keys oznaczono jako zainstalowany ręcznie.
+Zostaną zainstalowane następujące NOWE pakiety:
+  datadog-agent
+0 aktualizowanych, 1 nowo instalowanych, 0 usuwanych i 22 nieaktualizowanych.
+Konieczne pobranie 157 MB archiwów.
+Po tej operacji zostanie dodatkowo użyte 721 MB miejsca na dysku.
+Pobr:1 https://apt.datadoghq.com stable/7 amd64 datadog-agent amd64 1:7.68.1-1 [157 MB]
+Pobrano 157 MB w 16s (10,1 MB/s)
+Wybieranie wcześniej niewybranego pakietu datadog-agent.
+(Odczytywanie bazy danych ... (Odczytywanie bazy danych ... 5%(Odczytywanie bazy danych ... 10%(Odczytywanie bazy danych ... 15%(Odczytywanie bazy danych ... 20%(Odczytywanie bazy danych ... 25%(Odczytywanie bazy danych ... 30%(Odczytywanie bazy danych ... 35%(Odczytywanie bazy danych ... 40%(Odczytywanie bazy danych ... 45%(Odczytywanie bazy danych ... 50%(Odczytywanie bazy danych ... 55%(Odczytywanie bazy danych ... 60%(Odczytywanie bazy danych ... 65%(Odczytywanie bazy danych ... 70%(Odczytywanie bazy danych ... 75%(Odczytywanie bazy danych ... 80%(Odczytywanie bazy danych ... 85%(Odczytywanie bazy danych ... 90%(Odczytywanie bazy danych ... 95%(Odczytywanie bazy danych ... 100%(Odczytywanie bazy danych ... 422804 pliki i katalogi obecnie zainstalowane.)
+Przygotowywanie do rozpakowania pakietu .../datadog-agent_1%3a7.68.1-1_amd64.deb ...
+Rozpakowywanie pakietu datadog-agent (1:7.68.1-1) ...
+Konfigurowanie pakietu datadog-agent (1:7.68.1-1) ...
+Creating file: '/opt/datadog-agent/.post_python_installed_packages.txt'
+File '/opt/datadog-agent/.install_python_third_party_deps' not found: no third party integration will be installed.
+W: --force-yes jest przestarzałe, proszę w zamian korzystać z opcji zaczynających się od --allow.
+[34m
+* Adding your API key to the Datadog Agent configuration: /etc/datadog-agent/datadog.yaml
+[0m
+[34m
+* Setting SITE in the Datadog Agent configuration: /etc/datadog-agent/datadog.yaml
+[0m
+/usr/bin/systemctl
+[34m* Starting the Datadog Agent...
+[0m
+[32m  Your Datadog Agent is running and functioning properly.
+[0m[32m  It will continue to run in the background and submit metrics to Datadog.
+[0m[32m  If you ever want to stop the Datadog Agent, run:
+
+      sudo systemctl stop datadog-agent
+
+  And to run it again run:
+
+      sudo systemctl start datadog-agent[0m
+
+[32m  Consider adding dd-agent to the docker group to enable the docker support, run:
+
+      sudo usermod -a -G docker dd-agent[0m
+

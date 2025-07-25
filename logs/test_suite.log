@@ -1,0 +1,11 @@
+🧪 Starting Automated Test Suite...
+=====================================
+
+📊 Testing Database Connection...
+ 
+Fatal error: Uncaught Error: Class "mysqli" not found in /var/www/html/test_suite.php:37
+Stack trace:
+#0 /var/www/html/test_suite.php(18): AutomatedTestSuite->testDatabaseConnection()
+#1 /var/www/html/test_suite.php(329): AutomatedTestSuite->runAllTests()
+#2 {main}
+  thrown in /var/www/html/test_suite.php on line 37

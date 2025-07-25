@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<!--// $Id$ //-->
+<html><head>
+	<title>Lista VLAN-ów</title>
+	<meta name="GENERATOR" content="LMS 28-git">
+	<meta http-equiv="Content-Language" content="pl">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="Lista%20VLAN-%C3%B3w_pliki/galleria.classic.css" id="galleria-theme-classic"><link href="Lista%20VLAN-%C3%B3w_pliki/jquery-ui.min.css" rel="stylesheet" type="text/css">
+<link href="Lista%20VLAN-%C3%B3w_pliki/jquery.datetimepicker.min.css" rel="stylesheet" type="text/css">
+<link href="Lista%20VLAN-%C3%B3w_pliki/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+<link href="Lista%20VLAN-%C3%B3w_pliki/dataTables.responsive.min.css" rel="stylesheet" type="text/css">
+<link href="Lista%20VLAN-%C3%B3w_pliki/chosen.min.css" rel="stylesheet" type="text/css">
+<link href="Lista%20VLAN-%C3%B3w_pliki/jquery.scombobox.min.css" rel="stylesheet" type="text/css">
+<link href="Lista%20VLAN-%C3%B3w_pliki/select2.min.css" rel="stylesheet" type="text/css">
+<script>
+	var $_LANG = {}
+</script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/pl_PL.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/language.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/jquery.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/jquery-ui.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/datepicker-pl.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/jquery.datetimepicker.full.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/jquery.dataTables.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/dataTables.responsive.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/tinymce.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/input-autogrow.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/Autolinker.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/clipboard.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/chosen.jquery.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/select2.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/pl.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/sprintf.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/galleria.min.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/galleria.classic.min.js"></script>
+<script>
+
+	var lmsSettings = {
+		language: 'pl',
+		uiLanguage: 'pl_PL',
+		fontAwesomeName: 'Font Awesome 6 Free',
+		settingsTimeout: 28800,
+		wysiwygEditor: true,
+		helpdeskWysiwygEditor: false,
+		quickSearchAutoSubmit: 'true',
+		defaultTerytCity: 'false',
+        zipCodeBackend: JSON.parse('["prg","osm","pna"]'),
+        multiSelectPopupOnBottom: true,
+		multiSelectMaxVisible: '3',
+        eventTimeStep: 30,
+		openCalendarOnInputClick: false,
+		uploadedImageMaxSize: 600,
+		monthlyPeriod: 3,
+		touchDeviceTooltips: true,
+		terytShowNumericIdentifiers: true,
+		missedNodeWarning: true,
+		discountPercentage: 1,
+		discountAmount: 2,
+		office2pdfCommand: 'unoconv -f pdf -I %doctype% --stdin --stdout'
+	};
+
+	var lms = {
+		utils: {
+			smartNumberFormatter: Intl.NumberFormat(lmsSettings.language, {
+				style: "decimal",
+				useGrouping: "always",
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 3
+			}),
+			numberFormatter: Intl.NumberFormat(lmsSettings.language, {
+				style: "decimal",
+				useGrouping: "always",
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			}),
+			formatNumber: function (value) {
+				return this.numberFormatter.format(value);
+			},
+			smartFormatNumber: function (value) {
+				return this.smartNumberFormatter.format(value);
+			},
+			formatMoney: function (value, currency) {
+				return this.formatNumber(value) + ' ' + currency;
+			},
+			smartFormatMoney: function (value, currency) {
+				return this.smartFormatNumber(value) + ' ' + currency;
+			},
+		}
+	}
+
+	var tooltipsEnabled = true;
+	if ("ontouchstart" in document.documentElement && !lmsSettings.touchDeviceTooltips) {
+		tooltipsEnabled = false;
+	}
+
+		$(function() {
+		if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+			$('[title]').removeAttr('title');
+		}
+	});
+	
+	$(function() {
+					});
+
+</script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/jquery.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-customer-select.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-deferred-submit.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-persistent-filter.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-dialog.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-multiselect.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-dragslider.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-datepicker.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-combobox.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-fileupload.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-fileview.js"></script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/lms-ui-karma.js"></script>
+<script>
+
+	$(function() {
+		var elems = $('.lms-ui-error:visible');
+		if (elems.length) {
+			// scroll view into first erroneous form element
+			setTimeout(function () {
+				elems.first().get(0).scrollIntoView({
+					block: "center"
+				});
+			}, 0);
+		} else {
+			elems = $('.lms-ui-warning:visible');
+			if (elems.length) {
+				// scroll view into first warning form element
+				setTimeout(function () {
+					elems.first().get(0).scrollIntoView({
+						block: "center"
+					});
+				}, 0);
+			}
+		}
+	});
+
+</script>
+	<link href="Lista%20VLAN-%C3%B3w_pliki/style.css" rel="stylesheet" type="text/css">
+	<link href="Lista%20VLAN-%C3%B3w_pliki/map.css" rel="stylesheet" type="text/css">
+	<link rel="preconnect" href="https://fonts.googleapis.com/">
+	<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+	<link href="Lista%20VLAN-%C3%B3w_pliki/css2.css" rel="stylesheet">
+	
+	<link href="https://demo.lms.org.pl/img/lms-net.gif" rel="shortcut icon">
+	<script src="Lista%20VLAN-%C3%B3w_pliki/common.js"></script>
+	<script src="Lista%20VLAN-%C3%B3w_pliki/base64.js"></script>
+	<script src="Lista%20VLAN-%C3%B3w_pliki/ClickShowHideMenu.js"></script>
+	<script src="Lista%20VLAN-%C3%B3w_pliki/autosuggest.js"></script>
+	<script src="Lista%20VLAN-%C3%B3w_pliki/mousetrap.min.js"></script>
+	<script src="Lista%20VLAN-%C3%B3w_pliki/mousetrap-global-bind.min.js"></script>
+	<script>
+	
+	</script>
+</head>
+<body onload="start_login_timeout(60000)" class="lms-ui-main-document main-menu-visible" style="margin-top: 42px;">
+<input type="file" id="tinymce-image-upload" style="display: none;">
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:100;"></div>
+<div class="lms-ui-gallery-container">
+	<div class="lms-ui-gallery-overlay"></div>
+	<div class="lms-ui-gallery"></div>
+</div>
+<button id="lms-ui-back-to-top" class="lms-ui-button no-print" style="transform: translateX(121px);">
+	<i class="lms-ui-icon-back"></i>
+	<span class="lms-ui-label">Powrót na górę</span>
+</button>
+
+<script>
+
+	$(window).resize(function() {
+		var back_button = $("#lms-ui-back-to-top");
+		back_button.css('transform', 'translateX(' + back_button.outerWidth() + 'px)');
+	})
+
+</script>
+<script src="Lista%20VLAN-%C3%B3w_pliki/overlib.js"></script>
+
+<div id="lms-ui-modal-dialog" class="lms-ui-dialog" style="display: none;">
+	<ol>
+		<li class="message">
+		</li>
+	</ol>
+</div>
+<script src="Lista%20VLAN-%C3%B3w_pliki/modal-dialogs.js"></script>
+
+<div id="lms-ui-popup-menu" class="lms-ui-popup">
+    <div id="lms-ui-popup-menu-titlebar">
+        <div id="lms-ui-popup-menu-title">Tytuł</div>
+        <i class="lms-ui-icon-hide close-button"></i>
+    </div>
+    <div id="lms-ui-popup-menu-content">
+        <ul>
+        </ul>
+    </div>
+</div>
+<script src="Lista%20VLAN-%C3%B3w_pliki/popup-menu.js"></script>
+
+<div id="lms-ui-list-suggestion-container"></div>
+
+	
+		<div id="lms-ui-mobile-menu-container" class="no-print">
+	<nav id="lms-ui-mobile-menu-panel">
+		<a class="lms-ui-button lms-ui-mobile-menu-item" id="lms-ui-mobile-menu-toggle" data-target="#lms-ui-menu-panel"><i class="lms-ui-icon-menu"></i>
+		</a>
+		<a class="lms-ui-button lms-ui-mobile-menu-item" id="lms-ui-mobile-menu-search" data-target="#lms-ui-tool-panels"><i class="lms-ui-icon-search"></i>
+		</a>
+	</nav>
+</div>
+
+<script>
+
+	$(function() {
+		$('#lms-ui-mobile-menu-panel .lms-ui-mobile-menu-item').click(function() {
+			var target = $(this).attr('data-target');
+			if ($(target).is(':visible')) {
+				$(target).removeClass('fullscreen-popup');
+				disableFullScreenPopup();
+			} else {
+				$(target).addClass('fullscreen-popup');
+				enableFullScreenPopup();
+			}
+
+			$(this).parent().find('.lms-ui-mobile-menu-item:not([data-target="' + target + '"])').each(function() {
+				$($(this).attr('data-target')).removeClass('fullscreen-popup');
+				disableFullScreenPopup();
+			});
+		});
+	});
+
+</script>
+
+<i id="lms-ui-menu-panel-toggle" class="fas fa-angle-left no-print"></i>
+<nav id="lms-ui-menu-panel" class="no-print lms-ui-popup">
+	<div id="lms-ui-menu-panel-container" style="margin-right: 0px;">
+	<div id="lms-ui-logo">
+		<a href="https://demo.lms.org.pl/?m=welcome">
+			<img src="Lista%20VLAN-%C3%B3w_pliki/logo-40.png" title="LMS 28-git">
+			<span>28-git</span>
+		</a>
+	</div>
+	<div id="lms-ui-main-menu">
+		<script>
+
+			var mainMenuVisible = getCookie('main-menu-visible');
+			mainMenuVisible = mainMenuVisible === null || mainMenuVisible == 'true';
+			if (mainMenuVisible) {
+				$('body').addClass('main-menu-visible');
+			} else {
+				$('#lms-ui-menu-panel').hide();
+				$('#lms-ui-menu-panel-toggle').switchClass('fa-angle-left', 'fa-angle-right');
+			}
+
+			$('#lms-ui-menu-panel-toggle').click(function () {
+				var mainMenuVisible = $('#lms-ui-menu-panel').toggle().is(':visible');
+				if (mainMenuVisible) {
+					$('body').addClass('main-menu-visible').find('#lms-ui-menu-panel-toggle')
+						.switchClass('fa-angle-right', 'fa-angle-left');
+				} else {
+					$('body').removeClass('main-menu-visible').find('#lms-ui-menu-panel-toggle')
+						.switchClass('fa-angle-left', 'fa-angle-right');
+				}
+				setCookie('main-menu-visible', mainMenuVisible);
+			});
+
+			$('body').toggleClass('lms-ui-mobile', parseInt($(window).width()) <= 800);
+
+			$(window).resize(function() {
+				var mobileMode = parseInt($(window).width()) <= 800;
+				$('body').toggleClass('lms-ui-mobile', mobileMode)
+					.css('margin-top', mobileMode ? '' : $('#lms-ui-tool-panels').outerHeight());
+				$('.lms-ui-popup:visible').toggleClass('fullscreen-popup', mobileMode);
+			})
+
+			$(function() {
+				setTimeout(function() {
+					$(window).resize();
+				}, 0);
+			});
+
+		</script>
+
+					<div id="lms-ui-division">
+				<select size="1" id="select_context_division" name="select_context_division" title="Globalny kontekst firmy" class="">
+											<option value="2" selected="selected">
+							default 2
+						</option>
+											<option value="1">
+							domyślna firma
+						</option>
+									</select>
+			</div>
+		
+		<div id="main-menu" class="click-menu ui-sortable">
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+		<div id="menu-auth" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie uwierzytelnianiem" class="tip bold">
+						<div class="box1" id="main-menu-14">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-password ui-sortable-handle"></i>
+														Uwierzytelnianie
+						</div>
+					</div>
+					<div class="section" id="main-menu-14-section">
+																					<div title="Pozwala zmienić swoje hasło" class="tip bold">
+									<div class="box2" id="main-menu-14-0">
+										<a href="https://demo.lms.org.pl/?m=chpasswd">Hasło</a>
+									</div>
+								</div>
+															<div title="Zmiana Twojego hasła sieciowego" class="tip bold">
+									<div class="box2" id="main-menu-14-1">
+										<a href="https://demo.lms.org.pl/?m=chpasswd&amp;net=1">Hasło sieciowe</a>
+									</div>
+								</div>
+															<div title="Umożliwia obejrzenie aktualnych ustawień uwierzytelniania dwuetapowego" class="tip bold">
+									<div class="box2" id="main-menu-14-2">
+										<a href="https://demo.lms.org.pl/?m=twofactorauthinfo">Ustawienia</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-log" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie dziennikiem transakcji" class="tip bold">
+						<div class="box1-open" id="main-menu-1">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-archiveview ui-sortable-handle"></i>
+														Dziennik transakcji
+						</div>
+					</div>
+					<div class="section" id="main-menu-1-section" style="display: block;">
+																					<div title="Pozwala przeglądać dziennik transakcji" class="tip bold">
+									<div class="box2" id="main-menu-1-0">
+										<a href="https://demo.lms.org.pl/?m=archiveview">Podgląd</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-admin" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Informacje o systemie i administracja" class="tip bold">
+						<div class="box1-open" id="main-menu-0">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-administration ui-sortable-handle"></i>
+														Administracja
+						</div>
+					</div>
+					<div class="section" id="main-menu-0-section" style="display: block;">
+																					<div title="Lista użytkowników" class="tip bold">
+									<div class="box2" id="main-menu-0-0">
+										<a href="https://demo.lms.org.pl/?m=userlist">Użytkownicy</a>
+									</div>
+								</div>
+															<div title="Zarządzanie kopiami zapasowymi" class="tip bold">
+									<div class="box2" id="main-menu-0-1">
+										<a href="https://demo.lms.org.pl/?m=dblist">Kopie zapasowe</a>
+									</div>
+								</div>
+															<div title="Prawa autorskie, autorzy itp." class="tip bold">
+									<div class="box2" id="main-menu-0-2">
+										<a href="https://demo.lms.org.pl/?m=copyrights">Prawa autorskie</a>
+									</div>
+								</div>
+															<div title="Grupy użytkowników" class="tip bold">
+									<div class="box2" id="main-menu-0-3">
+										<a href="https://demo.lms.org.pl/?m=usergrouplist">Grupy użytkowników</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-customers" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie klientami" class="tip bold">
+						<div class="box1-open" id="main-menu-2">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-customer ui-sortable-handle"></i>
+														Klienci
+						</div>
+					</div>
+					<div class="section" id="main-menu-2-section" style="display: block;">
+																					<div title="Lista klientów" class="tip bold">
+									<div class="box2" id="main-menu-2-0">
+										<a href="https://demo.lms.org.pl/?m=customerlist">Lista</a>
+									</div>
+								</div>
+															<div title="Wyszukiwanie klientów" class="tip bold">
+									<div class="box2" id="main-menu-2-1">
+										<a href="https://demo.lms.org.pl/?m=customersearch">Szukaj</a>
+									</div>
+								</div>
+															<div title="Lista grup klientów" class="tip bold">
+									<div class="box2" id="main-menu-2-2">
+										<a href="https://demo.lms.org.pl/?m=customergrouplist">Grupy</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-netdevices" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie urządzeniami sieciowymi" class="tip bold">
+						<div class="box1-open" id="main-menu-5">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-netdev ui-sortable-handle"></i>
+														Osprzęt sieciowy
+						</div>
+					</div>
+					<div class="section" id="main-menu-5-section" style="display: block;">
+																					<div title="Lista urządzeń sieciowych" class="tip bold">
+									<div class="box2" id="main-menu-5-0">
+										<a href="https://demo.lms.org.pl/?m=netdevlist">Lista</a>
+									</div>
+								</div>
+															<div title="Dodanie nowego urządzenia" class="tip bold">
+									<div class="box2" id="main-menu-5-1">
+										<a href="https://demo.lms.org.pl/?m=netdevadd">Nowe urządzenie</a>
+									</div>
+								</div>
+															<div title="Wyszukiwanie urządzeń" class="tip bold">
+									<div class="box2" id="main-menu-5-2">
+										<a href="https://demo.lms.org.pl/?m=netdevsearch">Szukaj</a>
+									</div>
+								</div>
+															<div title="Lista węzłów sieciowych" class="tip bold">
+									<div class="box2" id="main-menu-5-3">
+										<a href="https://demo.lms.org.pl/?m=netnodelist">Lista węzłów</a>
+									</div>
+								</div>
+															<div title="Dodaj nowy węzeł sieciowy" class="tip bold">
+									<div class="box2" id="main-menu-5-4">
+										<a href="https://demo.lms.org.pl/?m=netnodeadd">Nowy węzeł</a>
+									</div>
+								</div>
+															<div title="Zarządzanie producentami i modelami osprzętu sieciowego" class="tip bold">
+									<div class="box2" id="main-menu-5-5">
+										<a href="https://demo.lms.org.pl/?m=netdevmodels">Producenci i modele</a>
+									</div>
+								</div>
+															<div title="Wyświetla mapę sieci" class="tip bold">
+									<div class="box2" id="main-menu-5-6">
+										<a href="https://demo.lms.org.pl/?m=netdevmap">Mapa</a>
+									</div>
+								</div>
+															<div class="tip bold" data-tooltip="Lista VLAN-ów" aria-describedby="ui-id-2">
+									<div class="box2 box2-hover" id="main-menu-5-7">
+										<a href="https://demo.lms.org.pl/?m=vlanlist">Lista VLAN-ów</a>
+									</div>
+								</div>
+															<div title="Zasięgi sieciowe" class="tip bold">
+									<div class="box2" id="main-menu-5-8">
+										<a href="https://demo.lms.org.pl/?m=netranges">Zasięgi sieciowe</a>
+									</div>
+								</div>
+															<div title="Wydruk list i raportów" class="tip bold">
+									<div class="box2" id="main-menu-5-9">
+										<a href="https://demo.lms.org.pl/?m=netdevprint">Raporty</a>
+									</div>
+								</div>
+															<div title="Lista kanałów STM" class="tip bold">
+									<div class="box2" id="main-menu-5-10">
+										<a href="https://demo.lms.org.pl/?m=ewxchlist">Lista kanałów</a>
+									</div>
+								</div>
+															<div title="Utworzenie nowego kanału STM" class="tip bold">
+									<div class="box2" id="main-menu-5-11">
+										<a href="https://demo.lms.org.pl/?m=ewxchadd">Nowy kanał</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-networks" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie sieciami IP" class="tip bold">
+						<div class="box1" id="main-menu-6">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-ipnetwork ui-sortable-handle"></i>
+														Sieci IP
+						</div>
+					</div>
+					<div class="section" id="main-menu-6-section">
+																					<div title="Lista sieci IP" class="tip bold">
+									<div class="box2" id="main-menu-6-0">
+										<a href="https://demo.lms.org.pl/?m=netlist">Lista</a>
+									</div>
+								</div>
+															<div title="Dodanie nowej sieci IP" class="tip bold">
+									<div class="box2" id="main-menu-6-1">
+										<a href="https://demo.lms.org.pl/?m=netadd">Nowa sieć</a>
+									</div>
+								</div>
+															<div title="Wyszukiwanie sieci" class="tip bold">
+									<div class="box2" id="main-menu-6-2">
+										<a href="https://demo.lms.org.pl/?m=netsearch&amp;searchform=1">Szukaj</a>
+									</div>
+								</div>
+															<div title="Umożliwia wyświetlenie użycia adresów IP z całej sieci." class="tip bold">
+									<div class="box2" id="main-menu-6-3">
+										<a href="https://demo.lms.org.pl/?m=netusage">Wykorzystanie sieci</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-nodes" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie komputerami" class="tip bold">
+						<div class="box1" id="main-menu-3">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-node ui-sortable-handle"></i>
+														Komputery
+						</div>
+					</div>
+					<div class="section" id="main-menu-3-section">
+																					<div title="Lista komputerów" class="tip bold">
+									<div class="box2" id="main-menu-3-0">
+										<a href="https://demo.lms.org.pl/?m=nodelist">Lista</a>
+									</div>
+								</div>
+															<div title="Wyszukiwanie komputerów" class="tip bold">
+									<div class="box2" id="main-menu-3-1">
+										<a href="https://demo.lms.org.pl/?m=nodesearch">Szukaj</a>
+									</div>
+								</div>
+															<div title="Lista grup komputerów" class="tip bold">
+									<div class="box2" id="main-menu-3-2">
+										<a href="https://demo.lms.org.pl/?m=nodegrouplist">Grupy</a>
+									</div>
+								</div>
+															<div title="Przeglądanie sesji komputerów" class="tip bold">
+									<div class="box2" id="main-menu-3-3">
+										<a href="https://demo.lms.org.pl/?m=nodesessionlist">Sesje komputerów</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-helpdesk" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="System Obsługi Zgłoszeń" class="tip bold">
+						<div class="box1" id="main-menu-11">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-helpdesk ui-sortable-handle"></i>
+														Helpdesk
+						</div>
+					</div>
+					<div class="section" id="main-menu-11-section">
+																					<div title="Lista kolejek" class="tip bold">
+									<div class="box2" id="main-menu-11-0">
+										<a href="https://demo.lms.org.pl/?m=rtqueuelist">Lista kolejek</a>
+									</div>
+								</div>
+															<div title="Lista kategorii" class="tip bold">
+									<div class="box2" id="main-menu-11-1">
+										<a href="https://demo.lms.org.pl/?m=rtcategorylist">Lista kategorii</a>
+									</div>
+								</div>
+															<div title="Wyszukiwanie zgłoszeń" class="tip bold">
+									<div class="box2" id="main-menu-11-2">
+										<a href="https://demo.lms.org.pl/?m=rtsearch">Szukaj</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-messages" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Komunikacja z klientami" class="tip bold">
+						<div class="box1" id="main-menu-10">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-message ui-sortable-handle"></i>
+														Wiadomości
+						</div>
+					</div>
+					<div class="section" id="main-menu-10-section">
+																					<div title="Lista wysłanych wiadomości" class="tip bold">
+									<div class="box2" id="main-menu-10-0">
+										<a href="https://demo.lms.org.pl/?m=messagelist">Lista</a>
+									</div>
+								</div>
+															<div title="Lista szablonów wiadomości" class="tip bold">
+									<div class="box2" id="main-menu-10-1">
+										<a href="https://demo.lms.org.pl/?m=messagetemplatelist">Szablony</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-documents" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie dokumentami" class="tip bold">
+						<div class="box1" id="main-menu-8">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-document ui-sortable-handle"></i>
+														Dokumenty
+						</div>
+					</div>
+					<div class="section" id="main-menu-8-section">
+																					<div title="Lista dokumentów" class="tip bold">
+									<div class="box2" id="main-menu-8-0">
+										<a href="https://demo.lms.org.pl/?m=documentlist&amp;init=1">Lista</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-VoIP" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie telefonią VoIP" class="tip bold">
+						<div class="box1" id="main-menu-4">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-phone ui-sortable-handle"></i>
+														VoIP
+						</div>
+					</div>
+					<div class="section" id="main-menu-4-section">
+																					<div title="Lista kont VoIP" class="tip bold">
+									<div class="box2" id="main-menu-4-0">
+										<a href="https://demo.lms.org.pl/?m=voipaccountlist&amp;init=1">Konta</a>
+									</div>
+								</div>
+															<div title="Przeglądanie listy billingów" class="tip bold">
+									<div class="box2" id="main-menu-4-1">
+										<a href="https://demo.lms.org.pl/?m=voipaccountbillinglist">Billingi</a>
+									</div>
+								</div>
+															<div title="Lista taryf telefonicznych" class="tip bold">
+									<div class="box2" id="main-menu-4-2">
+										<a href="https://demo.lms.org.pl/?m=tarifflist&amp;t=4">Taryfy</a>
+									</div>
+								</div>
+															<div title="Edycja cenników przypisywanych do taryf VoIP" class="tip bold">
+									<div class="box2" id="main-menu-4-3">
+										<a href="https://demo.lms.org.pl/?m=voippricelist">Cenniki</a>
+									</div>
+								</div>
+															<div title="Zarządzanie pulami numeracyjnymi" class="tip bold">
+									<div class="box2" id="main-menu-4-4">
+										<a href="https://demo.lms.org.pl/?m=voippoolnumberlist">Pule numeracyjne</a>
+									</div>
+								</div>
+															<div title="Wyszukiwanie kont VoIP" class="tip bold">
+									<div class="box2" id="main-menu-4-5">
+										<a href="https://demo.lms.org.pl/?m=voipaccountsearch">Szukaj</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-hosting" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Zarządzanie usługami hostingowymi" class="tip bold">
+						<div class="box1" id="main-menu-9">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-hosting ui-sortable-handle"></i>
+														Hosting
+						</div>
+					</div>
+					<div class="section" id="main-menu-9-section">
+																					<div title="Lista kont" class="tip bold">
+									<div class="box2" id="main-menu-9-0">
+										<a href="https://demo.lms.org.pl/?m=accountlist">Konta</a>
+									</div>
+								</div>
+															<div title="Lista aliasów" class="tip bold">
+									<div class="box2" id="main-menu-9-1">
+										<a href="https://demo.lms.org.pl/?m=aliaslist">Aliasy</a>
+									</div>
+								</div>
+															<div title="Lista domen" class="tip bold">
+									<div class="box2" id="main-menu-9-2">
+										<a href="https://demo.lms.org.pl/?m=domainlist">Domeny</a>
+									</div>
+								</div>
+															<div title="Wyszukiwanie kont, aliasów, domen" class="tip bold">
+									<div class="box2" id="main-menu-9-3">
+										<a href="https://demo.lms.org.pl/?m=accountsearch">Szukaj</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-finances" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Taryfy i zarządzanie finansami sieci" class="tip bold">
+						<div class="box1" id="main-menu-7">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-finances ui-sortable-handle"></i>
+														Finanse
+						</div>
+					</div>
+					<div class="section" id="main-menu-7-section">
+																					<div title="Lista opłat abonamentowych" class="tip bold">
+									<div class="box2" id="main-menu-7-0">
+										<a href="https://demo.lms.org.pl/?m=tarifflist">Lista taryf</a>
+									</div>
+								</div>
+															<div title="Lista stałych opłat" class="tip bold">
+									<div class="box2" id="main-menu-7-1">
+										<a href="https://demo.lms.org.pl/?m=paymentlist">Lista płatności</a>
+									</div>
+								</div>
+															<div title="Tabela operacji finansowych" class="tip bold">
+									<div class="box2" id="main-menu-7-2">
+										<a href="https://demo.lms.org.pl/?m=balancelist">Historia operacji</a>
+									</div>
+								</div>
+															<div title="Lista faktur" class="tip bold">
+									<div class="box2" id="main-menu-7-3">
+										<a href="https://demo.lms.org.pl/?m=invoicelist">Lista faktur</a>
+									</div>
+								</div>
+															<div title="Lista faktur pro forma" class="tip bold">
+									<div class="box2" id="main-menu-7-4">
+										<a href="https://demo.lms.org.pl/?m=invoicelist&amp;proforma=1">Lista faktur pro forma</a>
+									</div>
+								</div>
+															<div title="Lista not obciążeniowych" class="tip bold">
+									<div class="box2" id="main-menu-7-5">
+										<a href="https://demo.lms.org.pl/?m=notelist">Lista not obciążeniowych</a>
+									</div>
+								</div>
+															<div title="Lista rejestrów kasowych" class="tip bold">
+									<div class="box2" id="main-menu-7-6">
+										<a href="https://demo.lms.org.pl/?m=cashreglist">Rejestr kasowy</a>
+									</div>
+								</div>
+															<div title="Lista etykiet" class="tip bold">
+									<div class="box2" id="main-menu-7-7">
+										<a href="https://demo.lms.org.pl/?m=tarifftaglist">Lista etykiet</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-timetable" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Śledzenie zdarzeń" class="tip bold">
+						<div class="box1" id="main-menu-12">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-timetable ui-sortable-handle"></i>
+														Terminarz
+						</div>
+					</div>
+					<div class="section" id="main-menu-12-section">
+																					<div title="Terminarz" class="tip bold">
+									<div class="box2" id="main-menu-12-0">
+										<a href="https://demo.lms.org.pl/?m=eventlist">Terminarz</a>
+									</div>
+								</div>
+															<div title="Plan" class="tip bold">
+									<div class="box2" id="main-menu-12-1">
+										<a href="https://demo.lms.org.pl/?m=eventschedule">Plan</a>
+									</div>
+								</div>
+															<div title="Zaległe zdarzenia" class="tip bold">
+									<div class="box2" id="main-menu-12-2">
+										<a href="https://demo.lms.org.pl/?m=eventlist&amp;overdue_events_only=1">Zaległe zdarzenia</a>
+									</div>
+								</div>
+															<div title="Szukanie wpisów w kalendarzu" class="tip bold">
+									<div class="box2" id="main-menu-12-3">
+										<a href="https://demo.lms.org.pl/?m=eventsearch">Szukaj</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-config" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Konfiguracja systemu" class="tip bold">
+						<div class="box1" id="main-menu-13">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-configuration ui-sortable-handle"></i>
+														Konfiguracja
+						</div>
+					</div>
+					<div class="section" id="main-menu-13-section">
+																					<div title="Zmiana ustawień konfiguracyjnych" class="tip bold">
+									<div class="box2" id="main-menu-13-0">
+										<a href="https://demo.lms.org.pl/?m=configlist">Ustawienia</a>
+									</div>
+								</div>
+															<div title="Definicje stawek podatkowych" class="tip bold">
+									<div class="box2" id="main-menu-13-1">
+										<a href="https://demo.lms.org.pl/?m=taxratelist">Stawki podatkowe</a>
+									</div>
+								</div>
+															<div title="Definicje planów numeracyjnych" class="tip bold">
+									<div class="box2" id="main-menu-13-2">
+										<a href="https://demo.lms.org.pl/?m=numberplanlist">Plany numeracyjne</a>
+									</div>
+								</div>
+															<div title="Definicje województw" class="tip bold">
+									<div class="box2" id="main-menu-13-3">
+										<a href="https://demo.lms.org.pl/?m=statelist">Województwa</a>
+									</div>
+								</div>
+															<div title="Definicje firm (oddziałów)" class="tip bold">
+									<div class="box2" id="main-menu-13-4">
+										<a href="https://demo.lms.org.pl/?m=divisionlist">Firmy (Oddziały)</a>
+									</div>
+								</div>
+															<div title="Lista hostów" class="tip bold">
+									<div class="box2" id="main-menu-13-5">
+										<a href="https://demo.lms.org.pl/?m=hostlist">Hosty</a>
+									</div>
+								</div>
+															<div title="Konfiguracja demona(ów)" class="tip bold">
+									<div class="box2" id="main-menu-13-6">
+										<a href="https://demo.lms.org.pl/?m=daemoninstancelist">Demon</a>
+									</div>
+								</div>
+															<div title="Lista źródeł importu płatności" class="tip bold">
+									<div class="box2" id="main-menu-13-7">
+										<a href="https://demo.lms.org.pl/?m=cashsourcelist">Źródła importu</a>
+									</div>
+								</div>
+															<div title="Lista promocji" class="tip bold">
+									<div class="box2" id="main-menu-13-8">
+										<a href="https://demo.lms.org.pl/?m=promotionlist">Promocje</a>
+									</div>
+								</div>
+															<div title="Zarządzanie wtyczkami" class="tip bold">
+									<div class="box2" id="main-menu-13-9">
+										<a href="https://demo.lms.org.pl/?m=pluginlist">Wtyczki</a>
+									</div>
+								</div>
+															<div title="Zarządzenie projektami inwestycyjnymi" class="tip bold">
+									<div class="box2" id="main-menu-13-10">
+										<a href="https://demo.lms.org.pl/?m=invprojectlist">Projekty inwestycyjne</a>
+									</div>
+								</div>
+																		</div>
+				</div>
+			</div><div id="menu-documentation" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Dokumentacja" class="tip bold" onclick="window.open('doc/html/pl');">
+						<div class="box1" id="main-menu-15">
+															<i class="lms-ui-menu-item-icon lms-ui-icon-documentation ui-sortable-handle"></i>
+														Dokumentacja
+						</div>
+					</div>
+					<div class="section" id="main-menu-15-section">
+											</div>
+				</div>
+			</div><div id="menu-logout" class="lms-ui-menu-item">
+				<div class="click-menu bottomline">
+					<div title="Kliknij, aby się wylogować" class="tip bold" onclick="confirmDialog('Czy na pewno chcesz się wylogować?', this).done(function() { return location.href='?m=logout&amp;is_sure=1'; });">
+						<div class="box1" id="main-menu-16">
+							<i class="lms-ui-menu-item-icon lms-ui-icon-logout ui-sortable-handle"></i>
+							Wyloguj ad…
+						</div>
+					</div>
+				</div>
+			</div></div>
+		<script>
+
+		var mainMenu = new ClickShowHideMenu({
+			id: 'main-menu',
+			maxOpened: 0
+		});
+		mainMenu.init();
+
+		$('#main-menu').sortable({
+			items: ".lms-ui-menu-item",
+			handle: "i,img",
+			axis: "y",
+			opacity: 0.9,
+			update: function () {
+				data = {};
+				data['main-menu-order'] = $(this).sortable("toArray").join(';');
+				savePersistentSettings(data);
+			}
+		});
+
+		restoreSortable('main-menu', 'menu-auth;menu-log;menu-admin;menu-customers;menu-netdevices;menu-networks;menu-nodes;menu-helpdesk;menu-messages;menu-documents;menu-VoIP;menu-hosting;menu-finances;menu-timetable;menu-config;menu-documentation;menu-logout');
+
+		$('#select_context_division').change(function () {
+			data = {};
+			data['division_context'] = $(this).val();
+			saveCurrentDivision(data).done(function () {
+				$('.division-context-selected').val(data['division_context']);
+				var divisionContext = $('.division-context');
+				if (divisionContext.length) {
+					divisionContext.trigger("lms:division_selection");
+				}
+			});
+		});
+
+		</script>
+	</div>
+	<div id="lms-ui-session-expire" title="Sesja wygasa za:">999:59</div>
+	<div id="lms-ui-copyrights">
+		© 2001-2025<br>
+		DB: 2025070300<br>
+		<a href="https://demo.lms.org.pl/?m=copyrights">LMS Developers</a>
+	</div>
+	</div>
+</nav>
+<script>
+
+	var menuPanelContainer = $('#lms-ui-menu-panel-container');
+	menuPanelContainer.css('margin-right', menuPanelContainer[0].clientWidth - menuPanelContainer[0].offsetWidth + 'px');
+
+	$(function() {
+		$('#lms-ui-menu-panel').on('mouseenter touchstart', function () {
+			$('body').addClass('main-menu-mobile-wide');
+		}).on('mouseleave', function () {
+			$('body').removeClass('main-menu-mobile-wide');
+		});
+		$('#lms-ui-contents').on('mouseenter touchstart', function () {
+			$('body').removeClass('main-menu-mobile-wide');
+		});
+	});
+
+	var lms_session_expiration_warning_interval = 60
+	var lms_session_expiration_warning_dialog = false;
+
+	function session_expiration_warning_reset() {
+		lms_session_expiration_warning_dialog = false;
+	}
+
+	function session_expiration_warning_handler(time_to_expire) {
+		if (lms_session_expiration_warning_interval
+				&& lms_login_timeout_value - 10 >= lms_session_expiration_warning_interval
+				&& time_to_expire < lms_session_expiration_warning_interval) {
+			if (!lms_session_expiration_warning_dialog) {
+				lms_session_expiration_warning_dialog = true;
+				alertDialog($t('Your session is near to expiration! Click "OK" if you want to prevent logout.')).done(function () {
+					$.ajax('?', {
+						async: true,
+						method: 'GET',
+						success: function() {
+							reset_login_timeout();
+						}
+					});
+				});
+			}
+		}
+	}
+
+</script>
+	
+	
+		<div id="lms-ui-spinner" style="display: none;">
+	<div class="lms-ui-sk-fading-circle">
+		<div class="lms-ui-sk-circle1 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle2 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle3 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle4 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle5 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle6 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle7 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle8 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle9 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle10 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle11 lms-ui-sk-circle"></div>
+		<div class="lms-ui-sk-circle12 lms-ui-sk-circle"></div>
+	</div>
+</div>
+						<input type="hidden" id="old-history-entry" value="">
+		<input type="hidden" id="history-entry" value="">
+		<script>
+
+			var AUTOSUGGEST_MAX_LENGTH = 40;
+
+			$('#lms-ui-back-to-top').click(function() {
+				$('html,body').animate({ scrollTop: 0 });
+			});
+
+			// we use 'tabId' session storage value for identifying web browser tabs
+			// which should preserve some form data per tab
+			var lmsTabId = sessionStorage.getItem('tabId');
+
+/*
+			const bc = new BroadcastChannel("lms-broadcast-channel");
+			bc.onmessage = (event) => {
+				var newLmsTabId = event.data.srcTabId;
+				if (newLmsTabId == lmsTabId) {
+					event.srcElement.postMessage({
+						srcTabId: 0
+					});
+				} else if (newLmsTabId == 0) {
+					lmsTabId = Date.now();
+					sessionStorage.setItem('tabId', lmsTabId);
+
+					// new browser tab can be opened as hidden or tabid of new tab can be not initialised
+					// so we have to be careful and handle 'backto' session variable in special way and
+					// correct this variable when new tab id has been determined before the moment
+					var oldLmsTabId = getCookie('tabId');
+					
+					if (!document.hidden) {
+						setCookie('tabId', lmsTabId);
+					}
+				}
+			};
+			bc.postMessage({
+				srcTabId: lmsTabId
+			});
+*/
+
+			if (!lmsTabId) {
+				lmsTabId = Date.now();
+				sessionStorage.setItem('tabId', lmsTabId);
+
+				// new browser tab can be opened as hidden or tabid of new tab can be not initialised
+				// so we have to be careful and handle 'backto' session variable in special way and
+				// correct this variable when new tab id has been determined before the moment
+				var oldLmsTabId = getCookie('tabId');
+							}
+			if (!document.hidden) {
+				setCookie('tabId', lmsTabId);
+			}
+
+			var loginTimeout = parseInt('60000');
+			var lastClearLoginTimeout = Date.now();
+			var clearLoginTimeoutHandle = null;
+
+			$(window).on('mousemove keypress focus scroll', function(e) {
+				if (e.type == 'focus') {
+					setCookie('tabId', lmsTabId);
+
+					// check if login timeout condition is met - in newer web browser
+					// timers are not active when window is not visible
+					if (Date.now() > lms_login_timeout_ts) {
+						window.location.assign(window.location.href);
+					}
+				} else {
+					start_login_timeout(loginTimeout);
+
+					if (Date.now() - lastClearLoginTimeout > (loginTimeout * 1000 / 2)) {
+						$.ajax({
+							url: '?clear_login_timeout=1&api=1',
+							method: "POST",
+							dataType: 'json'
+						});
+						lastClearLoginTimeout = Date.now();
+					} else {
+						if (clearLoginTimeoutHandle) {
+							clearTimeout(clearLoginTimeoutHandle);
+						}
+						clearLoginTimeoutHandle = setTimeout(
+							function () {
+								$.ajax({
+									url: '?clear_login_timeout=1&api=1',
+									method: "POST",
+									dataType: 'json'
+								});
+								lastClearLoginTimeout = Date.now();
+							},
+							loginTimeout * 1000 / 2
+						);
+					}
+				}
+			});
+
+		</script>
+		<section id="lms-ui-contents" style="">
+			<div id="lms-ui-tool-panels" class="lms-ui-popup no-print">
+				<div id="lms-ui-quicksearch-indicators-panel" class="lms-ui-tool-panel no-print">
+	
+	<div class="lms-ui-quick-search">
+		<form method="post" name="quicksearch" id="quicksearch" action="?m=quicksearch" class="lms-ui-quick-search">
+			
+
+<div id="qs-customer" class="lms-ui-quick-search-field visible" data-mode="customer" data-label="klient" data-keyboard-shortcut="ctrl+1">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-customer" title="Kliknij tutaj, aby wybrać, które właściwości klienta powinny być używane podczas wyszukiwania"></i>
+    <input type="text" name="qs[customer]" size="15" title="Wprowadź jakąś wartość właściwości i naciśnij Enter. Ikona po lewej stronie pozwala wybrać, które właściwości są brane pod uwagę." class="blend lms-ui-quick-search-input lms-ui-quick-search-active" autocomplete="off" id="autosuggest0">
+	
+	<div class="lms-ui-multiselect-container tiny lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać, które właściwości klienta powinny być używane podczas wyszukiwania" tabindex="0"><i class="fa-fw lms-ui-icon-customisation"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="id" class="visible" checked="checked"><span class="">identyfikator klienta</span></li><li class="visible selected"><input type="checkbox" value="name" class="visible" checked="checked"><span class="">nazwa klienta</span></li><li class="visible selected"><input type="checkbox" value="altname" class="visible" checked="checked"><span class="">alternatywna nazwa klienta</span></li><li class="visible selected"><input type="checkbox" value="address" class="visible" checked="checked"><span class="">adres</span></li><li class="visible selected"><input type="checkbox" value="post_name" class="visible" checked="checked"><span class="">nazwa korespondencyjna</span></li><li class="visible selected"><input type="checkbox" value="post_address" class="visible" checked="checked"><span class="">adres korespondencyjny</span></li><li class="visible selected"><input type="checkbox" value="location_name" class="visible" checked="checked"><span class="">nazwa lokalizacji</span></li><li class="visible selected"><input type="checkbox" value="location_address" class="visible" checked="checked"><span class="">adres lokalizacyjny</span></li><li class="visible selected"><input type="checkbox" value="email" class="visible" checked="checked"><span class="">e-mail</span></li><li class="visible selected"><input type="checkbox" value="bankaccount" class="visible" checked="checked"><span class="">alternatywny rachunek bankowy</span></li><li class="visible selected"><input type="checkbox" value="ten" class="visible" checked="checked"><span class="">NIP</span></li><li class="visible selected"><input type="checkbox" value="ssn" class="visible" checked="checked"><span class="">PESEL</span></li><li class="visible selected"><input type="checkbox" value="additional-info" class="visible" checked="checked"><span class="">informacje dodatkowe</span></li><li class="visible selected"><input type="checkbox" value="notes" class="visible" checked="checked"><span class="">notatki</span></li><li class="visible selected"><input type="checkbox" value="documentmemo" class="visible" checked="checked"><span class="">notatka na dokumentach</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1" checked="checked"><span>zaznacz wszystkie</span></div></div><select id="qs-customer-properties" class="lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać, które właściwości klienta powinny być używane podczas wyszukiwania">
+		<option value="id" selected="selected">identyfikator klienta</option>
+		<option value="name" selected="selected">nazwa klienta</option>
+		<option value="altname" selected="selected">alternatywna nazwa klienta</option>
+		<option value="address" selected="selected">adres</option>
+		<option value="post_name" selected="selected">nazwa korespondencyjna</option>
+		<option value="post_address" selected="selected">adres korespondencyjny</option>
+		<option value="location_name" selected="selected">nazwa lokalizacji</option>
+		<option value="location_address" selected="selected">adres lokalizacyjny</option>
+		<option value="email" selected="selected">e-mail</option>
+		<option value="bankaccount" selected="selected">alternatywny rachunek bankowy</option>
+		<option value="ten" selected="selected">NIP</option>
+		<option value="ssn" selected="selected">PESEL</option>
+		<option value="additional-info" selected="selected">informacje dodatkowe</option>
+		<option value="notes" selected="selected">notatki</option>
+		<option value="documentmemo" selected="selected">notatka na dokumentach</option>
+	</select></div>
+</div>
+
+<div id="qs-phone" class="lms-ui-quick-search-field" data-mode="phone" data-label="telefon" data-keyboard-shortcut="ctrl+2">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-phone" title="Wprowadź numer telefonu i naciśnij Enter"></i>
+    <input type="text" name="qs[phone]" size="15" title="Wprowadź numer telefonu i naciśnij Enter" class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest1">
+	
+	<div class="lms-ui-multiselect-container tiny lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać w jaki sposób są wyszukiwane numery telefonów" tabindex="0"><i class="fa-fw lms-ui-icon-customisation"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="contact" class="visible" checked="checked"><span class="">numer telefonu klienta</span></li><li class="visible selected"><input type="checkbox" value="account" class="visible" checked="checked"><span class="">numer konta VoIP</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1" checked="checked"><span>zaznacz wszystkie</span></div></div><select id="qs-phone-properties" class="lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać w jaki sposób są wyszukiwane numery telefonów">
+					<option value="contact" selected="selected">numer telefonu klienta</option>
+							<option value="account" selected="selected">numer konta VoIP</option>
+			</select></div>
+</div>
+
+<div id="qs-node" class="lms-ui-quick-search-field visible" data-mode="node" data-label="komputer" data-keyboard-shortcut="ctrl+3">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-node" title="Wprowadź identyfikator komputera, nazwę, adres IP lub adres MAC i naciśnij Enter"></i>
+    <input type="text" name="qs[node]" size="15" title="Wprowadź jakąś wartość właściwości i naciśnij Enter. Ikona po lewej stronie pozwala wybrać, które właściwości są brane pod uwagę." class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest2">
+	
+	<div class="lms-ui-multiselect-container tiny lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać, które właściwości komputera powinny być używane podczas wyszukiwania" tabindex="0"><i class="fa-fw lms-ui-icon-customisation"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="id" class="visible" checked="checked"><span class="">identyfikator komputera</span></li><li class="visible selected"><input type="checkbox" value="name" class="visible" checked="checked"><span class="">nazwa komputera</span></li><li class="visible selected"><input type="checkbox" value="login" class="visible" checked="checked"><span class="">login komputera</span></li><li class="visible selected"><input type="checkbox" value="ip" class="visible" checked="checked"><span class="">adres IP</span></li><li class="visible selected"><input type="checkbox" value="public_ip" class="visible" checked="checked"><span class="">adres publiczny IP</span></li><li class="visible selected"><input type="checkbox" value="mac" class="visible" checked="checked"><span class="">adres MAC</span></li><li class="visible selected"><input type="checkbox" value="location_address" class="visible" checked="checked"><span class="">adres lokalizacyjny</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1" checked="checked"><span>zaznacz wszystkie</span></div></div><select id="qs-node-properties" class="lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać, które właściwości komputera powinny być używane podczas wyszukiwania">
+		<option value="id" selected="selected">identyfikator komputera</option>
+		<option value="name" selected="selected">nazwa komputera</option>
+		<option value="login" selected="selected">login komputera</option>
+		<option value="ip" selected="selected">adres IP</option>
+		<option value="public_ip" selected="selected">adres publiczny IP</option>
+		<option value="mac" selected="selected">adres MAC</option>
+		<option value="location_address" selected="selected">adres lokalizacyjny</option>
+	</select></div>
+</div>
+
+<div id="qs-network" class="lms-ui-quick-search-field" data-mode="network" data-label="sieć" data-keyboard-shortcut="ctrl+4">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-ipnetwork" title="Wprowadź ID sieci, nazwę lub adres IP i naciśnij Enter"></i>
+    <input type="text" name="qs[network]" size="15" title="Wprowadź jakąś wartość właściwości i naciśnij Enter. Ikona po lewej stronie pozwala wybrać, które właściwości są brane pod uwagę." class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest3">
+	
+	<div class="lms-ui-multiselect-container tiny lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać, które właściwości komputera powinny być używane podczas wyszukiwania" tabindex="0"><i class="fa-fw lms-ui-icon-customisation"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="id" class="visible" checked="checked"><span class="">identyfikator sieci</span></li><li class="visible selected"><input type="checkbox" value="name" class="visible" checked="checked"><span class="">nazwa sieci</span></li><li class="visible selected"><input type="checkbox" value="address" class="visible" checked="checked"><span class="">adres sieci</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1" checked="checked"><span>zaznacz wszystkie</span></div></div><select id="qs-network-properties" class="lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać, które właściwości komputera powinny być używane podczas wyszukiwania">
+		<option value="id" selected="selected">identyfikator sieci</option>
+		<option value="name" selected="selected">nazwa sieci</option>
+		<option value="address" selected="selected">adres sieci</option>
+	</select></div>
+</div>
+
+<div id="qs-netnode" class="lms-ui-quick-search-field" data-mode="netnode" data-label="węzeł sieciowy" data-keyboard-shortcut="ctrl+5">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-netnode" title="Wprowadź ID lub nazwę węzła i naciśnij Enter"></i>
+	<input type="text" name="qs[netnode]" size="15" title="Wprowadź jakąś wartość właściwości i naciśnij Enter. Ikona po lewej stronie pozwala wybrać, które właściwości są brane pod uwagę." class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest4">
+	
+	<div class="lms-ui-multiselect-container tiny lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać, które właściwości klienta powinny być używane podczas wyszukiwania" tabindex="0"><i class="fa-fw lms-ui-icon-customisation"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="id" class="visible" checked="checked"><span class="">identyfikator węzła sieciowego</span></li><li class="visible selected"><input type="checkbox" value="name" class="visible" checked="checked"><span class="">nazwa węzła sieciowego</span></li><li class="visible selected"><input type="checkbox" value="additional-info" class="visible" checked="checked"><span class="">informacje dodatkowe</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1" checked="checked"><span>zaznacz wszystkie</span></div></div><select id="qs-netnode-properties" class="lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać, które właściwości klienta powinny być używane podczas wyszukiwania">
+		<option value="id" selected="selected">identyfikator węzła sieciowego</option>
+		<option value="name" selected="selected">nazwa węzła sieciowego</option>
+		<option value="additional-info" selected="selected">informacje dodatkowe</option>
+	</select></div>
+</div>
+
+<div id="qs-netdev" class="lms-ui-quick-search-field visible" data-mode="netdevice" data-label="urządzenie sieciowe" data-keyboard-shortcut="ctrl+6">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-netdev" title="Wprowadź ID, nazwę urządzenia lub numer seryjny i naciśnij Enter"></i>
+    <input type="text" name="qs[netdevice]" size="15" title="Wprowadź jakąś wartość właściwości i naciśnij Enter. Ikona po lewej stronie pozwala wybrać, które właściwości są brane pod uwagę." class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest5">
+	
+	<div class="lms-ui-multiselect-container tiny lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać, które właściwości urządzenia sieciowego powinny być używane podczas wyszukiwania" tabindex="0"><i class="fa-fw lms-ui-icon-customisation"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="id" class="visible" checked="checked"><span class="">identyfikator urządzenia</span></li><li class="visible selected"><input type="checkbox" value="name" class="visible" checked="checked"><span class="">nazwa urządzenia</span></li><li class="visible selected"><input type="checkbox" value="serial" class="visible" checked="checked"><span class="">numer seryjny urządzenia</span></li><li class="visible selected"><input type="checkbox" value="mac" class="visible" checked="checked"><span class="">adres MAC urządzenia</span></li><li class="visible selected"><input type="checkbox" value="location_address" class="visible" checked="checked"><span class="">adres lokalizacyjny</span></li><li class="visible selected"><input type="checkbox" value="description" class="visible" checked="checked"><span class="">opis urządzenia</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1" checked="checked"><span>zaznacz wszystkie</span></div></div><select id="qs-netdev-properties" class="lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać, które właściwości urządzenia sieciowego powinny być używane podczas wyszukiwania">
+		<option value="id" selected="selected">identyfikator urządzenia</option>
+		<option value="name" selected="selected">nazwa urządzenia</option>
+		<option value="serial" selected="selected">numer seryjny urządzenia</option>
+		<option value="mac" selected="selected">adres MAC urządzenia</option>
+		<option value="location_address" selected="selected">adres lokalizacyjny</option>
+		<option value="description" selected="selected">opis urządzenia</option>
+	</select></div>
+</div>
+
+<div id="qs-wireless" class="lms-ui-quick-search-field" data-mode="wireless" data-label="sieć bezprzewodowa" data-keyboard-shortcut="ctrl+7">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-wireless" title="Wpisz SSID i naciśnij Enter"></i>
+    <input type="text" name="qs[wireless]" size="15" title="Wpisz SSID i naciśnij Enter" class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest6">
+</div>
+
+<div id="qs-ticket" class="lms-ui-quick-search-field" data-mode="ticket" data-label="zgłoszenie" data-keyboard-shortcut="ctrl+8">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-helpdesk" title="Wprowadź identyfikator zgłoszenia, temat lub nazwisko/nazwę zgłaszającego i naciśnij Enter"></i>
+    <input type="text" name="qs[ticket]" size="15" title="Wprowadź jakąś wartość właściwości i naciśnij Enter. Ikona po lewej stronie pozwala wybrać, które właściwości są brane pod uwagę." class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest7">
+	
+	<div class="lms-ui-multiselect-container tiny lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać, które właściwości zgłoszenia powinny być używane podczas wyszukiwania" tabindex="0"><i class="fa-fw lms-ui-icon-customisation"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="id" class="visible" checked="checked"><span class="">identyfikator zgłoszenia</span></li><li class="visible selected"><input type="checkbox" value="subject" class="visible" checked="checked"><span class="">temat zgłoszenia</span></li><li class="visible selected"><input type="checkbox" value="requestor" class="visible" checked="checked"><span class="">zgłaszający</span></li><li class="visible selected"><input type="checkbox" value="requestor_mail" class="visible" checked="checked"><span class="">e-mail zgłaszającego</span></li><li class="visible selected"><input type="checkbox" value="requestor_phone" class="visible" checked="checked"><span class="">telefon zgłaszającego</span></li><li class="visible selected"><input type="checkbox" value="customername" class="visible" checked="checked"><span class="">nazwa klienta</span></li><li class="visible selected"><input type="checkbox" value="unresolvedonly" class="visible" checked="checked"><span class="">pokaż tylko nierozwiązane</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1" checked="checked"><span>zaznacz wszystkie</span></div></div><select id="qs-ticket-properties" class="lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać, które właściwości zgłoszenia powinny być używane podczas wyszukiwania">
+		<option value="id" selected="selected">identyfikator zgłoszenia</option>
+		<option value="subject" selected="selected">temat zgłoszenia</option>
+		<option value="requestor" selected="selected">zgłaszający</option>
+		<option value="requestor_mail" selected="selected">e-mail zgłaszającego</option>
+		<option value="requestor_phone" selected="selected">telefon zgłaszającego</option>
+		<option value="customername" selected="selected">nazwa klienta</option>
+		<option value="unresolvedonly" selected="selected">pokaż tylko nierozwiązane</option>
+	</select></div>
+</div>
+
+<div id="qs-account" class="lms-ui-quick-search-field" data-mode="account" data-label="konto hostingowe" data-keyboard-shortcut="ctrl+9">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-hosting" title="Wprowadź nazwę konta lub aliasu i naciśnij Enter"></i>
+    <input type="text" name="qs[account]" size="15" title="Wprowadź nazwę konta lub aliasu i naciśnij Enter" class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest8">
+</div>
+
+<div id="qs-docum" class="lms-ui-quick-search-field" data-mode="document" data-label="dokument" data-keyboard-shortcut="ctrl+y">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-document" title="Wprowadź numer dokumentu i naciśnij Enter"></i>
+    <input type="text" name="qs[document]" size="15" title="Wprowadź numer dokumentu i naciśnij Enter" class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest9">
+</div>
+
+<div id="qs-customerext" class="lms-ui-quick-search-field" data-mode="customerext" data-label="zewnętrzny identyfikator klienta" data-keyboard-shortcut="ctrl+e">
+	<i class="lms-ui-quick-search-icon lms-ui-icon-externalid" title="Podaj fragment identyfikatora klienta w systemie zewnętrznym i naciśnij Enter"></i>
+    <input type="text" name="qs[customerext]" size="15" title="Podaj fragment identyfikatora klienta w systemie zewnętrznym i naciśnij Enter" class="blend lms-ui-quick-search-input" autocomplete="off" id="autosuggest10">
+	
+	<div class="lms-ui-multiselect-container tiny lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać, którzy dostawcy usługi powinni być używani podczas wyszukiwania zewnętrznych identyfikatorów klientów" tabindex="0"><i class="fa-fw lms-ui-icon-customisation"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="default" class="visible" checked="checked"><span class="">domyślny</span></li><li class="visible selected"><input type="checkbox" value="jambox-mobile" class="visible" checked="checked"><span class="">jambox-mobile</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1" checked="checked"><span>zaznacz wszystkie</span></div></div><select id="qs-customerext-properties" class="lms-ui-quicksearch-property-selection lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać, którzy dostawcy usługi powinni być używani podczas wyszukiwania zewnętrznych identyfikatorów klientów">
+		<option value="default" selected="selected">domyślny</option>
+					<option value="jambox-mobile" selected="selected">jambox-mobile</option>
+			</select></div>
+</div>
+
+
+
+<div class="lms-ui-multiselect-container tiny lms-ui-quick-search-selector lms-ui-multiselect-selection-group"><div class="lms-ui-multiselect-launcher" title="Kliknij tutaj, aby wybrać, które pola szybkiego wyszukiwania powinny być widoczne" tabindex="0"><i class="lms-ui-icon-secondary-selection"></i></div><div class="lms-ui-multiselect-popup lms-ui-popup" style="display: none;"><input type="checkbox" class="lms-ui-multiselect-label-workaround"><div class="lms-ui-multiselect-popup-titlebar"><div class="lms-ui-multiselect-popup-title">Wybierz opcje</div><i class="lms-ui-icon-hide close-button"></i></div><ul class="lms-ui-multiselect-popup-list"><li class="visible selected"><input type="checkbox" value="customer" class="visible" checked="checked"><span class="">klient</span></li><li class="visible"><input type="checkbox" value="phone" class="visible"><span class="">telefon</span></li><li class="visible selected"><input type="checkbox" value="node" class="visible" checked="checked"><span class="">komputer</span></li><li class="visible"><input type="checkbox" value="network" class="visible"><span class="">sieć</span></li><li class="visible"><input type="checkbox" value="netnode" class="visible"><span class="">węzeł sieciowy</span></li><li class="visible selected"><input type="checkbox" value="netdevice" class="visible" checked="checked"><span class="">urządzenie sieciowe</span></li><li class="visible"><input type="checkbox" value="wireless" class="visible"><span class="">sieć bezprzewodowa</span></li><li class="visible"><input type="checkbox" value="ticket" class="visible"><span class="">zgłoszenie</span></li><li class="visible"><input type="checkbox" value="account" class="visible"><span class="">konto hostingowe</span></li><li class="visible"><input type="checkbox" value="document" class="visible"><span class="">dokument</span></li><li class="visible"><input type="checkbox" value="customerext" class="visible"><span class="">zewnętrzny identyfikator klienta</span></li></ul><div class="lms-ui-multiselect-popup-checkall"><input type="checkbox" class="checkall" value="1"><span>zaznacz wszystkie</span></div></div><select id="qs-selector" name="qs-selector[]" class="lms-ui-quick-search-selector lms-ui-multiselect-selection-group" multiple="multiple" title="Kliknij tutaj, aby wybrać, które pola szybkiego wyszukiwania powinny być widoczne">
+
+<option value="customer" selected="selected">klient</option><option value="phone">telefon</option><option value="node" selected="selected">komputer</option><option value="network">sieć</option><option value="netnode">węzeł sieciowy</option><option value="netdevice" selected="selected">urządzenie sieciowe</option><option value="wireless">sieć bezprzewodowa</option><option value="ticket">zgłoszenie</option><option value="account">konto hostingowe</option><option value="document">dokument</option><option value="customerext">zewnętrzny identyfikator klienta</option></select></div>
+
+<a class="lms-ui-button" id="lms-ui-quick-search-field-clear"><i class="lms-ui-icon-clear"></i>
+		</a>
+
+<script>
+    function bindKeyboardShortcuts() {
+		$('.lms-ui-quick-search-field[data-keyboard-shortcut]').each(function () {
+			var mode = $(this).attr('data-mode');
+			var shortcut = $(this).attr('data-keyboard-shortcut');
+			var input = $(this).find('input');
+
+			Mousetrap.unbind(shortcut);
+
+			if (Object.keys(qs_fields).length && !qs_fields.hasOwnProperty(mode)) {
+				return;
+			}
+
+			Mousetrap.bindGlobal(shortcut, function (e) {
+				e.preventDefault();
+				input.click();
+			});
+		});
+	}
+
+	var qs_data = {
+		"qs-properties": {}
+	};
+		qs_data["qs-properties"]["customer"] = "id,name,altname,address,post_name,post_address,location_name,location_address,email,bankaccount,ten,ssn,additional-info,notes,documentmemo";
+		qs_data["qs-properties"]["node"] = "id,name,login,ip,public_ip,mac,location_address";
+		qs_data["qs-properties"]["phone"] = "contact,account";
+		qs_data["qs-properties"]["ticket"] = "id,subject,requestor,requestor_mail,requestor_phone,customername,unresolvedonly";
+		qs_data["qs-properties"]["netdevice"] = "id,name,serial,mac,location_address,description";
+		qs_data["qs-properties"]["network"] = "id,name,address";
+	
+    var qs_fields = {};
+        qs_fields["customer"] = true;
+        qs_fields["node"] = true;
+        qs_fields["netdevice"] = true;
+    
+    $('#qs-selector').each(function() {
+		var selector = $(this);
+		var field_count = Object.keys(qs_fields).length;
+		$('.lms-ui-quick-search-field[data-mode]').each(function () {
+			var mode = $(this).attr('data-mode');
+			$(this).toggleClass('visible', !field_count || qs_fields.hasOwnProperty(mode));
+			selector.append('<option value="' + mode + '"' + (!field_count || qs_fields.hasOwnProperty(mode) ? ' selected' : '') +
+					'>' + $(this).attr('data-label') + '</option>');
+		});
+		new multiselect({
+			id: $(this).attr('id'),
+			defaultValue: null,
+			button: $('<i class="lms-ui-icon-secondary-selection"></i>'),
+			type: 'tiny'
+		});
+	}).change(function() {
+		qs_fields = {};
+		$(this).find("option[selected]").each(function () {
+			qs_fields[$(this).val()] = true;
+		});
+		$('.lms-ui-quick-search-field').removeClass('visible');
+		$.each(qs_fields, function(key) {
+			$('.lms-ui-quick-search-field[data-mode="' + key + '"]').addClass('visible');
+		});
+
+		bindKeyboardShortcuts();
+
+		qs_data["qs-fields"] = Object.keys(qs_fields).join(',');
+		$.ajax({
+			method: "POST",
+			url: '?m=persistentsetting',
+			data: qs_data
+		});
+	});
+
+    $('select.lms-ui-quicksearch-property-selection').each(function() {
+		var id = $(this).attr('id');
+		new multiselect({
+			id: id,
+			defaultValue: null,
+			button: $(this).prev('i'),
+			type: 'tiny'
+		});
+	}).change(function() {
+		var mode = $(this).closest('.lms-ui-quick-search-field').attr('data-mode');
+		var properties = [];
+		$(this).find("option[selected]").each(function() {
+			properties.push($(this).val());
+		});
+		qs_data["qs-properties"][mode] = properties.join(',');
+		$.ajax({
+			method: "POST",
+			url: '?m=persistentsetting',
+			data: qs_data
+		});
+	});
+
+	bindKeyboardShortcuts();
+
+	$('.lms-ui-quick-search-input').keydown(function(e) {
+		if (e.code != 'Escape') {
+			return;
+		}
+
+		if (!$("body").is('.lms-ui-mobile') || $("#autosuggest").is(":visible")) {
+			return;
+		}
+
+		$("#lms-ui-tool-panels").hide().removeClass('fullscreen-popup')
+			.find('.lms-ui-quick-search-field').removeClass('lms-ui-quick-search-active')
+			.find('.lms-ui-quick-search-input').removeClass('lms-ui-quick-search-active');
+		disableFullScreenPopup();
+	});
+
+	$(function() {
+		// quick search input auto show/hide support
+		var qsFields = $('.lms-ui-quick-search-field');
+
+		qsFields.each(function(index, field) {
+			var input = $(field).find('input');
+			new AutoSuggest({
+				form: $(field).closest('form'),
+				elem: input,
+				uri: '?m=quicksearch&api=1&ajax=1&mode=' +$(field).attr('data-mode') + '&what=',
+				autosubmit: lmsSettings.quickSearchAutoSubmit,
+				activeDescription: true
+			})
+		});
+
+		qsFields.find('.lms-ui-quick-search-input').on('click', function() {
+			qsFields.find('.lms-ui-quick-search-input').removeClass('lms-ui-quick-search-active')
+				.closest('.lms-ui-quick-search-field').removeClass('lms-ui-quick-search-active');
+			$(this).addClass('lms-ui-quick-search-active').focus().closest('.lms-ui-quick-search-field')
+				.addClass('lms-ui-quick-search-active');
+		}).siblings('i').on('click', function() {
+			var popup_menu;
+			if ($('body').is('.lms-ui-mobile')) {
+				popup_menu = $('#lms-ui-popup-menu');
+				if (popup_menu.is(':visible')) {
+					popup_menu.hide().removeClass('fullscreen-popup');
+					disableFullScreenPopup();
+				} else {
+					$(this).addClass('lms-ui-dropdown-toggle');
+					var field_count = Object.keys(qs_fields).length;
+					var html = '';
+					$('.lms-ui-quick-search-field[data-mode]').each(function() {
+						var mode = $(this).attr('data-mode');
+						if (field_count && !qs_fields.hasOwnProperty(mode)) {
+							return;
+						}
+						html += '<li data-mode="' + mode + '"><i class="' + $(this).find('.lms-ui-quick-search-icon').attr('class') + ' fa-fw' +
+								'"></i>' + $(this).attr('data-label') + '</li>';
+					});
+					html += '<li><i class="lms-ui-icon-configuration fa-fw"></i>' + $t('Customise') + '</li>';
+					$('#lms-ui-popup-menu-title').html($t('Select resource type'));
+					$('#lms-ui-popup-menu-content ul').html(html).find('li').click(function () {
+						popup_menu.hide().removeClass('fullscreen-popup');
+						disableFullScreenPopup();
+						var mode = $(this).attr('data-mode');
+						if (mode) {
+							$('.lms-ui-quick-search-field[data-mode="' + mode + '"] .lms-ui-quick-search-input').click();
+							setCookie('default-mobile-quick-search-field', mode);
+						} else {
+							$('#qs-selector').siblings('.lms-ui-multiselect-launcher').trigger('click');
+						}
+					});
+					popup_menu.show().addClass('fullscreen-popup');
+					enableFullScreenPopup();
+				}
+			} else {
+				qsFields.find('.lms-ui-quick-search-input.lms-ui-quick-search-active').removeClass('lms-ui-quick-search-active');
+				$(this).siblings('.lms-ui-quick-search-input').addClass('lms-ui-quick-search-active').focus()
+						.closest('.lms-ui-quick-search-field').addClass('lms-ui-quick-search-active');
+			}
+		});
+		if (!location.hash.length) {
+			qsFields.first().find('.lms-ui-quick-search-input').addClass('lms-ui-quick-search-active').focus();
+		}
+
+		$(document).keydown(function(e) {
+			var new_field;
+			if (e.keyCode != 9)
+				return;
+			var qs_field = $(e.target).closest('.lms-ui-quick-search-field');
+			if (qsFields.index(qs_field) == -1)
+				return;
+			if (e.shiftKey) {
+				new_field = qs_field;
+				do {
+					new_field = new_field.prev('.lms-ui-quick-search-field');
+				} while (new_field.length && !new_field.is(':visible'));
+				if (!new_field.length) {
+					new_field = qsFields.last();
+					while (new_field.length && !new_field.is(':visible')) {
+						new_field = new_field.prev('.lms-ui-quick-search-field');
+					}
+				}
+			} else {
+				new_field = qs_field;
+				do {
+					new_field = new_field.next('.lms-ui-quick-search-field');
+				} while (new_field.length && !new_field.is(':visible'));
+				if (!new_field.length) {
+					new_field = qsFields.first();
+					while (new_field.length && !new_field.is(':visible')) {
+						new_field = new_field.next('.lms-ui-quick-search-field');
+					}
+				}
+			}
+			$(e.target).removeClass('lms-ui-quick-search-active');
+			new_field.find('input').addClass('lms-ui-quick-search-active').focus();
+			e.preventDefault();
+		});
+
+		$('#lms-ui-quick-search-field-clear').click(function() {
+			$(this).siblings('.lms-ui-quick-search-field.lms-ui-quick-search-active').find('.lms-ui-quick-search-input')
+				.val('').keyup();
+		});
+
+		$('#lms-ui-mobile-menu-search').click(function () {
+			var toolPanels = $("#lms-ui-tool-panels");
+			if (toolPanels.is(':visible')) {
+				var activeField = toolPanels.find('.lms-ui-quick-search-field.lms-ui-quick-search-active');
+				if (activeField.length) {
+					activeField.find('.lms-ui-quick-search-input').focus();
+				} else {
+					var defaultQuickSearchField = getCookie('default-mobile-quick-search-field');
+					var quickSearchField;
+					if (defaultQuickSearchField) {
+						quickSearchField = $('.lms-ui-quick-search-field[data-mode="' + defaultQuickSearchField + '"]')
+						if (!quickSearchField.length) {
+							quickSearchField = toolPanels.find('.lms-ui-quick-search-field').first();
+						}
+					} else {
+						quickSearchField = toolPanels.find('.lms-ui-quick-search-field').first();
+					}
+					quickSearchField.addClass('lms-ui-quick-search-active')
+						.find('.lms-ui-quick-search-input').addClass('lms-ui-quick-search-active').focus();
+				}
+			}
+		});
+	});
+
+</script>
+									<input type="image" src="Lista%20VLAN-%C3%B3w_pliki/empty.gif" width="0" height="0" style="border: none;">
+		</form>
+		<div id="autosuggest" class="lms-ui-popup">
+		</div>
+	</div>
+	
+			
+		<div id="lms-ui-indicators">
+			<style>
+    .lms-ui-indicator {
+        display: none;
+    }
+    #indicator-critical {
+        color: red;
+    }
+    #indicator-urgent {
+        color: orangered;
+    }
+    #indicator-unread {
+        color: blue;
+    }
+    #indicator-expired {
+        color: red;
+    }
+    #indicator-outdated {
+        color: orange;
+    }
+    #indicator-verify {
+        color: green;
+    }
+    #indicator-watching {
+        color: darkred;
+    }
+    #indicator-left {
+        color: black;
+    }
+    #indicator-overdue {
+        color: red;
+    }
+    #indicator-events {
+        color: blue;
+    }
+</style>
+
+
+<script>
+
+    function getIndicatorStats() {
+		$.ajax('?m=indicators&ajax=1&api=1', {
+				method: "POST",
+				dataType: "json"
+			}
+		).done(function (data) {
+			$.each(data, function (idx, value) {
+				if (parseInt(value))
+                    $('#indicator-' + idx).show();
+				else
+					$('#indicator-' + idx).hide();
+				$('#indicator-' + idx + ' .lms-ui-indicator-counter').html(value);
+			});
+		});
+	}
+
+    getIndicatorStats();
+
+    setInterval(function() {
+    	    getIndicatorStats();
+        }, 120 * 1000);
+
+</script>
+
+		</div>
+		
+	</div>
+				<!--// $Id$ //-->
+			</div>
+			<div id="lms-ui-module-view">
+				
+
+<h1>Lista VLAN-ów</h1>
+
+<div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer"><div class="top"><div class="lms-ui-datatable-toolbar"><div class="lms-ui-datatable-clear-settings"><i class="lms-ui-icon-clear" title="Skasuj ustawienia"></i></div><div class="lms-ui-datatable-column-toggle"></div><div class="dataTables_length" id="DataTables_Table_0_length"><label>Show <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0" class=""><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100" selected="selected">100</option><option value="-1">wszystkie</option></select> entries</label></div></div><div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate"><a class="paginate_button previous disabled" aria-controls="DataTables_Table_0" data-dt-idx="0" tabindex="-1" id="DataTables_Table_0_previous">Previous</a><span><a class="paginate_button current" aria-controls="DataTables_Table_0" data-dt-idx="1" tabindex="0">1</a></span><a class="paginate_button next disabled" aria-controls="DataTables_Table_0" data-dt-idx="2" tabindex="-1" id="DataTables_Table_0_next">Next</a></div><div id="DataTables_Table_0_filter" class="dataTables_filter"><label>Search:<input type="search" class="" placeholder="" aria-controls="DataTables_Table_0"></label></div></div><div id="DataTables_Table_0_processing" class="dataTables_processing" style="display: none;">Processing...</div><table class="lmsbox lms-ui-background-cycle lms-ui-datatable dataTable no-footer dtr-" data-page-length="100" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info" style="width: 1325px;">
+    <thead>
+        <tr class="bold" role="row"><td class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width: 78px;" aria-sort="ascending" aria-label="
+                 ID
+            : activate to sort column descending">
+                <i class="lms-ui-icon-id fa-fw"></i> ID
+            </td><td class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width: 268px;" aria-label="
+                 Identyfikator VLAN-u
+            : activate to sort column ascending">
+                <i class="lms-ui-icon-vlan fa-fw"></i> Identyfikator VLAN-u
+            </td><td class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width: 163px;" aria-label="
+                 Opis
+            : activate to sort column ascending">
+                <i class="lms-ui-icon-description fa-fw"></i> Opis
+            </td><td class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width: 230px;" aria-label="
+                 Przypisany klient
+            : activate to sort column ascending">
+                <i class="lms-ui-icon-customer fa-fw"></i> Przypisany klient
+            </td><td class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width: 325px;" aria-label="
+                 Przypisany węzeł sieciowy
+            : activate to sort column ascending">
+                <i class="lms-ui-icon-netnode fa-fw"></i> Przypisany węzeł sieciowy
+            </td><td class="text-right sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width: 141px;" aria-label="
+                Dodaj
+		
+            : activate to sort column ascending">
+                <button type="button" class="lms-ui-button" onclick="open_add_dialog()" name="addvlan" id="addvlanbtn" accesskey="v"><i class="lms-ui-icon-add"></i><span class="lms-ui-label">Dodaj</span>
+		</button>
+            </td></tr>
+    </thead>
+    <tbody>
+                
+                
+                
+                
+                
+                
+                
+                
+            <tr class="highlight" data-template-id="7" role="row">
+            <td data-order="7" tabindex="0" class="sorting_1">
+                7
+            </td>
+            <td data-template-vlanid="125" data-order="125">
+                125
+            </td>
+            <td data-template-description="Światłowód/ Lublin" title="Światłowód/ Lublin" class="">
+                Światłowód/ Lublin
+            </td>
+            <td data-template-customerid="15" title="ALFA-SYSTEM &amp; M.PIWOWARSKI, &amp; A.WIDERA SPÓŁKA JAWNA " class="">
+                <a href="https://demo.lms.org.pl/?m=customerinfo&amp;id=15">ALFA-SYSTEM …</a>
+            </td>
+            <td data-template-netnodeid="56" title="1234_test" class="">
+                <a href="https://demo.lms.org.pl/?m=netnodeinfo&amp;id=56">1234_test</a>
+            </td>
+            <td class="buttons">
+                <a class="lms-ui-button" onclick="open_modify_dialog(7)" title="Edytuj" data-title="Edytuj"><i class="lms-ui-icon-edit"></i>
+		</a>
+                <a href="https://demo.lms.org.pl/?m=vlanlist&amp;action=delete&amp;id=7" class="lms-ui-button delete-vlan" title="Usuń" data-title="Usuń"><i class="lms-ui-icon-delete"></i>
+		</a>
+            </td>
+        </tr><tr class="highlight" data-template-id="8" role="row">
+            <td data-order="8" tabindex="0" class="sorting_1">
+                8
+            </td>
+            <td data-template-vlanid="30" data-order="30">
+                30
+            </td>
+            <td data-template-description="dghd" title="dghd" class="">
+                dghd
+            </td>
+            <td data-template-customerid="" class="">
+                <a href="https://demo.lms.org.pl/?m=customerinfo&amp;id="></a>
+            </td>
+            <td data-template-netnodeid="33" title="asd" class="">
+                <a href="https://demo.lms.org.pl/?m=netnodeinfo&amp;id=33">asd</a>
+            </td>
+            <td class="buttons">
+                <a class="lms-ui-button" onclick="open_modify_dialog(8)" title="Edytuj" data-title="Edytuj"><i class="lms-ui-icon-edit"></i>
+		</a>
+                <a href="https://demo.lms.org.pl/?m=vlanlist&amp;action=delete&amp;id=8" class="lms-ui-button delete-vlan" title="Usuń" data-title="Usuń"><i class="lms-ui-icon-delete"></i>
+		</a>
+            </td>
+        </tr><tr class="highlight" data-template-id="10" role="row">
+            <td data-order="10" tabindex="0" class="sorting_1">
+                10
+            </td>
+            <td data-template-vlanid="2323" data-order="2323">
+                2323
+            </td>
+            <td data-template-description="t" title="t" class="">
+                t
+            </td>
+            <td data-template-customerid="" class="">
+                <a href="https://demo.lms.org.pl/?m=customerinfo&amp;id="></a>
+            </td>
+            <td data-template-netnodeid="10" title="add-test" class="">
+                <a href="https://demo.lms.org.pl/?m=netnodeinfo&amp;id=10">add-test</a>
+            </td>
+            <td class="buttons">
+                <a class="lms-ui-button" onclick="open_modify_dialog(10)" title="Edytuj" data-title="Edytuj"><i class="lms-ui-icon-edit"></i>
+		</a>
+                <a href="https://demo.lms.org.pl/?m=vlanlist&amp;action=delete&amp;id=10" class="lms-ui-button delete-vlan" title="Usuń" data-title="Usuń"><i class="lms-ui-icon-delete"></i>
+		</a>
+            </td>
+        </tr><tr class="highlight" data-template-id="11" role="row">
+            <td data-order="11" tabindex="0" class="sorting_1">
+                11
+            </td>
+            <td data-template-vlanid="1" data-order="1">
+                1
+            </td>
+            <td data-template-description="test" title="test" class="">
+                test
+            </td>
+            <td data-template-customerid="15" title="ALFA-SYSTEM &amp; M.PIWOWARSKI, &amp; A.WIDERA SPÓŁKA JAWNA " class="">
+                <a href="https://demo.lms.org.pl/?m=customerinfo&amp;id=15">ALFA-SYSTEM …</a>
+            </td>
+            <td data-template-netnodeid="16" title="bbbb" class="">
+                <a href="https://demo.lms.org.pl/?m=netnodeinfo&amp;id=16">bbbb</a>
+            </td>
+            <td class="buttons">
+                <a class="lms-ui-button" onclick="open_modify_dialog(11)" title="Edytuj" data-title="Edytuj"><i class="lms-ui-icon-edit"></i>
+		</a>
+                <a href="https://demo.lms.org.pl/?m=vlanlist&amp;action=delete&amp;id=11" class="lms-ui-button delete-vlan" title="Usuń" data-title="Usuń"><i class="lms-ui-icon-delete"></i>
+		</a>
+            </td>
+        </tr><tr class="highlight" data-template-id="13" role="row">
+            <td data-order="13" tabindex="0" class="sorting_1">
+                13
+            </td>
+            <td data-template-vlanid="4" data-order="4">
+                4
+            </td>
+            <td data-template-description="" class="">
+                
+            </td>
+            <td data-template-customerid="" class="">
+                <a href="https://demo.lms.org.pl/?m=customerinfo&amp;id="></a>
+            </td>
+            <td data-template-netnodeid="34" title="125" class="">
+                <a href="https://demo.lms.org.pl/?m=netnodeinfo&amp;id=34">125</a>
+            </td>
+            <td class="buttons">
+                <a class="lms-ui-button" onclick="open_modify_dialog(13)" title="Edytuj" data-title="Edytuj"><i class="lms-ui-icon-edit"></i>
+		</a>
+                <a href="https://demo.lms.org.pl/?m=vlanlist&amp;action=delete&amp;id=13" class="lms-ui-button delete-vlan" title="Usuń" data-title="Usuń"><i class="lms-ui-icon-delete"></i>
+		</a>
+            </td>
+        </tr><tr class="highlight" data-template-id="14" role="row">
+            <td data-order="14" tabindex="0" class="sorting_1">
+                14
+            </td>
+            <td data-template-vlanid="1902" data-order="1902">
+                1902
+            </td>
+            <td data-template-description="mgmt" title="mgmt" class="">
+                mgmt
+            </td>
+            <td data-template-customerid="" class="">
+                <a href="https://demo.lms.org.pl/?m=customerinfo&amp;id="></a>
+            </td>
+            <td data-template-netnodeid="41" title="wezel1" class="">
+                <a href="https://demo.lms.org.pl/?m=netnodeinfo&amp;id=41">wezel1</a>
+            </td>
+            <td class="buttons">
+                <a class="lms-ui-button" onclick="open_modify_dialog(14)" title="Edytuj" data-title="Edytuj"><i class="lms-ui-icon-edit"></i>
+		</a>
+                <a href="https://demo.lms.org.pl/?m=vlanlist&amp;action=delete&amp;id=14" class="lms-ui-button delete-vlan" title="Usuń" data-title="Usuń"><i class="lms-ui-icon-delete"></i>
+		</a>
+            </td>
+        </tr><tr class="highlight" data-template-id="15" role="row">
+            <td data-order="15" tabindex="0" class="sorting_1">
+                15
+            </td>
+            <td data-template-vlanid="100" data-order="100">
+                100
+            </td>
+            <td data-template-description="" class="">
+                
+            </td>
+            <td data-template-customerid="" class="">
+                <a href="https://demo.lms.org.pl/?m=customerinfo&amp;id="></a>
+            </td>
+            <td data-template-netnodeid="37" title="15" class="">
+                <a href="https://demo.lms.org.pl/?m=netnodeinfo&amp;id=37">15</a>
+            </td>
+            <td class="buttons">
+                <a class="lms-ui-button" onclick="open_modify_dialog(15)" title="Edytuj" data-title="Edytuj"><i class="lms-ui-icon-edit"></i>
+		</a>
+                <a href="https://demo.lms.org.pl/?m=vlanlist&amp;action=delete&amp;id=15" class="lms-ui-button delete-vlan" title="Usuń" data-title="Usuń"><i class="lms-ui-icon-delete"></i>
+		</a>
+            </td>
+        </tr><tr class="highlight" data-template-id="16" role="row">
+            <td data-order="16" tabindex="0" class="sorting_1">
+                16
+            </td>
+            <td data-template-vlanid="333" data-order="333">
+                333
+            </td>
+            <td data-template-description="ASystem" title="ASystem" class="">
+                ASystem
+            </td>
+            <td data-template-customerid="" class="">
+                <a href="https://demo.lms.org.pl/?m=customerinfo&amp;id="></a>
+            </td>
+            <td data-template-netnodeid="49" title="test" class="">
+                <a href="https://demo.lms.org.pl/?m=netnodeinfo&amp;id=49">test</a>
+            </td>
+            <td class="buttons">
+                <a class="lms-ui-button" onclick="open_modify_dialog(16)" title="Edytuj" data-title="Edytuj"><i class="lms-ui-icon-edit"></i>
+		</a>
+                <a href="https://demo.lms.org.pl/?m=vlanlist&amp;action=delete&amp;id=16" class="lms-ui-button delete-vlan" title="Usuń" data-title="Usuń"><i class="lms-ui-icon-delete"></i>
+		</a>
+            </td>
+        </tr></tbody>
+</table><div class="bottom"><div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">Showing 1 to 8 of 8 entries</div></div><div class="clear"></div></div>
+
+<style>
+    #addvlanmodal {
+        overflow: visible;
+    }
+    input {
+        margin-top: 5px;
+    }
+    .button-bar {
+        padding-top: 20px;
+    }
+</style>
+
+
+
+<script>
+    $( "#addvlanmodal" ).dialog( {
+        autoOpen: false,
+        resizable: false,
+        width: 'auto',
+        modal: true,
+        title: "Dodaj VLAN"
+    });
+
+    $( "#close" ).click(function() {
+        $( "#addvlanmodal" ).dialog( "close" );
+    });
+
+    function open_add_dialog() {
+        $( "#addvlan-form" ).attr('action', '?m=vlanlist&action=add');
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">Dodaj</span>');
+
+        $( "dialog-vlanid", "dialog-description", "dialog-netnode_selector").val();
+        updateAdvancedSelectsTest("#dialog-netnode_selector");
+
+        $( "#dialog-customer_selector" ).val('').trigger('input');
+        $( "#addvlanmodal" ).dialog( "option", "title", "Dodaj VLAN").dialog( "open" );
+    };
+
+    function open_modify_dialog (template_id) {
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">Zapisz</span>');
+        $( "#addvlan-form" ).attr('action', '?m=vlanlist&action=modify&id=' + template_id);
+        if (template_id) {
+            var row = $('[data-template-id=' + template_id + ']');
+            $("#dialog-vlanid").val($(row).find("[data-template-vlanid]").attr('data-template-vlanid'));
+            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
+            $("select#dialog-netnode_selector").val( $(row).find("[data-template-netnodeid]").attr('data-template-netnodeid'));
+            updateAdvancedSelectsTest("#dialog-netnode_selector");
+
+            var customeridedit = $(row).find("[data-template-customerid]").attr('data-template-customerid');
+            $( "#dialog-customer_selector" ).removeAttr('data-customer-name', 'data-prev-value').val(customeridedit).trigger('input');
+        }
+        $( "#addvlanmodal" ).dialog( "option", "title", "Modyfikuj VLAN " + template_id).dialog( "open" );
+    };
+</script>
+
+<script>
+    $(function() {
+        $( '.delete-vlan' ).click(function() {
+            confirmDialog( $t("Are you sure, you want to delete that VLAN?") , this).done(function() {
+                location.href = $(this).attr('href');
+            });
+            return false;
+        });
+    });
+</script>
+
+
+				
+			<footer>
+				
+									
+				<p id="lms-ui-generation-time">Czas generowania strony: 0,1066 sek. (13,23 MiB)</p>
+			</footer>
+		</div>
+	</section><div style="display: none;" tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable" aria-describedby="addvlanmodal" aria-labelledby="ui-id-1"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-1" class="ui-dialog-title">Dodaj VLAN</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>Close</button></div><div id="addvlanmodal" class="lms-ui-modal-dialog ui-dialog-content ui-widget-content">
+    <form method="POST" action="?m=vlanlist&amp;action=add" name="addvlan" id="addvlan-form">
+        <table>
+            <tbody>
+                <tr>
+                                    </tr>
+                <tr>
+                    <td>
+                        <i class="lms-ui-icon-vlan fa-fw"></i> Identyfikator VLAN-u
+                    </td>
+                    <td>
+                        <input type="number" min="0" max="4096" step="1" id="dialog-vlanid" name="addvlan[vlanid]" required="">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        <i class="lms-ui-icon-description fa-fw"></i> Opis VLAN-u
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-description" name="addvlan[description]">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <i class="lms-ui-icon-customer fa-fw"></i> Klient
+                    </td>
+                    <td>
+                        <div class="lms-ui-customer-select-container" data-version="2" data-show-id="1">
+<div class="lms-ui-customer-select">
+<div class="lms-ui-customer-select-suggestion-container"></div>
+<input type="text" name="addvlan[customerid]" class="lms-ui-customer-select-customerid" data-default-value="" data-prev-value="" size="5" form="addvlan-form" id="dialog-customer_selector" data-customer-name="1">
+<input type="text" placeholder="Wyszukaj klienta" form="addvlan-form" title="Wyszukaj klienta" class="lms-ui-customer-select-suggestion-input lms-ui-autogrow lms-ui-autogrow-initiated" "="" style="width: 156.8px;">
+<div title="Kliknij tutaj, aby wyczyścić wybór klienta" class="lms-ui-customer-function-button">
+<i class="lms-ui-icon-clear fa-fw"></i>
+</div>
+</div>
+<span class="lms-ui-customer-select-name">
+<a href=""></a></span>
+</div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        <i class="lms-ui-icon-netnode fa-fw"></i> Węzeł sieciowy
+                    </td>
+                    <td>
+                        <select name="addvlan[netnodeid]" class="lms-ui-advanced-select-test select2-hidden-accessible" id="dialog-netnode_selector" data-select2-id="select2-data-dialog-netnode_selector" tabindex="-1" aria-hidden="true">
+                            <option value="" data-select2-id="select2-data-2-7wla" selected="selected">— żadne —</option>
+                                                            <option value="61">0006 (61)</option>
+                                                            <option value="57">0008 (57)</option>
+                                                            <option value="56">1234_test (56)</option>
+                                                            <option value="34">125 (34)</option>
+                                                            <option value="37">15 (37)</option>
+                                                            <option value="21">2 (21)</option>
+                                                            <option value="59">a (59)</option>
+                                                            <option value="10">add-test (10)</option>
+                                                            <option value="14">add-test2 (14)</option>
+                                                            <option value="46">Alfons (46)</option>
+                                                            <option value="30">APNW01 (30)</option>
+                                                            <option value="33">asd (33)</option>
+                                                            <option value="53">AZ (53)</option>
+                                                            <option value="13">BARANOWKA (13)</option>
+                                                            <option value="16">bbbb (16)</option>
+                                                            <option value="64">das (64)</option>
+                                                            <option value="43">DAX (43)</option>
+                                                            <option value="35">dc (35)</option>
+                                                            <option value="51">gdsfsdf (51)</option>
+                                                            <option value="42">IST-S (42)</option>
+                                                            <option value="12">loc_test (12)</option>
+                                                            <option value="1">Maszt w Pikutkowie (1)</option>
+                                                            <option value="31">Naugarduko g. 18 (31)</option>
+                                                            <option value="38">oddział (38)</option>
+                                                            <option value="54">OLT1 (54)</option>
+                                                            <option value="36">Porzeczkowa (36)</option>
+                                                            <option value="20">sdfsf (20)</option>
+                                                            <option value="19">SL02W11 (19)</option>
+                                                            <option value="50">S-par-21 (50)</option>
+                                                            <option value="49">test (49)</option>
+                                                            <option value="45">test (45)</option>
+                                                            <option value="55">test (55)</option>
+                                                            <option value="32">test (32)</option>
+                                                            <option value="2">test123 (2)</option>
+                                                            <option value="11">TEST:300606 (11)</option>
+                                                            <option value="63">TestBUNT (63)</option>
+                                                            <option value="47">testests (47)</option>
+                                                            <option value="29">Testowy (29)</option>
+                                                            <option value="62">testtt (62)</option>
+                                                            <option value="15">TTTTT (15)</option>
+                                                            <option value="22">umbara (22)</option>
+                                                            <option value="41">wezel1 (41)</option>
+                                                            <option value="40">wezel1 (40)</option>
+                                                            <option value="52">wezeł test (52)</option>
+                                                            <option value="48">węzeł sieciowy 1 (48)</option>
+                                                            <option value="39">Wiosenna 3 (39)</option>
+                                                            <option value="44">WW-01 test1 (44)</option>
+                                                            <option value="60">zxcvv (60)</option>
+                                                            <option value="58">zzzxxcccc (58)</option>
+                                                    </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-1-09cp" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single lms-ui-advanced-select-test" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-dialog-netnode_selector-container" aria-controls="select2-dialog-netnode_selector-container"><span class="select2-selection__rendered" id="select2-dialog-netnode_selector-container" role="textbox" aria-readonly="true" title="Wybierz opcję"><span class="select2-selection__placeholder">Wybierz opcję</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="button-bar text-center">
+                        <button type="submit" class="lms-ui-button" id="submit-modal-button"><i class="lms-ui-icon-submit"></i><span class="lms-ui-label">Dodaj</span>
+		</button>
+                        <button type="button" class="lms-ui-button" id="close"><i class="lms-ui-icon-cancel"></i><span class="lms-ui-label">Anuluj</span>
+		</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+</div></div>
+
+
+<span style="position: absolute; top: -9999px; left: -9999px; width: auto; font-size: 12px; font-family: Arial, Helvetica, sans-serif; font-weight: 400; letter-spacing: 0px; text-transform: none; white-space: nowrap;"></span><div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"><div>Lista VLAN-ów</div></div><div role="tooltip" id="ui-id-2" class="ui-tooltip bold ui-widget ui-widget-content" style="top: 503.734px; left: 1px;"><div class="ui-tooltip-content">Lista VLAN-ów</div></div></body></html>

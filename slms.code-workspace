@@ -1,0 +1,19 @@
+{
+    "folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../../etc/apache2"
+		},
+		{
+			"path": "../../../home/sarna/slmsbac"
+		},
+		{
+			"path": "../../../home/sarna/Pulpit/LMS_dump"
+		}
+	],
+	"settings": {
+		"php.version": "8.3"
+	}
+}

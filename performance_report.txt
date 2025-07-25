@@ -1,0 +1,14 @@
+Performance Benchmark Report
+Generated: 2025-07-25 19:29:23
+
+db_simple_query: 0.12588500976562 ms - Simple SELECT query
+db_count_query: 0.91314315795898 ms - COUNT query
+db_show_tables: 0.20098686218262 ms - SHOW TABLES query
+file_read: 0.029087066650391 ms - File read operation
+file_write: 0.10180473327637 ms - File write operation
+file_delete: 0.039100646972656 ms - File delete operation
+memory_allocation: 0.69999694824219 MB - Memory allocation: 0MB
+memory_peak: 2 MB - Peak memory usage: 2MB
+cpu_intensive: 14.750957489014 ms - CPU-intensive calculation
+string_operations: 0.51188468933105 ms - String concatenation
+dns_resolution: 18.59712600708 ms - DNS resolution time

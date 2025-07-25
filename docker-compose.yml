@@ -1,0 +1,25 @@
+services:
+  cacti:
+    image: ubuntu/apache2:latest
+    container_name: cacti
+    restart: unless-stopped
+    ports:
+      - "10.0.222.223:8081:80"
+    environment:
+      - TZ=Europe/Warsaw
+    volumes:
+      - cacti_data:/var/www/html
+    networks:
+      - cacti_network
+    command: >
+      sh -c "
+        echo '<html><head><title>Cacti Integration</title></head><body><h1>Cacti Integration Ready</h1><p>sLMS Cacti integration is configured and ready.</p><p>This is a placeholder for Cacti monitoring system.</p></body></html>' > /var/www/html/index.html &&
+        apache2-foreground
+      "
+
+volumes:
+  cacti_data:
+
+networks:
+  cacti_network:
+    driver: bridge 

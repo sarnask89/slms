@@ -1,0 +1,11 @@
+⚡ Starting Performance Benchmark...
+=====================================
+
+📊 Benchmarking Database Queries...
+ 
+Fatal error: Uncaught Error: Class "mysqli" not found in /var/www/html/performance_benchmark.php:36
+Stack trace:
+#0 /var/www/html/performance_benchmark.php(18): PerformanceBenchmark->benchmarkDatabaseQueries()
+#1 /var/www/html/performance_benchmark.php(340): PerformanceBenchmark->runAllBenchmarks()
+#2 {main}
+  thrown in /var/www/html/performance_benchmark.php on line 36

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slms-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slms-web
+  template:
+    metadata:
+      labels:
+        app: slms-web
+    spec:
+      containers:
+        - name: slms-web
+          image: sarnask82/slms:latest # <-- Change to your image if needed
+          ports:
+            - containerPort: 80
+          env:
+            - name: TZ
+              value: Europe/Warsaw
+          volumeMounts:
+            - name: uploads
+              mountPath: /var/www/html/uploads
+      volumes:
+        - name: uploads
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: slms-service
+spec:
+  type: NodePort
+  selector:
+    app: slms-web
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080 # You can change this if needed

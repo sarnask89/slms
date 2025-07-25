@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="     http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd     ">
+ <name>Net_RouterOS</name>
+ <channel>pear.php.net</channel>
+ <summary>RouterOS API client implementation.</summary>
+ <description>This package allows you to read and write information from a RouterOS host using MikroTik&apos;s RouterOS API.</description>
+ <lead>
+  <name>Vasil Rangelov</name>
+  <user>boen_robot</user>
+  <email>boen.robot@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2011-09-01</date>
+ <time>19:11:40</time>
+ <version>
+  <release>1.0.1</release>
+  <api>1.0.1</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL License 2.1</license>
+ <notes>
+Channel change, more divisions and better fail handling. Package now has 100% code coverage.
+Uninstall the previous release with &quot;pear uninstall pearhub/Net_RouterOS&quot;.
+ </notes>
+ <contents>
+  <dir name="/">
+   <file baseinstalldir="/" md5sum="9bf7bf54df8cd78e64eb084db88a8a27" name="src/Net/RouterOS/ArgumentException.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="72daf83655262bbf172fc9093e55f2c2" name="src/Net/RouterOS/Autoload.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="76231eacc414761cd3a0f4b94fd33583" name="src/Net/RouterOS/Client.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="22611957a89e5153f52c0241ac8faeec" name="src/Net/RouterOS/Communicator.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="50767832c8784113d246b7094adbef58" name="src/Net/RouterOS/DataFlowException.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="80a04de3914b7a9e0db4469d2a44b86a" name="src/Net/RouterOS/Exception.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="eb8fee1e29cbb1a710b6f99b98e18eb8" name="src/Net/RouterOS/Message.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="c0a1b5ce101c0500eae45467f2353401" name="src/Net/RouterOS/SocketClientTransmitter.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="9d8035dd195aa64b320d0a39ba0da7e5" name="src/Net/RouterOS/NotSupportedException.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="b74e367db221cfbf6adcfc63312d3436" name="src/Net/RouterOS/Query.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="1095257f27c1642d87ca7d05931134fe" name="src/Net/RouterOS/Request.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="14d6e9288cdf9b4d99e7c1c18f377d10" name="src/Net/RouterOS/Response.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="49d7889df48fda4485f5e36d7f3171a8" name="src/Net/RouterOS/SocketException.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="ed1d6209295b5dfa4e259f20a888a9cb" name="src/Net/RouterOS/Transmitter.php" role="php">
+    <tasks:replace from="~~summary~~" to="summary" type="package-info" />
+    <tasks:replace from="~~description~~" to="description" type="package-info" />
+    <tasks:replace from="~~version~~" to="version" type="package-info" />
+   </file>
+   <file md5sum="740783a855c183484729b6c2a28b82e2" name="tests/ClientFeaturesTest.php" role="test" />
+   <file md5sum="267cf1eda6f23c52fea3e0d14b6f5199" name="tests/ConnectionTest.php" role="test" />
+   <file md5sum="241935d6addda3a096e8f180aab257f2" name="tests/RequestHandlingTest.php" role="test" />
+   <file md5sum="15d70032e7a70d5964bcef2356996adb" name="tests/StateAlteringFeaturesTest.php" role="test" />
+   <file md5sum="b24ee113cf750408f091e168a0ef6e73" name="tests/PseudoServer.php" role="test" />
+   <file md5sum="1b5ee8ba64971a0e28b9ecd90734d707" name="tests/configuration.xml" role="test" />
+   <file md5sum="2fce610945be6ff13b6f47a636329173" name="examples/callback-and-loop.php" role="doc" />
+   <file md5sum="bec45e2b6a34a76d4ec45569e343e9de" name="examples/loop-and-extract.php" role="doc" />
+   <file md5sum="3ac5bedf77ce7588a4d192097407ef1b" name="examples/send-and-complete.php" role="doc" />
+   <file md5sum="446557cf72b6b57027f3f8d1f8e87312" name="examples/send-and-forget.php" role="doc" />
+   <file md5sum="f0c06cf59c2c7e019ba7b2606fe04462" name="examples/sync-request-arguments.php" role="doc" />
+   <file md5sum="faf41c2b06d3380b357229e78f477f6e" name="examples/sync-request-simple.php" role="doc" />
+   <file md5sum="c3bf4b3b005e04fce5c8153a43ced774" name="docs/generate.php" role="doc" />
+   <file md5sum="8c73c27935d64c876a0d22bdce2b71b6" name="docs/tutorials/Net_RouterOS/Client.cls" role="doc" />
+   <file md5sum="c51997f4936827f28db368e542913efb" name="docs/tutorials/Net_RouterOS/Net_RouterOS.pkg" role="doc" />
+   <file md5sum="86e05ae041cd6c904af49f1321aedf5c" name="docs/tutorials/Net_RouterOS/Query.cls" role="doc" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.3.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease>
+  <filelist>
+   <install as="Net/RouterOS/ArgumentException.php" name="src/Net/RouterOS/ArgumentException.php" />
+   <install as="Net/RouterOS/Autoload.php" name="src/Net/RouterOS/Autoload.php" />
+   <install as="Net/RouterOS/Client.php" name="src/Net/RouterOS/Client.php" />
+   <install as="Net/RouterOS/Communicator.php" name="src/Net/RouterOS/Communicator.php" />
+   <install as="Net/RouterOS/DataFlowException.php" name="src/Net/RouterOS/DataFlowException.php" />
+   <install as="Net/RouterOS/Exception.php" name="src/Net/RouterOS/Exception.php" />
+   <install as="Net/RouterOS/Message.php" name="src/Net/RouterOS/Message.php" />
+   <install as="Net/RouterOS/SocketClientTransmitter.php" name="src/Net/RouterOS/SocketClientTransmitter.php" />
+   <install as="Net/RouterOS/NotSupportedException.php" name="src/Net/RouterOS/NotSupportedException.php" />
+   <install as="Net/RouterOS/Query.php" name="src/Net/RouterOS/Query.php" />
+   <install as="Net/RouterOS/Request.php" name="src/Net/RouterOS/Request.php" />
+   <install as="Net/RouterOS/Response.php" name="src/Net/RouterOS/Response.php" />
+   <install as="Net/RouterOS/SocketException.php" name="src/Net/RouterOS/SocketException.php" />
+   <install as="Net/RouterOS/Transmitter.php" name="src/Net/RouterOS/Transmitter.php" />
+   <install as="ClientFeaturesTest.php" name="tests/ClientFeaturesTest.php" />
+   <install as="ConnectionTest.php" name="tests/ConnectionTest.php" />
+   <install as="RequestHandlingTest.php" name="tests/RequestHandlingTest.php" />
+   <install as="StateAlteringFeaturesTest.php" name="tests/StateAlteringFeaturesTest.php" />
+   <install as="PseudoServer.php" name="tests/PseudoServer.php" />
+   <install as="configuration.xml" name="tests/configuration.xml" />
+   <install as="generate.php" name="docs/generate.php" />
+   <install as="tutorials/Net_RouterOS/Client.cls" name="docs/tutorials/Net_RouterOS/Client.cls" />
+   <install as="tutorials/Net_RouterOS/Net_RouterOS.pkg" name="docs/tutorials/Net_RouterOS/Net_RouterOS.pkg" />
+   <install as="tutorials/Net_RouterOS/Query.cls" name="docs/tutorials/Net_RouterOS/Query.cls" />
+  </filelist>
+ </phprelease>
+</package>

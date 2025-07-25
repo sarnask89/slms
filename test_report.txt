@@ -1,0 +1,23 @@
+Automated Test Suite Report
+Generated: 2025-07-25 19:29:38
+
+[PASS] database_connection: Connection successful
+[FAIL] api_health: Endpoint not accessible
+[FAIL] api_system_status: Endpoint not accessible
+[FAIL] api_debug: Endpoint not accessible
+[PASS] mikrotik_file_modules/cacti_api.php: File exists
+[PASS] mikrotik_file_modules/cacti_integration.php: File exists
+[PASS] php_performance: PHP performance good: 0.0040531158447266ms
+[PASS] memory_usage: Memory usage acceptable: 2MB
+[FAIL] session_security: HTTP-only cookies disabled
+[FAIL] file_permissions_config.php: Insecure permissions
+[FAIL] file_permissions_index.php: Insecure permissions
+[PASS] directory_modules: Directory exists and writable
+[PASS] directory_assets: Directory exists and writable
+[PASS] directory_logs: Directory exists and writable
+[PASS] directory_cache: Directory exists and writable
+[PASS] extension_pdo: Extension loaded
+[PASS] extension_pdo_mysql: Extension loaded
+[PASS] extension_json: Extension loaded
+[PASS] extension_curl: Extension loaded
+[PASS] error_reporting: Error reporting enabled

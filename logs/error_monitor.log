@@ -1,0 +1,11 @@
+[2025-07-25 01:23:08] [INFO] Error monitoring system initialized
+[2025-07-25 01:23:08] [CRITICAL] [EXCEPTION] Division by zero in /var/www/html/slms/error_monitor.php on line 198
+Stack trace: #0 /var/www/html/slms/error_monitor.php(353): ErrorMonitor->monitorMemoryUsage()
+#1 {main}
+[2025-07-25 01:23:08] [ALERT] {"level":"CRITICAL","message":"[EXCEPTION] Division by zero in \/var\/www\/html\/slms\/error_monitor.php on line 198\nStack trace: #0 \/var\/www\/html\/slms\/error_monitor.php(353): ErrorMonitor->monitorMemoryUsage()\n#1 {main}","timestamp":"2025-07-25 01:23:08","server":"unknown"}
+[2025-07-25 17:17:42] [INFO] Error monitoring system initialized
+[2025-07-25 17:17:47] [WARNING] [E_WARNING] fsockopen(): Unable to connect to 8.8.8.8:80 (Connection timed out) in /var/www/html/error_monitor.php on line 229
+[2025-07-25 17:17:47] [ERROR] Network connectivity issue: Cannot reach 8.8.8.8 (Connection timed out)
+[2025-07-25 17:29:24] [INFO] Error monitoring system initialized
+[2025-07-25 17:29:29] [WARNING] [E_WARNING] fsockopen(): Unable to connect to 8.8.8.8:80 (Connection timed out) in /var/www/html/error_monitor.php on line 229
+[2025-07-25 17:29:29] [ERROR] Network connectivity issue: Cannot reach 8.8.8.8 (Connection timed out)

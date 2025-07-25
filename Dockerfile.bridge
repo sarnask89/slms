@@ -1,0 +1,38 @@
+FROM php:8.1-cli
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    libzip-dev \
+    unzip \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mysqli \
+    zip
+
+# Set working directory
+WORKDIR /app
+
+# Copy application files
+COPY . /app/
+
+# Create a simple test script to verify the bridge NAT controller
+RUN echo '<?php \
+require_once "modules/bridge_nat_controller.php"; \
+echo "Bridge NAT Controller loaded successfully!\n"; \
+echo "Available classes:\n"; \
+echo "- BridgeNATController\n"; \
+echo "- DynamicNetworkController\n"; \
+echo "Ready for bridge-based traffic control!\n"; \
+?>' > /app/test_bridge.php
+
+# Set permissions
+RUN chmod +x /app/test_bridge.php
+
+CMD ["php", "test_bridge.php"] 

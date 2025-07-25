@@ -1,0 +1,28 @@
+[0;1;32m●[0m mariadb.service - MariaDB 11.8.2 database server
+     Loaded: loaded (]8;;file://debian/usr/lib/systemd/system/mariadb.service\/usr/lib/systemd/system/mariadb.service]8;;\; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Fri 2025-07-25 00:02:17 CEST; 8min ago
+ Invocation: 3cdb1d170b8f478a8a7b0f291964431b
+       Docs: ]8;;man:mariadbd(8)\man:mariadbd(8)]8;;\
+             ]8;;https://mariadb.com/kb/en/library/systemd/\https://mariadb.com/kb/en/library/systemd/]8;;\
+    Process: 60992 ExecStartPre=/usr/bin/install -m 755 -o mysql -g root -d /var/run/mysqld (code=exited, status=0/SUCCESS)
+    Process: 60994 ExecStartPre=/bin/sh -c [ ! -e /usr/bin/galera_recovery ] && VAR= ||   VAR=`/usr/bin/galera_recovery`; [ $? -eq 0 ]   && echo _WSREP_START_POSITION=$VAR > /run/mysqld/wsrep-start-position || exit 1 (code=exited, status=0/SUCCESS)
+    Process: 61099 ExecStartPost=/bin/rm -f /run/mysqld/wsrep-start-position (code=exited, status=0/SUCCESS)
+    Process: 61101 ExecStartPost=/etc/mysql/debian-start (code=exited, status=0/SUCCESS)
+   Main PID: 61046 (mariadbd)
+     Status: "[0;1;36mTaking your SQL requests now...[0m"
+      Tasks: 10[0;38;5;245m (limit: 124149)[0m
+     Memory: 134.1M (peak: 139.4M)
+        CPU: 846ms
+     CGroup: /system.slice/mariadb.service
+             └─[0;38;5;245m61046 /usr/sbin/mariadbd[0m
+
+lip 25 00:02:17 debian mariadbd[61046]: 2025-07-25  0:02:17 0 [Note] mariadbd: Event Scheduler: Loaded 0 events
+lip 25 00:02:17 debian mariadbd[61046]: 2025-07-25  0:02:17 0 [Note] /usr/sbin/mariadbd: ready for connections.
+lip 25 00:02:17 debian mariadbd[61046]: Version: '11.8.2-MariaDB-1 from Debian'  socket: '/run/mysqld/mysqld.sock'  port: 3306  -- Please help get to 10k stars at https://github.com/MariaDB/Server
+lip 25 00:02:17 debian systemd[1]: Started mariadb.service - MariaDB 11.8.2 database server.
+lip 25 00:02:17 debian /etc/mysql/debian-start[61103]: Upgrading MariaDB tables if necessary.
+lip 25 00:02:17 debian debian-start[61119]: --------------
+lip 25 00:02:17 debian debian-start[61119]: SELECT count(*) FROM mysql.user WHERE user='root' and password='' and password_expired='N' and plugin in ('', 'mysql_native_password', 'mysql_old_password')
+lip 25 00:02:17 debian debian-start[61119]: --------------
+lip 25 00:02:17 debian debian-start[61119]: ERROR 1267 (HY000) at line 1: Illegal mix of collations (utf8mb4_general_ci,COERCIBLE) and (utf8mb4_uca1400_ai_ci,COERCIBLE) for operation '='
+lip 25 00:07:14 debian mariadbd[61046]: 2025-07-25  0:07:14 6 [Warning] Access denied for user 'root'@'localhost' (using password: NO)

@@ -1,0 +1,89 @@
+================================================
+           sLMS System Debug Report
+================================================
+
+1. Checking PHP Configuration...
+2. Checking File Structure...
+3. Testing Database Connection...
+ 4. Testing Session Handling...
+
+Warning: session_start(): Session cannot be started after headers have already been sent in /var/www/html/debug_system.php on line 88
+5. Testing Authentication System...
+
+Warning: session_start(): Session cannot be started after headers have already been sent in /var/www/html/modules/helpers/auth_helper.php on line 3
+ 6. Testing Layout System...
+ 7. Testing Cacti Integration...
+ 8. Testing Web Server Status...
+9. Testing Docker Container...
+10. Checking Common Module Files...
+
+================================================
+                    SUMMARY
+================================================
+
+✅ SUCCESS (31):
+   • PHP Version: 8.1.33
+   • PDO extension loaded
+   • PDO MySQL extension loaded
+   • cURL extension loaded
+   • JSON extension loaded
+   • File exists: config.php
+   • File exists: index.php
+   • File exists: admin_menu.php
+   • File exists: modules/helpers/auth_helper.php
+   • File exists: modules/helpers/database_helper.php
+   • File exists: partials/layout.php
+   • File exists: partials/navbar.php
+   • File exists: assets/style.css
+   • File exists: assets/multiselect.js
+   • Session handling working
+   • Auth helper loaded successfully
+   • is_logged_in function available
+   • get_current_user_info function available
+   • Cacti API file exists
+   • Cacti API class instantiated
+   • Cacti running in real mode
+   • Module exists: login.php
+   • Module exists: logout.php
+   • Module exists: users.php
+   • Module exists: clients.php
+   • Module exists: devices.php
+   • Module exists: networks.php
+   • Module exists: services.php
+   • Module exists: cacti_integration.php
+   • Module exists: dashboard_editor.php
+   • Module exists: dashboard_preview.php
+
+⚠️  WARNINGS (3):
+   • SNMP extension not loaded (optional)
+   • Web server not responding: Failed to connect to 10.0.222.223 port 8000 after 0 ms: Couldn't connect to server
+   • Docker container returned HTTP 0
+
+❌ ISSUES (2):
+   • Database connection failed: SQLSTATE[HY000] [2002] No such file or directory
+   • Layout system error: SQLSTATE[HY000] [2002] No such file or directory
+
+================================================
+              RECOMMENDATIONS
+================================================
+
+CRITICAL ISSUES TO FIX:
+   • Database connection failed: SQLSTATE[HY000] [2002] No such file or directory
+   • Layout system error: SQLSTATE[HY000] [2002] No such file or directory
+
+RECOMMENDED IMPROVEMENTS:
+   • SNMP extension not loaded (optional)
+   • Web server not responding: Failed to connect to 10.0.222.223 port 8000 after 0 ms: Couldn't connect to server
+   • Docker container returned HTTP 0
+
+NEXT STEPS:
+1. Start the PHP development server: php -S 10.0.222.223:8000
+2. Access the web interface: http://10.0.222.223:8000
+3. Test login with default credentials: admin/admin123
+4. Check Cacti integration: http://10.0.222.223:8000/modules/cacti_integration.php
+
+CURRENT STATUS: ❌ NEEDS FIXES
+
+================================================
+Debug report completed.
+ 
