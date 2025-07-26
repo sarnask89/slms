@@ -1,11 +1,21 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../../../../home/sarna/Obrazy/themes"
-		}
-	],
-	"settings": {}
+    "folders": [
+        {
+            "path": "/var/www/html"
+        },
+        {
+            "path": "/etc/apache2"
+        }
+    ],
+    "settings": {
+        "php.version": "8.2",
+        "files.associations": {
+            "*.php": "php"
+        },
+        "emmet.includeLanguages": {
+            "php": "html"
+        },
+        "php.validate.enable": true,
+        "php.suggest.basic": false
+    }
 }
