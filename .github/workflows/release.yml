@@ -1,0 +1,59 @@
+name: Automated Release
+
+on:
+  push:
+    tags:
+      - 'slms-*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+          echo "## 🚀 SLMS Release ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### ✨ What's New" >> $GITHUB_OUTPUT
+          echo "- ML System integration with advanced algorithms" >> $GITHUB_OUTPUT
+          echo "- MCP Server for Copilot integration" >> $GITHUB_OUTPUT
+          echo "- Enhanced documentation and user guides" >> $GITHUB_OUTPUT
+          echo "- Improved performance and stability" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### 🔧 Technical Improvements" >> $GITHUB_OUTPUT
+          echo "- Database schema optimizations" >> $GITHUB_OUTPUT
+          echo "- API enhancements and new endpoints" >> $GITHUB_OUTPUT
+          echo "- Security improvements and bug fixes" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### 📦 Installation" >> $GITHUB_OUTPUT
+          echo "1. Clone the repository" >> $GITHUB_OUTPUT
+          echo "2. Run setup script: \`php setup_ml_system.php\`" >> $GITHUB_OUTPUT
+          echo "3. Configure your environment" >> $GITHUB_OUTPUT
+          echo "4. Start the application" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: SLMS Release ${{ steps.get_version.outputs.VERSION }}
+          body: ${{ steps.release_notes.outputs.RELEASE_NOTES }}
+          draft: false
+          prerelease: false
+
+      - name: Notify success
+        run: |
+          echo "✅ Release ${{ steps.get_version.outputs.VERSION }} created successfully!"
+          echo "🔗 View at: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.VERSION }}" 
