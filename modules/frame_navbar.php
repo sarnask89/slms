@@ -129,7 +129,7 @@ $dynamic_css = generate_layout_css($layout_settings);
     <?php if ($layout_settings['menu_position'] === 'left' || $layout_settings['menu_position'] === 'both'): ?>
         <!-- Sidebar Navigation -->
         <nav class="navbar navbar-expand-lg">
-            <div class="navbar-brand">sLMS System</div>
+            <div class="navbar-brand">AI SERVICE NETWORK MANAGEMENT SYSTEM</div>
             <div class="navbar-nav">
                 <?php foreach ($menu_items as $item): ?>
                     <?php

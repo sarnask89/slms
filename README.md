@@ -1,8 +1,8 @@
-# sLMS - System zarządzania siecią lokalną
+# AI SERVICE NETWORK MANAGEMENT SYSTEM - System zarządzania siecią lokalną
 
 ## 📋 Opis projektu
 
-sLMS (System Local Management System) to kompleksowe rozwiązanie do zarządzania siecią lokalną, monitorowania urządzeń i integracji z systemami Cacti. System oferuje zaawansowane funkcje monitorowania SNMP, zarządzania klientami, generowania raportów i administracji systemem.
+AI SERVICE NETWORK MANAGEMENT SYSTEM to kompleksowe rozwiązanie do zarządzania siecią lokalną, monitorowania urządzeń i integracji z systemami Cacti. System oferuje zaawansowane funkcje monitorowania SNMP, zarządzania klientami, generowania raportów i administracji systemem.
 
 ## ✨ Główne funkcje
 
@@ -49,8 +49,8 @@ sLMS (System Local Management System) to kompleksowe rozwiązanie do zarządzani
 
 ### Krok 1: Klonowanie repozytorium
 ```bash
-git clone https://github.com/sarnask89/slms.git
-cd slms
+git clone https://github.com/sarnask89/ai-service-network-management.git
+cd ai-service-network-management
 ```
 
 ### Krok 2: Konfiguracja bazy danych
@@ -128,7 +128,7 @@ $cacti_password = 'admin';
 ## 🏗️ Struktura projektu
 
 ```
-slms/
+ai-service-network-management/
 ├── assets/                 # Pliki CSS, JS, obrazy
 ├── docs/                   # Dokumentacja
 ├── modules/                # Moduły systemu
@@ -181,8 +181,8 @@ php -r "require 'config.php'; get_pdo(); echo 'OK';"
 ### Problem z uprawnieniami
 ```bash
 # Ustaw odpowiednie uprawnienia
-chmod 755 /var/www/html/slms
-chown -R www-data:www-data /var/www/html/slms
+chmod 755 /var/www/html/ai-service-network-management
+chown -R www-data:www-data /var/www/html/ai-service-network-management
 ```
 
 ## 🤝 Współpraca
@@ -214,4 +214,4 @@ Ten projekt jest dostępny na licencji MIT. Zobacz plik `LICENSE` dla szczegół
 
 ---
 
-**sLMS** - Profesjonalne zarządzanie siecią lokalną 🚀# slms
+**AI SERVICE NETWORK MANAGEMENT SYSTEM** - Profesjonalne zarządzanie siecią lokalną 🚀
