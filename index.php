@@ -2,14 +2,14 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/modules/helpers/auth_helper.php';
 require_login();
-$pageTitle = 'Panel główny sLMS';
+$pageTitle = 'Panel główny AI SERVICE NETWORK MANAGEMENT SYSTEM';
 ob_start();
 ?>
 <div class="container">
   <div class="row justify-content-center mt-5">
     <div class="col-md-8">
       <div class="slms-card p-5 text-center">
-        <h1 class="display-5 slms-accent mb-3">Witamy w panelu głównym sLMS</h1>
+        <h1 class="display-5 slms-accent mb-3">Witamy w panelu głównym AI SERVICE NETWORK MANAGEMENT SYSTEM</h1>
         <p class="lead mb-5">Zarządzaj swoją siecią, klientami i usługami w jednym miejscu</p>
         
         <div class="row g-4">

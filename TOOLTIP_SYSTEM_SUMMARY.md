@@ -101,7 +101,7 @@
 
 #### JavaScript Architecture
 ```javascript
-class SLMSTooltipSystem {
+class AIServiceTooltipSystem {
     // Core functionality
     - init() - Initialize tooltip system
     - loadTooltipData() - Load tooltip content
@@ -208,11 +208,11 @@ class SLMSTooltipSystem {
 ```javascript
 // Initialize tooltip system
 document.addEventListener('DOMContentLoaded', () => {
-    window.slmsTooltips = new SLMSTooltipSystem();
+    window.aiServiceTooltips = new AIServiceTooltipSystem();
 });
 
 // Add custom tooltips
-window.slmsTooltips.addTooltip(element, 'custom-tooltip', {
+window.aiServiceTooltips.addTooltip(element, 'custom-tooltip', {
     title: 'Custom Tooltip',
     content: 'Custom content here',
     category: 'Custom Category'
@@ -313,5 +313,5 @@ echo '<input type="text" data-tooltip-id="client-name-field" name="client_name">
 ---
 
 **Implementation Date**: July 20, 2025  
-**Version**: sLMS v1.0 Tooltip System  
+**Version**: AI SERVICE NETWORK MANAGEMENT SYSTEM v1.0 Tooltip System  
 **Status**: ✅ **Production Ready** 

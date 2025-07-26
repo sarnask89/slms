@@ -27,7 +27,7 @@ if (isset($_GET['logout'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sLMS - Authentication Temporarily Disabled</title>
+    <title>AI SERVICE NETWORK MANAGEMENT SYSTEM - Authentication Temporarily Disabled</title>
     <style>
         body {
             font-family: Arial, sans-serif;
