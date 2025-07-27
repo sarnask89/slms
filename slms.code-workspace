@@ -5,6 +5,9 @@
         },
         {
             "path": "/var/www/html"
+        },
+        {
+            "path": "../../../home/sarna/Pobrane/slmsold"
         }
     ],
     "settings": {
