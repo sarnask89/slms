@@ -833,20 +833,26 @@
         // Setup event listeners
         function setupEventListeners() {
             // View mode change
-            document.getElementById('view-mode').addEventListener('change', function() {
-                const mode = this.value;
-                console.log('View mode changed to:', mode);
-                // Implement view mode switching
-            });
+            const viewMode = document.getElementById('view-mode');
+            if (viewMode) {
+                viewMode.addEventListener('change', function() {
+                    const mode = this.value;
+                    console.log('View mode changed to:', mode);
+                    // Implement view mode switching
+                });
+            }
 
             // Auto refresh toggle
-            document.getElementById('auto-refresh').addEventListener('change', function() {
-                if (this.checked) {
-                    startAutoRefresh();
-                } else {
-                    stopAutoRefresh();
-                }
-            });
+            const autoRefresh = document.getElementById('auto-refresh');
+            if (autoRefresh) {
+                autoRefresh.addEventListener('change', function() {
+                    if (this.checked) {
+                        startAutoRefresh();
+                    } else {
+                        stopAutoRefresh();
+                    }
+                });
+            }
         }
 
         // Show device information
@@ -855,6 +861,11 @@
             const deviceInfo = document.getElementById('device-info');
             const deviceTitle = document.getElementById('device-title');
             const deviceDetails = document.getElementById('device-details');
+            
+            if (!deviceInfo || !deviceTitle || !deviceDetails) {
+                console.warn('Device info elements not found');
+                return;
+            }
             
             const statusClass = device.status === 'online' ? 'text-success' : 'text-danger';
             const statusIcon = device.status === 'online' ? 'bi-check-circle' : 'bi-x-circle';
@@ -923,11 +934,13 @@
         // Toggle auto refresh
         function toggleAutoRefresh() {
             const checkbox = document.getElementById('auto-refresh');
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) {
-                startAutoRefresh();
-            } else {
-                stopAutoRefresh();
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.checked) {
+                    startAutoRefresh();
+                } else {
+                    stopAutoRefresh();
+                }
             }
         }
 

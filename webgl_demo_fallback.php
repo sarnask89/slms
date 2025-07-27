@@ -1004,11 +1004,14 @@
         // Setup event listeners
         function setupEventListeners() {
             // View mode change
-            document.getElementById('view-mode').addEventListener('change', function() {
-                const mode = this.value;
-                console.log('View mode changed to:', mode);
-                // Implement view mode switching
-            });
+            const viewMode = document.getElementById('view-mode');
+            if (viewMode) {
+                viewMode.addEventListener('change', function() {
+                    const mode = this.value;
+                    console.log('View mode changed to:', mode);
+                    // Implement view mode switching
+                });
+            }
         }
 
         // Show device information
@@ -1093,11 +1096,13 @@
         // Toggle auto refresh
         function toggleAutoRefresh() {
             const checkbox = document.getElementById('auto-refresh');
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) {
-                startAutoRefresh();
-            } else {
-                stopAutoRefresh();
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.checked) {
+                    startAutoRefresh();
+                } else {
+                    stopAutoRefresh();
+                }
             }
         }
 
