@@ -1,25 +1,16 @@
-<?php
-session_start();
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../modules/helpers/auth_helper.php';
-
-// Require login
-require_login();
-
-$pageTitle = 'Access Level Permissions';
-ob_start();
-?>
-
-if (session_status() === PHP_SESSION_NONE) {
+<?phpif (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/helpers/auth_helper.php';
-require_once __DIR__ . '/helpers/request_helper.php';
+require_once __DIR__ . '/../modules/helpers/auth_helper.php';
+require_once __DIR__ . '/../modules/helpers/request_helper.php';
 
-// Require admin access
+// Require login and admin access
 require_login();
 require_admin();
+
+$pageTitle = 'Access Level Permissions';
+ob_start();
 
 $pdo = get_pdo();
 $access_level_id = $_GET['access_level_id'] ?? null;
@@ -224,9 +215,7 @@ try {
         echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
     }
 }
-?> 
 
-<?php
 $content = ob_get_clean();
 require_once __DIR__ . '/../partials/layout.php';
 ?>

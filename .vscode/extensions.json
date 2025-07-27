@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "stoildobreff.php-resolver",
+        "xdebug.php-debug",
+        "firefox-devtools.vscode-firefox-debug",
+        "chenzhiy2001.os-debug",
+        "ikappas.phpcs",
+        "devsense.composer-php-vscode",
+        "zardoy.inline-debugger",
+        "devsense.intelli-php-vscode",
+        "anysphere.remote-containers",
+        "kilocode.kilo-code"
+    ]
+}

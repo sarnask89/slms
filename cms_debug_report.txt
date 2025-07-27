@@ -1,0 +1,425 @@
+=== CMS DEBUG REPORT ===
+2025-07-26 17:49:45
+
+[OUTPUT ERROR] Strona: test-system (dynamic)
+<h1>test_system.php</h1> Starting system tests...
+
+Testing core components...
+
+Testing database tables...
+
+Testing authentication system...
+
+Testing all modules...
+
+
+Testing file permissions...
+
+
+Test Results:
+=============
+
+✓ Database connection established
+✓ config.php exists
+✓ Database connection function works
+✓ base_url function exists
+✓ modules directory exists
+✓ assets directory exists
+✓ partials directory exists
+✓ sql directory exists
+✓ Table users exists
+✗ Missing columns in users: password, full_name, access_level_id, last_login
+✓ Table access_levels exists
+✓ All required columns present in access_levels
+✓ Table access_level_permissions exists
+✓ All required columns present in access_level_permissions
+✓ Table clients exists
+✓ All required columns present in clients
+✓ Table devices exists
+✓ All required columns present in devices
+✓ Table networks exists
+✗ Missing columns in networks: subnet, updated_at
+✓ Table services exists
+✓ All required columns present in services
+✓ Table invoices exists
+✗ Missing columns in invoices: number, total_amount, paid_at, updated_at
+✓ Table payments exists
+✗ Missing columns in payments: updated_at
+✓ Auth function is_logged_in exists
+✓ Auth function require_login exists
+✓ Auth function has_role exists
+✓ Auth function require_role exists
+✓ Auth function is_admin exists
+✓ Auth function require_admin exists
+✓ Auth function get_current_user_info exists
+✓ Auth function has_access_permission exists
+✓ Admin user exists
+✓ Syntax OK: modules/access_level_manager.php
+✓ Correct path usage in modules/access_level_manager.php
+! Unsafe session handling in modules/access_level_manager.php
+✓ Proper request method checking in modules/access_level_manager.php
+✓ Syntax OK: modules/access_level_permissions.php
+✓ Correct path usage in modules/access_level_permissions.php
+! Unsafe session handling in modules/access_level_permissions.php
+! Missing request method check in modules/access_level_permissions.php
+✓ Syntax OK: modules/activity_log.php
+✓ Correct path usage in modules/activity_log.php
+✓ Proper session handling in modules/activity_log.php
+! Missing request method check in modules/activity_log.php
+✓ Syntax OK: modules/add_client.php
+✓ Correct path usage in modules/add_client.php
+✓ Proper request method checking in modules/add_client.php
+✓ Syntax OK: modules/add_device.php
+✓ Correct path usage in modules/add_device.php
+✓ Proper request method checking in modules/add_device.php
+✓ Syntax OK: modules/add_internet_package.php
+✓ Correct path usage in modules/add_internet_package.php
+✓ Proper request method checking in modules/add_internet_package.php
+✓ Syntax OK: modules/add_invoice.php
+✓ Correct path usage in modules/add_invoice.php
+✓ Proper request method checking in modules/add_invoice.php
+✓ Syntax OK: modules/add_network.php
+✓ Correct path usage in modules/add_network.php
+✓ Proper request method checking in modules/add_network.php
+✓ Syntax OK: modules/add_payment.php
+✓ Correct path usage in modules/add_payment.php
+✓ Proper request method checking in modules/add_payment.php
+✓ Syntax OK: modules/add_service.php
+✓ Correct path usage in modules/add_service.php
+✓ Proper request method checking in modules/add_service.php
+✓ Syntax OK: modules/add_skeleton_device.php
+✓ Correct path usage in modules/add_skeleton_device.php
+✓ Proper request method checking in modules/add_skeleton_device.php
+✓ Syntax OK: modules/add_tariff.php
+✓ Correct path usage in modules/add_tariff.php
+✓ Proper request method checking in modules/add_tariff.php
+✓ Syntax OK: modules/add_tv_package.php
+✓ Correct path usage in modules/add_tv_package.php
+✓ Proper request method checking in modules/add_tv_package.php
+✓ Syntax OK: modules/add_user.php
+✓ Correct path usage in modules/add_user.php
+✓ Proper request method checking in modules/add_user.php
+✓ Syntax OK: modules/advanced_graphing.php
+✓ Correct path usage in modules/advanced_graphing.php
+! Missing request method check in modules/advanced_graphing.php
+✓ Syntax OK: modules/bandwidth_reports.php
+✓ Correct path usage in modules/bandwidth_reports.php
+✓ Proper request method checking in modules/bandwidth_reports.php
+✓ Syntax OK: modules/bridge_nat_controller.php
+✓ Correct path usage in modules/bridge_nat_controller.php
+! Unsafe session handling in modules/bridge_nat_controller.php
+! Missing request method check in modules/bridge_nat_controller.php
+✓ Syntax OK: modules/cacti_api.php
+✓ Correct path usage in modules/cacti_api.php
+✓ Syntax OK: modules/cacti_device_details.php
+✓ Correct path usage in modules/cacti_device_details.php
+! Missing request method check in modules/cacti_device_details.php
+✓ Syntax OK: modules/cacti_integration.php
+✓ Correct path usage in modules/cacti_integration.php
+✓ Proper session handling in modules/cacti_integration.php
+✓ Proper request method checking in modules/cacti_integration.php
+✓ Syntax OK: modules/capacity_planning.php
+✓ Correct path usage in modules/capacity_planning.php
+✓ Proper request method checking in modules/capacity_planning.php
+✓ Syntax OK: modules/captive_portal.php
+✓ Correct path usage in modules/captive_portal.php
+✓ Proper session handling in modules/captive_portal.php
+✓ Proper request method checking in modules/captive_portal.php
+✓ Syntax OK: modules/check_auth.php
+✓ Correct path usage in modules/check_auth.php
+✓ Proper session handling in modules/check_auth.php
+✓ Syntax OK: modules/check_device.php
+✓ Correct path usage in modules/check_device.php
+✓ Proper request method checking in modules/check_device.php
+✓ Syntax OK: modules/client_devices.php
+✓ Correct path usage in modules/client_devices.php
+! Missing request method check in modules/client_devices.php
+✓ Syntax OK: modules/clients.php
+✓ Correct path usage in modules/clients.php
+✓ Proper request method checking in modules/clients.php
+✓ Syntax OK: modules/cms_migrator.php
+✓ Correct path usage in modules/cms_migrator.php
+✓ Syntax OK: modules/column_config.php
+✓ Correct path usage in modules/column_config.php
+! Missing request method check in modules/column_config.php
+✓ Syntax OK: modules/config.php
+✓ Correct path usage in modules/config.php
+✓ Syntax OK: modules/config_script.php
+✓ Correct path usage in modules/config_script.php
+✓ Proper request method checking in modules/config_script.php
+✓ Syntax OK: modules/content_wrapper.php
+✓ Correct path usage in modules/content_wrapper.php
+! Missing request method check in modules/content_wrapper.php
+✓ Syntax OK: modules/create_column_config_table.php
+✓ Correct path usage in modules/create_column_config_table.php
+✓ Syntax OK: modules/create_layout_table.php
+✓ Correct path usage in modules/create_layout_table.php
+✓ Syntax OK: modules/dashboard_editor.php
+✓ Correct path usage in modules/dashboard_editor.php
+✓ Proper request method checking in modules/dashboard_editor.php
+✓ Syntax OK: modules/dashboard_preview.php
+✓ Correct path usage in modules/dashboard_preview.php
+✓ Syntax OK: modules/devices.php
+✓ Correct path usage in modules/devices.php
+✓ Proper request method checking in modules/devices.php
+✓ Syntax OK: modules/dhcp_clients.php
+✓ Correct path usage in modules/dhcp_clients.php
+✓ Syntax OK: modules/dhcp_clients_v7.php
+✓ Correct path usage in modules/dhcp_clients_v7.php
+! Unsafe session handling in modules/dhcp_clients_v7.php
+✓ Proper request method checking in modules/dhcp_clients_v7.php
+✓ Syntax OK: modules/discover_snmp_mndp.php
+✓ Correct path usage in modules/discover_snmp_mndp.php
+✓ Proper request method checking in modules/discover_snmp_mndp.php
+✓ Syntax OK: modules/dynamic_network_controller.php
+✓ Correct path usage in modules/dynamic_network_controller.php
+! Unsafe session handling in modules/dynamic_network_controller.php
+! Missing request method check in modules/dynamic_network_controller.php
+✓ Syntax OK: modules/edit_client.php
+✓ Correct path usage in modules/edit_client.php
+✓ Proper request method checking in modules/edit_client.php
+✓ Syntax OK: modules/edit_device.php
+✓ Correct path usage in modules/edit_device.php
+✓ Proper request method checking in modules/edit_device.php
+✓ Syntax OK: modules/edit_internet_package.php
+✓ Correct path usage in modules/edit_internet_package.php
+✓ Proper request method checking in modules/edit_internet_package.php
+✓ Syntax OK: modules/edit_network.php
+✓ Correct path usage in modules/edit_network.php
+✓ Proper request method checking in modules/edit_network.php
+✓ Syntax OK: modules/edit_service.php
+✓ Correct path usage in modules/edit_service.php
+✓ Proper request method checking in modules/edit_service.php
+✓ Syntax OK: modules/edit_skeleton_device.php
+✓ Correct path usage in modules/edit_skeleton_device.php
+✓ Proper request method checking in modules/edit_skeleton_device.php
+✓ Syntax OK: modules/edit_tariff.php
+✓ Correct path usage in modules/edit_tariff.php
+✓ Proper request method checking in modules/edit_tariff.php
+✓ Syntax OK: modules/edit_tv_package.php
+✓ Correct path usage in modules/edit_tv_package.php
+✓ Proper request method checking in modules/edit_tv_package.php
+✓ Syntax OK: modules/edit_user.php
+✓ Correct path usage in modules/edit_user.php
+✓ Proper request method checking in modules/edit_user.php
+✓ Syntax OK: modules/enhanced_queue_manager.php
+✓ Correct path usage in modules/enhanced_queue_manager.php
+! Unsafe session handling in modules/enhanced_queue_manager.php
+✓ Syntax OK: modules/error_403.php
+✓ Correct path usage in modules/error_403.php
+✓ Syntax OK: modules/error_404.php
+✓ Correct path usage in modules/error_404.php
+✓ Syntax OK: modules/error_500.php
+✓ Correct path usage in modules/error_500.php
+✓ Syntax OK: modules/example_with_access_control.php
+✓ Correct path usage in modules/example_with_access_control.php
+! Unsafe session handling in modules/example_with_access_control.php
+✓ Syntax OK: modules/frame_layout.php
+✓ Correct path usage in modules/frame_layout.php
+! Missing request method check in modules/frame_layout.php
+✓ Syntax OK: modules/frame_navbar.php
+✓ Correct path usage in modules/frame_navbar.php
+✓ Syntax OK: modules/frame_top_navbar.php
+✓ Correct path usage in modules/frame_top_navbar.php
+✓ Syntax OK: modules/import_dhcp_clients_improved.php
+✓ Correct path usage in modules/import_dhcp_clients_improved.php
+✓ Proper request method checking in modules/import_dhcp_clients_improved.php
+✓ Syntax OK: modules/import_dhcp_networks_improved.php
+✓ Correct path usage in modules/import_dhcp_networks_improved.php
+✓ Proper request method checking in modules/import_dhcp_networks_improved.php
+✓ Syntax OK: modules/intel_x710_queue_manager.php
+✓ Correct path usage in modules/intel_x710_queue_manager.php
+! Unsafe session handling in modules/intel_x710_queue_manager.php
+✓ Syntax OK: modules/intel_x710_t4l_queue_manager.php
+✓ Correct path usage in modules/intel_x710_t4l_queue_manager.php
+! Unsafe session handling in modules/intel_x710_t4l_queue_manager.php
+✓ Syntax OK: modules/interface_monitoring.php
+✓ Correct path usage in modules/interface_monitoring.php
+! Missing request method check in modules/interface_monitoring.php
+✓ Syntax OK: modules/internet_packages.php
+✓ Correct path usage in modules/internet_packages.php
+✓ Proper request method checking in modules/internet_packages.php
+✓ Syntax OK: modules/invoices.php
+✓ Correct path usage in modules/invoices.php
+✓ Syntax OK: modules/layout_manager.php
+✓ Correct path usage in modules/layout_manager.php
+! Missing request method check in modules/layout_manager.php
+✓ Syntax OK: modules/login.php
+✓ Correct path usage in modules/login.php
+! Unsafe session handling in modules/login.php
+! Missing request method check in modules/login.php
+✓ Syntax OK: modules/logout.php
+✓ Correct path usage in modules/logout.php
+! Unsafe session handling in modules/logout.php
+✓ Syntax OK: modules/manual.php
+✓ Correct path usage in modules/manual.php
+✓ Syntax OK: modules/menu_editor.php
+✓ Correct path usage in modules/menu_editor.php
+✓ Proper request method checking in modules/menu_editor.php
+✓ Syntax OK: modules/menu_preview.php
+✓ Correct path usage in modules/menu_preview.php
+✓ Syntax OK: modules/mikrotik_api.php
+✓ Correct path usage in modules/mikrotik_api.php
+! Unsafe session handling in modules/mikrotik_api.php
+✓ Syntax OK: modules/mikrotik_api_v7.php
+✓ Correct path usage in modules/mikrotik_api_v7.php
+✓ Syntax OK: modules/mikrotik_rest_api_v7.php
+✓ Correct path usage in modules/mikrotik_rest_api_v7.php
+✓ Syntax OK: modules/ml_ajax.php
+✓ Correct path usage in modules/ml_ajax.php
+! Unsafe session handling in modules/ml_ajax.php
+! Missing request method check in modules/ml_ajax.php
+✓ Syntax OK: modules/ml_database_manager.php
+✓ Correct path usage in modules/ml_database_manager.php
+✓ Syntax OK: modules/ml_model_manager.php
+✓ Correct path usage in modules/ml_model_manager.php
+! Unsafe session handling in modules/ml_model_manager.php
+✓ Proper request method checking in modules/ml_model_manager.php
+✓ Syntax OK: modules/ml_performance_monitor.php
+✓ Correct path usage in modules/ml_performance_monitor.php
+✓ Syntax OK: modules/ml_prediction_engine.php
+✓ Correct path usage in modules/ml_prediction_engine.php
+✓ Syntax OK: modules/ml_training_engine.php
+✓ Correct path usage in modules/ml_training_engine.php
+✓ Syntax OK: modules/mndp_enhanced.php
+✓ Correct path usage in modules/mndp_enhanced.php
+! Unsafe session handling in modules/mndp_enhanced.php
+✓ Syntax OK: modules/mndp_monitor.php
+✓ Correct path usage in modules/mndp_monitor.php
+✓ Proper request method checking in modules/mndp_monitor.php
+✓ Syntax OK: modules/network_alerts.php
+✓ Correct path usage in modules/network_alerts.php
+✓ Proper request method checking in modules/network_alerts.php
+✓ Syntax OK: modules/network_dashboard.php
+✓ Correct path usage in modules/network_dashboard.php
+! Missing request method check in modules/network_dashboard.php
+✓ Syntax OK: modules/network_monitoring.php
+✓ Correct path usage in modules/network_monitoring.php
+✓ Proper request method checking in modules/network_monitoring.php
+✓ Syntax OK: modules/network_monitoring_api.php
+✓ Correct path usage in modules/network_monitoring_api.php
+! Unsafe session handling in modules/network_monitoring_api.php
+! Missing request method check in modules/network_monitoring_api.php
+✓ Syntax OK: modules/network_monitoring_enhanced.php
+✓ Correct path usage in modules/network_monitoring_enhanced.php
+✓ Proper request method checking in modules/network_monitoring_enhanced.php
+✓ Syntax OK: modules/networks.php
+✓ Correct path usage in modules/networks.php
+✓ Proper request method checking in modules/networks.php
+✓ Syntax OK: modules/payments.php
+✓ Correct path usage in modules/payments.php
+✓ Proper request method checking in modules/payments.php
+✓ Syntax OK: modules/profile.php
+✓ Correct path usage in modules/profile.php
+✓ Proper session handling in modules/profile.php
+✓ Proper request method checking in modules/profile.php
+✓ Syntax OK: modules/queue_monitoring.php
+✓ Correct path usage in modules/queue_monitoring.php
+! Missing request method check in modules/queue_monitoring.php
+✓ Syntax OK: modules/run_all_scripts.php
+✓ Correct path usage in modules/run_all_scripts.php
+✓ Syntax OK: modules/save_reload.php
+✓ Correct path usage in modules/save_reload.php
+✓ Proper request method checking in modules/save_reload.php
+✓ Syntax OK: modules/search.php
+✓ Correct path usage in modules/search.php
+! Missing request method check in modules/search.php
+✓ Syntax OK: modules/services.php
+✓ Correct path usage in modules/services.php
+✓ Proper request method checking in modules/services.php
+✓ Syntax OK: modules/setup_auth_tables.php
+✓ Correct path usage in modules/setup_auth_tables.php
+✓ Syntax OK: modules/simple_check.php
+✓ Correct path usage in modules/simple_check.php
+✓ Proper request method checking in modules/simple_check.php
+✓ Syntax OK: modules/skeleton_devices.php
+✓ Correct path usage in modules/skeleton_devices.php
+✓ Proper session handling in modules/skeleton_devices.php
+✓ Proper request method checking in modules/skeleton_devices.php
+✓ Syntax OK: modules/snmp_graph.php
+✓ Correct path usage in modules/snmp_graph.php
+! Missing request method check in modules/snmp_graph.php
+✓ Syntax OK: modules/snmp_graph_poll.php
+✓ Correct path usage in modules/snmp_graph_poll.php
+! Unsafe session handling in modules/snmp_graph_poll.php
+✓ Syntax OK: modules/snmp_oid_helper.php
+✓ Correct path usage in modules/snmp_oid_helper.php
+✓ Syntax OK: modules/system_status.php
+✓ Correct path usage in modules/system_status.php
+✓ Syntax OK: modules/table_example.php
+✓ Correct path usage in modules/table_example.php
+✓ Syntax OK: modules/tariffs.php
+✓ Correct path usage in modules/tariffs.php
+✓ Proper request method checking in modules/tariffs.php
+✓ Syntax OK: modules/test_all_php_files.php
+✓ Correct path usage in modules/test_all_php_files.php
+! Unsafe session handling in modules/test_all_php_files.php
+✓ Syntax OK: modules/test_cacti_integration.php
+✓ Correct path usage in modules/test_cacti_integration.php
+✓ Syntax OK: modules/test_mikrotik_api.php
+✓ Correct path usage in modules/test_mikrotik_api.php
+! Unsafe session handling in modules/test_mikrotik_api.php
+✓ Proper request method checking in modules/test_mikrotik_api.php
+✓ Syntax OK: modules/theme_compositor.php
+✓ Correct path usage in modules/theme_compositor.php
+✓ Proper request method checking in modules/theme_compositor.php
+✓ Syntax OK: modules/theme_preview.php
+✓ Correct path usage in modules/theme_preview.php
+✓ Syntax OK: modules/tooltip_data.php
+✓ Correct path usage in modules/tooltip_data.php
+! Unsafe session handling in modules/tooltip_data.php
+✓ Syntax OK: modules/tv_packages.php
+✓ Correct path usage in modules/tv_packages.php
+✓ Proper request method checking in modules/tv_packages.php
+✓ Syntax OK: modules/update_client_structure.php
+✓ Correct path usage in modules/update_client_structure.php
+✓ Syntax OK: modules/user_management.php
+✓ Correct path usage in modules/user_management.php
+✓ Proper session handling in modules/user_management.php
+✓ Proper request method checking in modules/user_management.php
+✓ Syntax OK: modules/user_profile.php
+✓ Correct path usage in modules/user_profile.php
+✓ Proper session handling in modules/user_profile.php
+✓ Proper request method checking in modules/user_profile.php
+✓ Syntax OK: modules/users.php
+✓ Correct path usage in modules/users.php
+✓ Proper request method checking in modules/users.php
+✓ Syntax OK: modules/vlan_captive_portal.php
+✓ Correct path usage in modules/vlan_captive_portal.php
+✓ Proper session handling in modules/vlan_captive_portal.php
+✓ Proper request method checking in modules/vlan_captive_portal.php
+✓ Syntax OK: modules/helpers/auth_helper.php
+✓ Correct path usage in modules/helpers/auth_helper.php
+✓ Proper session handling in modules/helpers/auth_helper.php
+✓ Syntax OK: modules/helpers/column_helper.php
+✓ Correct path usage in modules/helpers/column_helper.php
+✓ Syntax OK: modules/helpers/database_helper.php
+✓ Correct path usage in modules/helpers/database_helper.php
+✓ Syntax OK: modules/helpers/layout_helper.php
+✓ Correct path usage in modules/helpers/layout_helper.php
+✓ Syntax OK: modules/helpers/request_helper.php
+✓ Correct path usage in modules/helpers/request_helper.php
+✓ Proper request method checking in modules/helpers/request_helper.php
+✓ Syntax OK: modules/modules/config.php
+✓ Correct path usage in modules/modules/config.php
+✓ Correct permissions (0644) for config.php
+✓ Correct permissions (0755) for modules
+✓ Correct permissions (0755) for assets
+✓ Correct permissions (0755) for partials
+✓ Correct permissions (0755) for sql
+
+Summary:
+--------
+Successes: 345
+Warnings:  39
+Errors:    4
+
+Critical Errors:
+---------------
+✗ Missing columns in users: password, full_name, access_level_id, last_login
+✗ Missing columns in networks: subnet, updated_at
+✗ Missing columns in invoices: number, total_amount, paid_at, updated_at
+✗ Missing columns in payments: updated_at
+
+
+

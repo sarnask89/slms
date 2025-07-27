@@ -16,6 +16,34 @@
             "php": "html"
         },
         "php.validate.enable": true,
-        "php.suggest.basic": false
+        "php.suggest.basic": false,
+        "files.autoSave": "afterDelay",
+        "cursor.composer.subAgentsMode": "aggressive",
+        "debug.console.acceptSuggestionOnEnter": "on",
+        "sqltools.connections": [
+            {
+                "mysqlOptions": {
+                    "authProtocol": "default",
+                    "enableSsl": "Disabled"
+                },
+                "previewLimit": 50,
+                "server": "localhost",
+                "port": 3306,
+                "driver": "MySQL",
+                "name": "slml",
+                "database": "slmsdb",
+                "password": "mlss15gent001",
+                "username": "slms"
+            }
+        ]
+    },
+    "extensions": {
+        "recommendations": [
+            "stoildobreff.php-resolver",
+            "xdebug.php-debug",
+            "firefox-devtools.vscode-firefox-debug",
+            "chenzhiy2001.os-debug",
+            "ikappas.phpcs"
+        ]
     }
 }

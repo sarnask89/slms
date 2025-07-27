@@ -16,6 +16,171 @@
             "php": "html"
         },
         "php.validate.enable": true,
-        "php.suggest.basic": false
+        "php.suggest.basic": false,
+        
+        // Enhanced PHP IntelliSense
+        "php.suggest.basic": false,
+        "php.validate.executablePath": "/usr/bin/php",
+        "php.validate.run": "onType",
+        
+        // PHP Debug Configuration
+        "php.debug.ideKey": "VSCODE",
+        "php.debug.port": 9003,
+        "php.debug.host": "10.0.222.223",
+        
+        // IntelliSense Settings
+        "php.suggest.basic": false,
+        "php.completion.insertUseDeclaration": true,
+        "php.completion.autoInsertUseStatement": true,
+        "php.completion.triggerParameterHints": true,
+        
+        // Code Formatting
+        "php.format.enable": true,
+        "php.format.rules": {
+            "@PSR2": true
+        },
+        
+        // Error Reporting
+        "php.validate.errorReporting": "E_ALL",
+        "php.validate.warningReporting": "E_ALL",
+        
+        // File Watching
+        "files.watcherExclude": {
+            "**/node_modules/**": true,
+            "**/vendor/**": true,
+            "**/cache/**": true,
+            "**/logs/**": true
+        },
+        
+        // Search Exclude
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/vendor": true,
+            "**/cache": true,
+            "**/logs": true,
+            "**/.git": true
+        },
+        
+        // Editor Settings
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.wordWrap": "on",
+        "editor.rulers": [120],
+        
+        // PHP Specific Editor Settings
+        "php.suggest.basic": false,
+        "php.validate.enable": true,
+        "php.validate.executablePath": "/usr/bin/php",
+        "php.validate.run": "onType",
+        "php.validate.trigger": "onType",
+        
+        // Debug Settings
+        "debug.allowBreakpointsEverywhere": true,
+        "debug.showBreakpointsInOverviewRuler": true,
+        "debug.showInlineBreakpointCandidates": true,
+        
+        // Intelephense Configuration
+        "intelephense.environment.phpVersion": "8.2.29",
+        "intelephense.environment.includePaths": [
+            "/var/www/html",
+            "/var/www/html/modules",
+            "/var/www/html/modules/helpers",
+            "/var/www/html/api",
+            "/var/www/html/includes"
+        ],
+        "intelephense.diagnostics.enable": true,
+        "intelephense.completion.insertUseDeclaration": true,
+        "intelephense.completion.triggerParameterHints": true,
+        
+        // JavaScript/TypeScript Settings
+        "javascript.validate.enable": true,
+        "typescript.validate.enable": true,
+        "javascript.suggest.autoImports": true,
+        "typescript.suggest.autoImports": true,
+        
+        // Firefox Debugger Settings
+        "firefox-debugger.port": 6000,
+        "firefox-debugger.host": "localhost",
+        "firefox-debugger.timeout": 30000
+    },
+    "extensions": {
+        "recommendations": [
+            "xdebug.php-debug",
+            "neilbrayfield.php-docblocker",
+            "junstyle.php-cs-fixer",
+            "mehedidracula.php-namespace-resolver",
+            "bradlc.vscode-tailwindcss",
+            "ms-vscode.vscode-json",
+            "firefox-devtools.vscode-firefox-debug",
+            "devsense.composer-php-vscode",
+            "zardoy.inline-debugger",
+            "devsense.intelli-php-vscode",
+            "anysphere.remote-containers",
+            "kilocode.kilo-code"
+        ]
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Listen for Xdebug",
+                "type": "php",
+                "request": "launch",
+                "port": 9003,
+                "pathMappings": {
+                    "/var/www/html": "${workspaceFolder}/html"
+                },
+                "xdebugSettings": {
+                    "max_children": 128,
+                    "max_data": 512,
+                    "max_depth": 3
+                }
+            },
+            {
+                "name": "Launch currently open script",
+                "type": "php",
+                "request": "launch",
+                "program": "${file}",
+                "cwd": "${fileDirname}",
+                "port": 0,
+                "runtimeArgs": [
+                    "-dxdebug.start_with_request=yes"
+                ],
+                "env": {
+                    "XDEBUG_MODE": "debug,develop",
+                    "XDEBUG_CONFIG": "client_port=${port}"
+                }
+            },
+            {
+                "name": "Launch Firefox",
+                "type": "firefox",
+                "request": "launch",
+                "url": "http://localhost/slms",
+                "webRoot": "${workspaceFolder}/html",
+                "pathMappings": [
+                    {
+                        "url": "webpack:///./",
+                        "path": "${workspaceFolder}/html/"
+                    }
+                ],
+                "profile": "default",
+                "keepProfileChanges": true
+            },
+            {
+                "name": "Attach to Firefox",
+                "type": "firefox",
+                "request": "attach",
+                "url": "http://localhost/slms",
+                "webRoot": "${workspaceFolder}/html",
+                "pathMappings": [
+                    {
+                        "url": "webpack:///./",
+                        "path": "${workspaceFolder}/html/"
+                    }
+                ],
+                "port": 6000
+            }
+        ]
     }
 }
