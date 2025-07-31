@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/../modules/helpers/auth_helper.php';
 
 // Require login
@@ -14,7 +15,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/mikrotik_rest_api_v7.php';
 
 // Check if user is logged in

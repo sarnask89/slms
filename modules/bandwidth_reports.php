@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 
 $pageTitle = 'Bandwidth Utilization Reports';
 $pdo = get_pdo();
@@ -166,7 +167,7 @@ class BandwidthReports {
 }
 
 // Handle report generation
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reportSystem = new BandwidthReports($pdo);
     
     if (isset($_POST['generate_daily'])) {

@@ -1,6 +1,7 @@
 <?php
 // Migrator statycznych plików do bazy CMS
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 
 function slugify($text) {
     $text = preg_replace('~[^\pL\d]+~u', '-', $text);

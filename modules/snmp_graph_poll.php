@@ -1,18 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../modules/helpers/auth_helper.php';
+require_once 'module_loader.php';
 
-// Require login
-require_login();
-
-$pageTitle = 'Snmp Graph Poll';
-ob_start();
-?>
-
-require_once __DIR__ . '/../config.php';
 $pdo = get_pdo();
 $oids = require __DIR__ . '/snmp_oid_helper.php';
 
@@ -43,8 +31,3 @@ foreach ($results as $line) {
 }
 echo "</ul>";
 echo '<p><a href="snmp_graph.php">Back to SNMP Graphing</a></p>'; 
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
-?>

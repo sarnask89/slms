@@ -16,7 +16,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/ml_database_manager.php';
 require_once __DIR__ . '/ml_training_engine.php';
 require_once __DIR__ . '/ml_prediction_engine.php';

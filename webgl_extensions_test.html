@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Extensions Test - Based on Khronos Registry</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #00ff88;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #00ff88;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px #00ff88;
+        }
+        
+        .extension-section {
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #00ff88;
+        }
+        
+        .extension-section h2 {
+            margin-top: 0;
+            color: #00ff88;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 10px;
+        }
+        
+        .extension-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .extension-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .extension-card:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .extension-name {
+            font-weight: bold;
+            color: #00ff88;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .extension-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-supported { background: #00ff88; color: black; }
+        .status-unsupported { background: #ff6b35; color: white; }
+        .status-unknown { background: #ffd700; color: black; }
+        
+        .extension-description {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin: 10px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00b894);
+            color: black;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        }
+        
+        .test-results {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #00ff88;
+        }
+        
+        .webgl-canvas {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            margin: 20px 0;
+            background: #000;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 WebGL Extensions Test - Khronos Registry</h1>
+        
+        <!-- WebGL Canvas -->
+        <div class="extension-section">
+            <h2>🎨 WebGL Context</h2>
+            <canvas id="webgl-canvas" class="webgl-canvas"></canvas>
+            <div>
+                <button class="btn" onclick="testAllExtensions()">Test All Extensions</button>
+                <button class="btn" onclick="testKhronosRatified()">Test Khronos Ratified</button>
+                <button class="btn" onclick="testDraftExtensions()">Test Draft Extensions</button>
+                <button class="btn" onclick="generateExtensionReport()">Generate Report</button>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="extension-section">
+            <h2>📊 Extension Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-extensions">0</div>
+                    <div class="stat-label">Total Extensions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="supported-extensions">0</div>
+                    <div class="stat-label">Supported</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="unsupported-extensions">0</div>
+                    <div class="stat-label">Unsupported</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="khronos-ratified">0</div>
+                    <div class="stat-label">Khronos Ratified</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Khronos Ratified Extensions -->
+        <div class="extension-section">
+            <h2>🏆 Khronos Ratified Extensions</h2>
+            <p>Based on <a href="https://registry.khronos.org/webgl/extensions/" target="_blank">Khronos WebGL Extension Registry</a></p>
+            <div class="extension-grid" id="khronos-extensions">
+                <!-- Extensions will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Draft Extensions -->
+        <div class="extension-section">
+            <h2>📝 Draft Extensions</h2>
+            <div class="extension-grid" id="draft-extensions">
+                <!-- Draft extensions will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Test Results -->
+        <div class="extension-section">
+            <h2>📋 Test Results</h2>
+            <div class="test-results" id="test-results">
+                <div>WebGL Extensions Test initialized...</div>
+                <div>Ready to test extensions...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WebGL Extensions Test Suite
+        class WebGLExtensionsTest {
+            constructor() {
+                this.webglContext = null;
+                this.extensions = {
+                    khronosRatified: [
+                        // Based on Khronos WebGL Extension Registry
+                        'OES_texture_float',
+                        'OES_texture_half_float',
+                        'WEBGL_lose_context',
+                        'OES_standard_derivatives',
+                        'OES_vertex_array_object',
+                        'WEBGL_debug_renderer_info',
+                        'WEBGL_debug_shaders',
+                        'WEBGL_compressed_texture_s3tc',
+                        'WEBGL_depth_texture',
+                        'OES_element_index_uint',
+                        'EXT_texture_filter_anisotropic',
+                        'EXT_frag_depth',
+                        'WEBGL_draw_buffers',
+                        'ANGLE_instanced_arrays',
+                        'OES_texture_float_linear',
+                        'OES_texture_half_float_linear',
+                        'EXT_blend_minmax',
+                        'EXT_shader_texture_lod',
+                        'WEBGL_compressed_texture_astc',
+                        'WEBGL_compressed_texture_etc',
+                        'WEBGL_compressed_texture_etc1',
+                        'WEBGL_compressed_texture_pvrtc',
+                        'WEBGL_compressed_texture_s3tc_srgb',
+                        'WEBGL_multi_draw',
+                        'WEBGL_polygon_mode',
+                        'WEBGL_provoking_vertex',
+                        'WEBGL_render_shared_exponent',
+                        'WEBGL_stencil_texturing',
+                        'WEBGL_color_buffer_float',
+                        'WEBGL_clip_cull_distance',
+                        'WEBGL_blend_func_extended'
+                    ],
+                    draft: [
+                        'WEBGL_blend_equation_advanced_coherent',
+                        'WEBGL_draw_instanced_base_vertex_base_instance',
+                        'WEBGL_multi_draw_instanced_base_vertex_base_instance',
+                        'WEBGL_shader_pixel_local_storage'
+                    ]
+                };
+                this.testResults = {};
+                this.init();
+            }
+            
+            init() {
+                this.initializeWebGL();
+                this.renderExtensionCards();
+                this.log('WebGL Extensions Test initialized');
+            }
+            
+            initializeWebGL() {
+                const canvas = document.getElementById('webgl-canvas');
+                this.webglContext = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                
+                if (!this.webglContext) {
+                    this.log('❌ WebGL not supported');
+                    return false;
+                }
+                
+                this.log('✅ WebGL context initialized');
+                return true;
+            }
+            
+            renderExtensionCards() {
+                // Render Khronos ratified extensions
+                const khronosContainer = document.getElementById('khronos-extensions');
+                khronosContainer.innerHTML = '';
+                
+                this.extensions.khronosRatified.forEach(extName => {
+                    const card = this.createExtensionCard(extName, 'khronos');
+                    khronosContainer.appendChild(card);
+                });
+                
+                // Render draft extensions
+                const draftContainer = document.getElementById('draft-extensions');
+                draftContainer.innerHTML = '';
+                
+                this.extensions.draft.forEach(extName => {
+                    const card = this.createExtensionCard(extName, 'draft');
+                    khronosContainer.appendChild(card);
+                });
+                
+                this.updateStats();
+            }
+            
+            createExtensionCard(extName, type) {
+                const card = document.createElement('div');
+                card.className = 'extension-card';
+                card.innerHTML = `
+                    <div class="extension-name">${extName}</div>
+                    <div class="extension-status status-unknown" id="status-${extName}">Unknown</div>
+                    <div class="extension-description">${this.getExtensionDescription(extName)}</div>
+                    <button class="btn" onclick="extensionTest.testExtension('${extName}')">Test Extension</button>
+                `;
+                return card;
+            }
+            
+            getExtensionDescription(extName) {
+                const descriptions = {
+                    'OES_texture_float': 'Enables floating-point textures',
+                    'WEBGL_lose_context': 'Allows losing and restoring WebGL context',
+                    'OES_standard_derivatives': 'Enables derivative functions in shaders',
+                    'OES_vertex_array_object': 'Provides vertex array objects for better performance',
+                    'WEBGL_debug_renderer_info': 'Provides debug information about the renderer',
+                    'WEBGL_compressed_texture_s3tc': 'S3TC compressed texture support',
+                    'WEBGL_depth_texture': 'Depth texture support',
+                    'EXT_texture_filter_anisotropic': 'Anisotropic texture filtering',
+                    'WEBGL_draw_buffers': 'Multiple render targets support',
+                    'ANGLE_instanced_arrays': 'Instanced rendering support',
+                    'WEBGL_compressed_texture_astc': 'ASTC compressed texture support',
+                    'WEBGL_compressed_texture_etc': 'ETC compressed texture support',
+                    'WEBGL_multi_draw': 'Multiple draw calls in single command',
+                    'WEBGL_color_buffer_float': 'Floating-point color buffer support',
+                    'WEBGL_blend_func_extended': 'Extended blending functions'
+                };
+                
+                return descriptions[extName] || 'WebGL extension for enhanced functionality';
+            }
+            
+            testExtension(extName) {
+                this.log(`🧪 Testing extension: ${extName}`);
+                
+                if (!this.webglContext) {
+                    this.log(`❌ WebGL context not available for ${extName}`);
+                    this.updateExtensionStatus(extName, 'unsupported');
+                    return;
+                }
+                
+                try {
+                    const extension = this.webglContext.getExtension(extName);
+                    
+                    if (extension) {
+                        this.log(`✅ Extension ${extName} is supported`);
+                        this.updateExtensionStatus(extName, 'supported');
+                        this.testResults[extName] = {
+                            supported: true,
+                            extension: extension,
+                            timestamp: new Date().toISOString()
+                        };
+                    } else {
+                        this.log(`❌ Extension ${extName} is not supported`);
+                        this.updateExtensionStatus(extName, 'unsupported');
+                        this.testResults[extName] = {
+                            supported: false,
+                            extension: null,
+                            timestamp: new Date().toISOString()
+                        };
+                    }
+                } catch (error) {
+                    this.log(`❌ Error testing ${extName}: ${error.message}`);
+                    this.updateExtensionStatus(extName, 'unsupported');
+                    this.testResults[extName] = {
+                        supported: false,
+                        error: error.message,
+                        timestamp: new Date().toISOString()
+                    };
+                }
+                
+                this.updateStats();
+            }
+            
+            updateExtensionStatus(extName, status) {
+                const statusElement = document.getElementById(`status-${extName}`);
+                if (statusElement) {
+                    statusElement.textContent = status.toUpperCase();
+                    statusElement.className = `extension-status status-${status}`;
+                }
+            }
+            
+            testAllExtensions() {
+                this.log('🧪 Testing all extensions...');
+                
+                const allExtensions = [...this.extensions.khronosRatified, ...this.extensions.draft];
+                
+                allExtensions.forEach((extName, index) => {
+                    setTimeout(() => {
+                        this.testExtension(extName);
+                    }, index * 100); // Test with 100ms delay between each
+                });
+            }
+            
+            testKhronosRatified() {
+                this.log('🏆 Testing Khronos ratified extensions...');
+                
+                this.extensions.khronosRatified.forEach((extName, index) => {
+                    setTimeout(() => {
+                        this.testExtension(extName);
+                    }, index * 100);
+                });
+            }
+            
+            testDraftExtensions() {
+                this.log('📝 Testing draft extensions...');
+                
+                this.extensions.draft.forEach((extName, index) => {
+                    setTimeout(() => {
+                        this.testExtension(extName);
+                    }, index * 100);
+                });
+            }
+            
+            updateStats() {
+                const allExtensions = [...this.extensions.khronosRatified, ...this.extensions.draft];
+                const supported = allExtensions.filter(ext => 
+                    this.testResults[ext] && this.testResults[ext].supported
+                ).length;
+                const unsupported = allExtensions.length - supported;
+                
+                document.getElementById('total-extensions').textContent = allExtensions.length;
+                document.getElementById('supported-extensions').textContent = supported;
+                document.getElementById('unsupported-extensions').textContent = unsupported;
+                document.getElementById('khronos-ratified').textContent = this.extensions.khronosRatified.length;
+            }
+            
+            generateExtensionReport() {
+                this.log('📊 Generating extension report...');
+                
+                const report = {
+                    timestamp: new Date().toISOString(),
+                    webglSupported: !!this.webglContext,
+                    totalExtensions: this.extensions.khronosRatified.length + this.extensions.draft.length,
+                    khronosRatified: this.extensions.khronosRatified.length,
+                    draft: this.extensions.draft.length,
+                    testResults: this.testResults,
+                    supportedExtensions: Object.keys(this.testResults).filter(ext => 
+                        this.testResults[ext] && this.testResults[ext].supported
+                    ),
+                    unsupportedExtensions: Object.keys(this.testResults).filter(ext => 
+                        this.testResults[ext] && !this.testResults[ext].supported
+                    )
+                };
+                
+                this.log(`📊 Report: ${JSON.stringify(report, null, 2)}`);
+                
+                // Create downloadable report
+                const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'webgl-extensions-report.json';
+                a.click();
+                
+                this.log('📊 Extension report downloaded as webgl-extensions-report.json');
+            }
+            
+            log(message) {
+                const results = document.getElementById('test-results');
+                const timestamp = new Date().toLocaleTimeString();
+                results.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                results.scrollTop = results.scrollHeight;
+                console.log(`[WebGL Extensions] ${message}`);
+            }
+        }
+        
+        // Global extension test instance
+        let extensionTest;
+        
+        // Initialize extension test
+        document.addEventListener('DOMContentLoaded', function() {
+            extensionTest = new WebGLExtensionsTest();
+        });
+        
+        // Global functions
+        function testAllExtensions() {
+            if (extensionTest) extensionTest.testAllExtensions();
+        }
+        
+        function testKhronosRatified() {
+            if (extensionTest) extensionTest.testKhronosRatified();
+        }
+        
+        function testDraftExtensions() {
+            if (extensionTest) extensionTest.testDraftExtensions();
+        }
+        
+        function generateExtensionReport() {
+            if (extensionTest) extensionTest.generateExtensionReport();
+        }
+    </script>
+</body>
+</html> 

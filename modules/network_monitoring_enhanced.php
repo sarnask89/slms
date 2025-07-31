@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/mikrotik_api.php';
 
 $pageTitle = 'Network Monitoring (Enhanced)';

@@ -9,6 +9,7 @@
         "zardoy.inline-debugger",
         "devsense.intelli-php-vscode",
         "anysphere.remote-containers",
-        "kilocode.kilo-code"
+        "kilocode.kilo-code",
+        "mtxr.sqltools"
     ]
 }

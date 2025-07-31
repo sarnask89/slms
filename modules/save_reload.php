@@ -1,12 +1,13 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Zapisz/Przeładuj';
 $pdo = get_pdo();
 
 $message = '';
 $error = '';
 
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     $menu_id = $_POST['menu_id'] ?? '';
     

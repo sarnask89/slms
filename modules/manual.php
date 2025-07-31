@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 
 $pageTitle = 'Podręcznik użytkownika';
 $content = ob_start();

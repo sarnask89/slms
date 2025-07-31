@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Loading Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+        #status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #4CAF50; }
+        .error { background: #f44336; }
+        .info { background: #2196F3; }
+        #canvas {
+            border: 1px solid #333;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Three.js Loading Test</h1>
+    <div id="status" class="info">Testing Three.js libraries...</div>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div id="console"></div>
+
+    <script>
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const div = document.createElement('div');
+            div.style.color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#74c0fc';
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            console.appendChild(div);
+        }
+
+        function updateStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = type;
+        }
+
+        // Test Three.js loading
+        function testThreeJS() {
+            log('Testing Three.js availability...');
+            
+            if (typeof THREE === 'undefined') {
+                log('THREE is undefined - loading libraries...', 'error');
+                loadLibraries();
+                return;
+            }
+            
+            log('THREE.js is available!', 'success');
+            testOrbitControls();
+        }
+
+        function loadLibraries() {
+            log('Loading Three.js from CDN...');
+            
+            // Load Three.js
+            const threeScript = document.createElement('script');
+            threeScript.src = 'https://unpkg.com/three@0.158.0/build/three.min.js';
+            threeScript.onload = function() {
+                log('Three.js loaded successfully from CDN', 'success');
+                loadOrbitControls();
+            };
+            threeScript.onerror = function() {
+                log('CDN Three.js failed, trying local...', 'error');
+                loadLocalThreeJS();
+            };
+            document.head.appendChild(threeScript);
+        }
+
+        function loadLocalThreeJS() {
+            log('Loading local Three.js...');
+            
+            const script = document.createElement('script');
+            script.src = 'assets/js/three.min.js';
+            script.onload = function() {
+                log('Local Three.js loaded successfully', 'success');
+                loadOrbitControls();
+            };
+            script.onerror = function() {
+                log('All Three.js sources failed!', 'error');
+                updateStatus('Failed to load Three.js', 'error');
+            };
+            document.head.appendChild(script);
+        }
+
+        function loadOrbitControls() {
+            log('Loading OrbitControls...');
+            
+            const script = document.createElement('script');
+            script.src = 'assets/js/OrbitControls-compat.js';
+            script.onload = function() {
+                log('OrbitControls compatibility wrapper loaded', 'success');
+                testOrbitControls();
+            };
+            script.onerror = function() {
+                log('OrbitControls failed to load', 'error');
+                testBasicThreeJS();
+            };
+            document.head.appendChild(script);
+        }
+
+        function testOrbitControls() {
+            log('Testing OrbitControls...');
+            
+            if (typeof THREE.OrbitControls === 'undefined') {
+                log('OrbitControls not available', 'error');
+                testBasicThreeJS();
+                return;
+            }
+            
+            log('OrbitControls is available!', 'success');
+            testFullThreeJS();
+        }
+
+        function testBasicThreeJS() {
+            log('Testing basic Three.js functionality...');
+            
+            try {
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas') });
+                
+                renderer.setSize(800, 600);
+                
+                const geometry = new THREE.BoxGeometry();
+                const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                const cube = new THREE.Mesh(geometry, material);
+                scene.add(cube);
+                
+                camera.position.z = 5;
+                
+                function animate() {
+                    requestAnimationFrame(animate);
+                    cube.rotation.x += 0.01;
+                    cube.rotation.y += 0.01;
+                    renderer.render(scene, camera);
+                }
+                
+                animate();
+                log('Basic Three.js test successful!', 'success');
+                updateStatus('Three.js working (basic mode)', 'success');
+                
+            } catch (error) {
+                log('Basic Three.js test failed: ' + error.message, 'error');
+                updateStatus('Three.js test failed', 'error');
+            }
+        }
+
+        function testFullThreeJS() {
+            log('Testing full Three.js with OrbitControls...');
+            
+            try {
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas') });
+                
+                renderer.setSize(800, 600);
+                
+                const geometry = new THREE.BoxGeometry();
+                const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                const cube = new THREE.Mesh(geometry, material);
+                scene.add(cube);
+                
+                camera.position.z = 5;
+                
+                // Test OrbitControls
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.05;
+                
+                function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update();
+                    renderer.render(scene, camera);
+                }
+                
+                animate();
+                log('Full Three.js with OrbitControls test successful!', 'success');
+                updateStatus('Three.js + OrbitControls working!', 'success');
+                
+            } catch (error) {
+                log('Full Three.js test failed: ' + error.message, 'error');
+                testBasicThreeJS();
+            }
+        }
+
+        // Start testing when page loads
+        window.addEventListener('load', function() {
+            log('Page loaded, starting tests...');
+            testThreeJS();
+        });
+    </script>
+</body>
+</html> 

@@ -11,7 +11,8 @@
  * - Enhanced data sources from existing modules
  */
 
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/helpers/auth_helper.php';
 
 // Include existing module dependencies

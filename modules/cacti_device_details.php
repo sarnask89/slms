@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/../modules/helpers/auth_helper.php';
 require_once __DIR__ . '/cacti_api.php';
 
@@ -428,5 +429,5 @@ function editDevice(deviceId) {
 
 <?php
 $content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
+require_once '../partials/layout.php';
 ?> 

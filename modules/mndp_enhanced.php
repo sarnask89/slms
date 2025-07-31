@@ -1,16 +1,4 @@
-<?phpif (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../modules/helpers/auth_helper.php';
-
-// Require login
-require_login();
-
-$pageTitle = 'Mndp Enhanced';
-ob_start();
-?>
-
+<?php
 /**
  * Enhanced MNDP (Mikrotik Neighbour Discovery Protocol) Implementation
  * Based on MAC-Telnet source code documentation
@@ -222,8 +210,3 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_NAME'])) {
     }
 }
 ?> 
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
-?>

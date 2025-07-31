@@ -1,17 +1,4 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../modules/helpers/auth_helper.php';
-
-// Require login
-require_login();
-
-$pageTitle = 'Tooltip Data';
-ob_start();
-?>
-
 /**
  * Tooltip Data Endpoint
  * Serves tooltip data in JSON format for the sLMS tooltip system
@@ -690,8 +677,3 @@ $tooltipData = [
 // Return tooltip data as JSON
 echo json_encode($tooltipData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 ?> 
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
-?>

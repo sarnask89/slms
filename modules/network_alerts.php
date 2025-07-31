@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/mikrotik_api.php';
 
 $pageTitle = 'Network Alerts & Monitoring';
@@ -95,7 +96,7 @@ class NetworkAlerts {
 }
 
 // Handle alert configuration
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['check_alerts'])) {
         $alertSystem = new NetworkAlerts($pdo);
         

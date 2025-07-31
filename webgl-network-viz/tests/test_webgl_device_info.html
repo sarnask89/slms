@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test WebGL Device Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+        
+        .device-info-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 0;
+            width: 600px;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .device-info-header {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            padding: 20px;
+            color: #000;
+            position: relative;
+        }
+
+        .device-info-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .device-info-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            color: #000;
+            font-size: 20px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .device-info-close:hover {
+            background: rgba(0, 0, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        .device-info-content {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .device-info-section {
+            margin-bottom: 25px;
+        }
+
+        .device-info-section h4 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .device-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .device-info-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .device-info-label {
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .device-info-value {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .device-status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .status-offline {
+            background: #ff4444;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+        }
+
+        .status-unknown {
+            background: #ffaa00;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+        }
+
+        .device-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .device-action-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .device-action-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .device-action-btn.primary {
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            color: #000;
+            border: none;
+        }
+
+        .device-action-btn.primary:hover {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+        }
+
+        .device-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1999;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>WebGL Device Info Test</h1>
+        
+        <div class="test-section">
+            <h2>Device Information Panel Test</h2>
+            <p>This test verifies the enhanced device information panel functionality.</p>
+            
+            <button class="test-button" onclick="showTestDeviceInfo()">Show Device Info Panel</button>
+            <button class="test-button" onclick="hideDeviceInfo()">Hide Device Info Panel</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Device Data</h2>
+            <p>Sample device data that would be displayed in the panel:</p>
+            <pre id="test-device-data">
+{
+  "id": "test_device_1",
+  "hostname": "Router-01",
+  "ip_address": "192.168.1.1",
+  "device_type": "router",
+  "vendor": "MikroTik",
+  "model": "RB4011iGS+",
+  "status": "online",
+  "last_seen": "2023-12-31T23:59:59Z"
+}
+            </pre>
+        </div>
+    </div>
+
+    <!-- Device Overlay -->
+    <div class="device-overlay" id="device-overlay" onclick="hideDeviceInfo()"></div>
+    
+    <!-- Device Info Panel -->
+    <div class="device-info-panel" id="device-info-panel">
+        <div class="device-info-header">
+            <h3>Device Information</h3>
+            <button class="device-info-close" id="close-device-info" onclick="hideDeviceInfo()">&times;</button>
+        </div>
+        <div class="device-info-content">
+            <div class="device-info-section">
+                <h4>Basic Info</h4>
+                <div class="device-info-grid">
+                    <div class="device-info-item">
+                        <span class="device-info-label">Hostname:</span>
+                        <span class="device-info-value" id="device-hostname">Router-01</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-info-label">IP Address:</span>
+                        <span class="device-info-value" id="device-ip">192.168.1.1</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-info-label">Device Type:</span>
+                        <span class="device-info-value" id="device-type">router</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-info-label">Vendor:</span>
+                        <span class="device-info-value" id="device-vendor">MikroTik</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-info-label">Model:</span>
+                        <span class="device-info-value" id="device-model">RB4011iGS+</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-info-label">Status:</span>
+                        <span class="device-info-value" id="device-status">
+                            <span class="device-status-indicator status-online"></span> Online
+                        </span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-info-label">Last Seen:</span>
+                        <span class="device-info-value" id="device-last-seen">12/31/2023, 11:59:59 PM</span>
+                    </div>
+                </div>
+            </div>
+            <div class="device-info-section">
+                <h4>Interfaces</h4>
+                <div class="device-interfaces" id="device-interfaces">
+                    <div class="interface-item">
+                        <div class="interface-name">ether1</div>
+                        <div class="interface-details">IP: 192.168.1.1/24</div>
+                        <div class="interface-details">MAC: 4C:5E:0C:4D:5E:6F</div>
+                        <div class="interface-details">Speed: 1Gbps</div>
+                    </div>
+                    <div class="interface-item">
+                        <div class="interface-name">ether2</div>
+                        <div class="interface-details">IP: 10.0.0.1/24</div>
+                        <div class="interface-details">MAC: 4C:5E:0C:4D:5E:70</div>
+                        <div class="interface-details">Speed: 1Gbps</div>
+                    </div>
+                </div>
+            </div>
+            <div class="device-info-section">
+                <h4>Connections</h4>
+                <div class="device-connections" id="device-connections">
+                    <div class="connection-item">
+                        <div class="connection-direction">Outbound</div>
+                        <div class="connection-details">Source: Router-01 (192.168.1.1)</div>
+                        <div class="connection-details">Target: Switch-01 (192.168.1.2)</div>
+                        <div class="connection-details">Status: Active</div>
+                    </div>
+                </div>
+            </div>
+            <div class="device-actions">
+                <button class="device-action-btn primary" id="scan-interfaces-btn">Scan Interfaces</button>
+                <button class="device-action-btn" id="refresh-device-btn">Refresh Device</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTestDeviceInfo() {
+            document.getElementById('device-overlay').style.display = 'block';
+            document.getElementById('device-info-panel').style.display = 'block';
+        }
+        
+        function hideDeviceInfo() {
+            document.getElementById('device-overlay').style.display = 'none';
+            document.getElementById('device-info-panel').style.display = 'none';
+        }
+        
+        // Test device action buttons
+        document.getElementById('scan-interfaces-btn').addEventListener('click', function() {
+            alert('Scan Interfaces action triggered!');
+        });
+        
+        document.getElementById('refresh-device-btn').addEventListener('click', function() {
+            alert('Refresh Device action triggered!');
+        });
+        
+        // Test keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                hideDeviceInfo();
+            }
+        });
+    </script>
+</body>
+</html> 

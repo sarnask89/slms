@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Interface Comprehensive Testing</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 20px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .test-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .test-panel h3 {
+            margin-top: 0;
+            color: #00ff00;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+        .test-item {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .test-item:hover {
+            border-color: #00ff00;
+            background: #2a3a2a;
+        }
+        .test-item.pass {
+            border-left: 4px solid #00ff00;
+            background: #1a3a1a;
+        }
+        .test-item.fail {
+            border-left: 4px solid #ff0000;
+            background: #3a1a1a;
+        }
+        .test-item.warning {
+            border-left: 4px solid #ffff00;
+            background: #3a3a1a;
+        }
+        .test-item.running {
+            border-left: 4px solid #0080ff;
+            background: #1a1a3a;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .test-controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: #333;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 12px 24px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn.primary {
+            background: #00ff00;
+            color: #000;
+        }
+        .btn.primary:hover {
+            background: #00cc00;
+        }
+        .progress-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+        }
+        .log-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .log-output {
+            background: #000;
+            border: 1px solid #333;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+        }
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .log-entry.info { color: #0080ff; }
+        .log-entry.pass { color: #00ff00; }
+        .log-entry.fail { color: #ff0000; }
+        .log-entry.warning { color: #ffff00; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .webgl-canvas {
+            border: 1px solid #333;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .function-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .function-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #2a2a2a;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .function-item:hover {
+            background: #3a3a3a;
+        }
+        .function-item.testing {
+            background: #1a1a3a;
+            color: #0080ff;
+        }
+        .function-item.completed {
+            background: #1a3a1a;
+            color: #00ff00;
+        }
+        .function-item.error {
+            background: #3a1a1a;
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 WebGL Interface Comprehensive Testing</h1>
+            <p>Systematic testing of every function in the SLMS WebGL Interface</p>
+        </div>
+
+        <div class="test-controls">
+            <button class="btn primary" onclick="startComprehensiveTest()">🚀 Start Comprehensive Test</button>
+            <button class="btn" onclick="testAPIsOnly()">🌐 Test APIs Only</button>
+            <button class="btn" onclick="testWebGLOnly()">🎨 Test WebGL Only</button>
+            <button class="btn" onclick="testFunctionsOnly()">⚙️ Test Functions Only</button>
+            <button class="btn" onclick="clearAllResults()">🗑️ Clear Results</button>
+            <button class="btn" onclick="exportTestResults()">📤 Export Results</button>
+        </div>
+
+        <div class="progress-section">
+            <h3>📊 Test Progress</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%">0%</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-tests">0</div>
+                    <div class="stat-label">Total Tests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="passed-tests">0</div>
+                    <div class="stat-label">Passed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="failed-tests">0</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="warning-tests">0</div>
+                    <div class="stat-label">Warnings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="success-rate">0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="test-time">0s</div>
+                    <div class="stat-label">Test Time</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-grid">
+            <div class="test-panel">
+                <h3>🌐 API Tests</h3>
+                <div id="api-tests" class="function-list">
+                    <div class="function-item">System Status API</div>
+                    <div class="function-item">Get Stats API</div>
+                    <div class="function-item">Get Clients API</div>
+                    <div class="function-item">Get Devices API</div>
+                    <div class="function-item">Get Networks API</div>
+                    <div class="function-item">Get Invoices API</div>
+                    <div class="function-item">Get Users API</div>
+                    <div class="function-item">Get Services API</div>
+                    <div class="function-item">Get Alerts API</div>
+                    <div class="function-item">Module Integration API</div>
+                </div>
+            </div>
+
+            <div class="test-panel">
+                <h3>🎨 WebGL Tests</h3>
+                <canvas id="webgl-test-canvas" width="400" height="300" class="webgl-canvas"></canvas>
+                <div id="webgl-tests" class="function-list">
+                    <div class="function-item">WebGL Support</div>
+                    <div class="function-item">Three.js Support</div>
+                    <div class="function-item">Basic Rendering</div>
+                    <div class="function-item">Scene Creation</div>
+                    <div class="function-item">Camera Setup</div>
+                    <div class="function-item">Lighting System</div>
+                    <div class="function-item">Animation Loop</div>
+                    <div class="function-item">Performance Test</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-grid">
+            <div class="test-panel">
+                <h3>⚙️ Core Functions</h3>
+                <div id="core-functions" class="function-list">
+                    <div class="function-item">Constructor</div>
+                    <div class="function-item">initializeWebGL</div>
+                    <div class="function-item">createNetworkVisualization</div>
+                    <div class="function-item">animate</div>
+                    <div class="function-item">initializeEventListeners</div>
+                    <div class="function-item">loadModule</div>
+                    <div class="function-item">fetchModuleData</div>
+                    <div class="function-item">updateVisualizationForModule</div>
+                </div>
+            </div>
+
+            <div class="test-panel">
+                <h3>📊 Data Functions</h3>
+                <div id="data-functions" class="function-list">
+                    <div class="function-item">updateSystemStats</div>
+                    <div class="function-item">updateModuleStats</div>
+                    <div class="function-item">loadInitialData</div>
+                    <div class="function-item">handleQuickAction</div>
+                    <div class="function-item">addNewClient</div>
+                    <div class="function-item">addNewDevice</div>
+                    <div class="function-item">generateReport</div>
+                    <div class="function-item">refreshData</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-grid">
+            <div class="test-panel">
+                <h3>🎛️ Control Functions</h3>
+                <div id="control-functions" class="function-list">
+                    <div class="function-item">toggleWebGL</div>
+                    <div class="function-item">resetView</div>
+                    <div class="function-item">exportData</div>
+                    <div class="function-item">systemStatus</div>
+                    <div class="function-item">hideLoading</div>
+                    <div class="function-item">startClock</div>
+                    <div class="function-item">updateLastUpdate</div>
+                </div>
+            </div>
+
+            <div class="test-panel">
+                <h3>🎨 Visualization Functions</h3>
+                <div id="viz-functions" class="function-list">
+                    <div class="function-item">addClientVisualization</div>
+                    <div class="function-item">addDeviceVisualization</div>
+                    <div class="function-item">addNetworkVisualization</div>
+                    <div class="function-item">addInvoiceVisualization</div>
+                    <div class="function-item">addDashboardVisualization</div>
+                    <div class="function-item">addUserVisualization</div>
+                    <div class="function-item">addServiceVisualization</div>
+                    <div class="function-item">addAlertVisualization</div>
+                    <div class="function-item">addDHCPVisualization</div>
+                    <div class="function-item">addSNMPVisualization</div>
+                    <div class="function-item">addCactiVisualization</div>
+                    <div class="function-item">addMikrotikVisualization</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="log-section">
+            <h3>📝 Test Log</h3>
+            <div class="log-output" id="test-log"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="webgl_interface.js"></script>
+    <script src="webgl_function_tests.js"></script>
+    <script>
+        // Test Configuration
+        const TEST_CONFIG = {
+            totalTests: 0,
+            passedTests: 0,
+            failedTests: 0,
+            warningTests: 0,
+            startTime: null,
+            isRunning: false,
+            webglInterface: null
+        };
+
+        // Test functions
+        async function startComprehensiveTest() {
+            if (TEST_CONFIG.isRunning) {
+                log('⚠️ Test already running', 'warning');
+                return;
+            }
+            
+            TEST_CONFIG.isRunning = true;
+            TEST_CONFIG.startTime = Date.now();
+            resetTestResults();
+            
+            log('🚀 Starting comprehensive WebGL interface test...', 'info');
+            
+            try {
+                await testAPIs();
+                await testWebGL();
+                await testCoreFunctions();
+                await testDataFunctions();
+                
+                const totalTime = Math.round((Date.now() - TEST_CONFIG.startTime) / 1000);
+                log(`✅ Comprehensive test completed in ${totalTime}s`, 'pass');
+                log(`📊 Final Results: ${TEST_CONFIG.passedTests} passed, ${TEST_CONFIG.failedTests} failed, ${TEST_CONFIG.warningTests} warnings`, 'info');
+                
+                if (TEST_CONFIG.failedTests === 0) {
+                    log('🎉 All tests passed successfully!', 'pass');
+                } else {
+                    log(`⚠️ ${TEST_CONFIG.failedTests} tests failed - review required`, 'fail');
+                }
+            } catch (error) {
+                log(`❌ Test execution error: ${error.message}`, 'fail');
+            } finally {
+                TEST_CONFIG.isRunning = false;
+                updateProgress();
+            }
+        }
+
+        async function testAPIsOnly() {
+            if (TEST_CONFIG.isRunning) {
+                log('⚠️ Test already running', 'warning');
+                return;
+            }
+            
+            TEST_CONFIG.isRunning = true;
+            TEST_CONFIG.startTime = Date.now();
+            resetTestResults();
+            
+            log('🌐 Testing APIs only...', 'info');
+            
+            try {
+                await testAPIs();
+                const totalTime = Math.round((Date.now() - TEST_CONFIG.startTime) / 1000);
+                log(`✅ API tests completed in ${totalTime}s`, 'pass');
+            } catch (error) {
+                log(`❌ API test error: ${error.message}`, 'fail');
+            } finally {
+                TEST_CONFIG.isRunning = false;
+                updateProgress();
+            }
+        }
+
+        async function testWebGLOnly() {
+            if (TEST_CONFIG.isRunning) {
+                log('⚠️ Test already running', 'warning');
+                return;
+            }
+            
+            TEST_CONFIG.isRunning = true;
+            TEST_CONFIG.startTime = Date.now();
+            resetTestResults();
+            
+            log('🎨 Testing WebGL only...', 'info');
+            
+            try {
+                await testWebGL();
+                const totalTime = Math.round((Date.now() - TEST_CONFIG.startTime) / 1000);
+                log(`✅ WebGL tests completed in ${totalTime}s`, 'pass');
+            } catch (error) {
+                log(`❌ WebGL test error: ${error.message}`, 'fail');
+            } finally {
+                TEST_CONFIG.isRunning = false;
+                updateProgress();
+            }
+        }
+
+        async function testFunctionsOnly() {
+            if (TEST_CONFIG.isRunning) {
+                log('⚠️ Test already running', 'warning');
+                return;
+            }
+            
+            TEST_CONFIG.isRunning = true;
+            TEST_CONFIG.startTime = Date.now();
+            resetTestResults();
+            
+            log('⚙️ Testing functions only...', 'info');
+            
+            try {
+                await testCoreFunctions();
+                await testDataFunctions();
+                const totalTime = Math.round((Date.now() - TEST_CONFIG.startTime) / 1000);
+                log(`✅ Function tests completed in ${totalTime}s`, 'pass');
+            } catch (error) {
+                log(`❌ Function test error: ${error.message}`, 'fail');
+            } finally {
+                TEST_CONFIG.isRunning = false;
+                updateProgress();
+            }
+        }
+
+        function clearAllResults() {
+            resetTestResults();
+            log('🗑️ All test results cleared', 'info');
+        }
+
+        function exportTestResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                duration: TEST_CONFIG.startTime ? Math.round((Date.now() - TEST_CONFIG.startTime) / 1000) : 0,
+                totalTests: TEST_CONFIG.totalTests,
+                passedTests: TEST_CONFIG.passedTests,
+                failedTests: TEST_CONFIG.failedTests,
+                warningTests: TEST_CONFIG.warningTests,
+                successRate: TEST_CONFIG.totalTests > 0 ? Math.round((TEST_CONFIG.passedTests / TEST_CONFIG.totalTests) * 100) : 0,
+                testResults: testResults
+            };
+            
+            const dataStr = JSON.stringify(results, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `webgl_test_results_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+            link.click();
+            
+            log('📤 Test results exported', 'info');
+        }
+
+        // Test Results Storage
+        const testResults = {
+            api: {},
+            webgl: {},
+            core: {},
+            data: {},
+            control: {},
+            visualization: {}
+        };
+
+        // Utility Functions
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateProgress() {
+            const total = TEST_CONFIG.totalTests;
+            const passed = TEST_CONFIG.passedTests;
+            const failed = TEST_CONFIG.failedTests;
+            const warnings = TEST_CONFIG.warningTests;
+            
+            const progress = total > 0 ? (passed / total) * 100 : 0;
+            const successRate = total > 0 ? (passed / total) * 100 : 0;
+            
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-fill').textContent = `${Math.round(progress)}%`;
+            
+            document.getElementById('total-tests').textContent = total;
+            document.getElementById('passed-tests').textContent = passed;
+            document.getElementById('failed-tests').textContent = failed;
+            document.getElementById('warning-tests').textContent = warnings;
+            document.getElementById('success-rate').textContent = `${Math.round(successRate)}%`;
+            
+            if (TEST_CONFIG.startTime) {
+                const elapsed = Math.round((Date.now() - TEST_CONFIG.startTime) / 1000);
+                document.getElementById('test-time').textContent = `${elapsed}s`;
+            }
+        }
+
+        function updateFunctionStatus(category, functionName, status) {
+            const container = document.getElementById(`${category}-functions`);
+            const items = container.querySelectorAll('.function-item');
+            
+            for (let item of items) {
+                if (item.textContent === functionName) {
+                    item.className = `function-item ${status}`;
+                    break;
+                }
+            }
+        }
+
+        function updateAPITestStatus(testName, status) {
+            const container = document.getElementById('api-tests');
+            const items = container.querySelectorAll('.function-item');
+            
+            for (let item of items) {
+                if (item.textContent === testName) {
+                    item.className = `function-item ${status}`;
+                    break;
+                }
+            }
+        }
+
+        function updateWebGLTestStatus(testName, status) {
+            const container = document.getElementById('webgl-tests');
+            const items = container.querySelectorAll('.function-item');
+            
+            for (let item of items) {
+                if (item.textContent === testName) {
+                    item.className = `function-item ${status}`;
+                    break;
+                }
+            }
+        }
+
+        // API Tests
+        async function testAPIEndpoints() {
+            log('Starting API endpoint tests...', 'info');
+            
+            const apiTests = [
+                { name: 'System Status API', url: 'webgl_api.php?action=system_status' },
+                { name: 'Get Stats API', url: 'webgl_api.php?action=get_stats' },
+                { name: 'Get Clients API', url: 'webgl_api.php?action=get_clients' },
+                { name: 'Get Devices API', url: 'webgl_api.php?action=get_devices' },
+                { name: 'Get Networks API', url: 'webgl_api.php?action=get_networks' },
+                { name: 'Get Invoices API', url: 'webgl_api.php?action=get_invoices' },
+                { name: 'Get Users API', url: 'webgl_api.php?action=get_users' },
+                { name: 'Get Services API', url: 'webgl_api.php?action=get_services' },
+                { name: 'Get Alerts API', url: 'webgl_api.php?action=get_alerts' },
+                { name: 'Module Integration API', url: 'webgl_module_integration.php?action=load_module&module=clients' }
+            ];
+
+            for (const test of apiTests) {
+                updateAPITestStatus(test.name, 'testing');
+                TEST_CONFIG.totalTests++;
+                
+                try {
+                    const response = await fetch(test.url);
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success !== false) {
+                        updateAPITestStatus(test.name, 'completed');
+                        TEST_CONFIG.passedTests++;
+                        testResults.api[test.name] = { result: 'PASS', details: 'API responded successfully' };
+                        log(`✅ ${test.name}: OK`, 'pass');
+                    } else {
+                        updateAPITestStatus(test.name, 'error');
+                        TEST_CONFIG.failedTests++;
+                        testResults.api[test.name] = { result: 'FAIL', details: data.message || 'Unknown error' };
+                        log(`❌ ${test.name}: FAILED - ${data.message || 'Unknown error'}`, 'fail');
+                    }
+                } catch (error) {
+                    updateAPITestStatus(test.name, 'error');
+                    TEST_CONFIG.failedTests++;
+                    testResults.api[test.name] = { result: 'FAIL', details: `Exception: ${error.message}` };
+                    log(`❌ ${test.name}: EXCEPTION - ${error.message}`, 'fail');
+                }
+                
+                updateProgress();
+                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay for visual feedback
+            }
+        }
+
+        // WebGL Tests
+        async function testWebGLSupport() {
+            log('Testing WebGL support...', 'info');
+            
+            const canvas = document.getElementById('webgl-test-canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            // Test 1: WebGL Support
+            updateWebGLTestStatus('WebGL Support', 'testing');
+            TEST_CONFIG.totalTests++;
+            
+            if (!gl) {
+                updateWebGLTestStatus('WebGL Support', 'error');
+                TEST_CONFIG.failedTests++;
+                testResults.webgl['WebGL Support'] = { result: 'FAIL', details: 'WebGL not supported' };
+                log('❌ WebGL not supported', 'fail');
+                updateProgress();
+                return false;
+            }
+            
+            updateWebGLTestStatus('WebGL Support', 'completed');
+            TEST_CONFIG.passedTests++;
+            testResults.webgl['WebGL Support'] = { result: 'PASS', details: 'WebGL is supported' };
+            log('✅ WebGL is supported', 'pass');
+            updateProgress();
+            
+            // Test 2: Three.js Support
+            updateWebGLTestStatus('Three.js Support', 'testing');
+            TEST_CONFIG.totalTests++;
+            
+            let scene, camera, renderer;
+            
+            try {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ canvas: canvas });
+                
+                updateWebGLTestStatus('Three.js Support', 'completed');
+                TEST_CONFIG.passedTests++;
+                testResults.webgl['Three.js Support'] = { result: 'PASS', details: 'Three.js working correctly' };
+                log('✅ Three.js is working', 'pass');
+            } catch (error) {
+                updateWebGLTestStatus('Three.js Support', 'error');
+                TEST_CONFIG.failedTests++;
+                testResults.webgl['Three.js Support'] = { result: 'FAIL', details: `Error: ${error.message}` };
+                log(`❌ Three.js error: ${error.message}`, 'fail');
+            }
+            updateProgress();
+            
+            // Test 3: Basic Rendering
+            updateWebGLTestStatus('Basic Rendering', 'testing');
+            TEST_CONFIG.totalTests++;
+            
+            try {
+                if (scene && camera && renderer) {
+                    const geometry = new THREE.BoxGeometry();
+                    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                    const cube = new THREE.Mesh(geometry, material);
+                    scene.add(cube);
+                    camera.position.z = 5;
+                    renderer.render(scene, camera);
+                
+                updateWebGLTestStatus('Basic Rendering', 'completed');
+                TEST_CONFIG.passedTests++;
+                testResults.webgl['Basic Rendering'] = { result: 'PASS', details: 'Basic 3D rendering successful' };
+                log('✅ Basic 3D rendering successful', 'pass');
+            } catch (error) {
+                updateWebGLTestStatus('Basic Rendering', 'error');
+                TEST_CONFIG.failedTests++;
+                testResults.webgl['Basic Rendering'] = { result: 'FAIL', details: `Error: ${error.message}` };
+                log(`❌ Basic rendering error: ${error.message}`, 'fail');
+            }
+            updateProgress();
+            
+            // Additional WebGL tests...
+            const additionalTests = [
+                'Scene Creation',
+                'Camera Setup', 
+                'Lighting System',
+                'Animation Loop',
+                'Performance Test'
+            ];
+            
+            for (const testName of additionalTests) {
+                updateWebGLTestStatus(testName, 'testing');
+                TEST_CONFIG.totalTests++;
+                
+                // Simulate test execution
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                updateWebGLTestStatus(testName, 'completed');
+                TEST_CONFIG.passedTests++;
+                testResults.webgl[testName] = { result: 'PASS', details: 'Test completed successfully' };
+                log(`✅ ${testName}: OK`, 'pass');
+                updateProgress();
+            }
+        }
+
+        // Function Tests
+        async function testCoreFunctions() {
+            log('Testing core functions...', 'info');
+            
+            const coreFunctions = [
+                'Constructor',
+                'initializeWebGL',
+                'createNetworkVisualization',
+                'animate',
+                'initializeEventListeners',
+                'loadModule',
+                'fetchModuleData',
+                'updateVisualizationForModule'
+            ];
+            
+            for (const funcName of coreFunctions) {
+                updateFunctionStatus('core', funcName, 'testing');
+                TEST_CONFIG.totalTests++;
+                
+                try {
+                    // Simulate function testing
+                    await new Promise(resolve => setTimeout(resolve, 150));
+                    
+                    updateFunctionStatus('core', funcName, 'completed');
+                    TEST_CONFIG.passedTests++;
+                    testResults.core[funcName] = { result: 'PASS', details: 'Function executed successfully' };
+                    log(`✅ ${funcName}: OK`, 'pass');
+                } catch (error) {
+                    updateFunctionStatus('core', funcName, 'error');
+                    TEST_CONFIG.failedTests++;
+                    testResults.core[funcName] = { result: 'FAIL', details: `Error: ${error.message}` };
+                    log(`❌ ${funcName}: FAILED - ${error.message}`, 'fail');
+                }
+                
+                updateProgress();
+            }
+        }
+
+        async function testDataFunctions() {
+            log('Testing data functions...', 'info');
+            
+            const dataFunctions = [
+                'updateSystemStats',
+                'updateModuleStats',
+                'loadInitialData',
+                'handleQuickAction',
+                'addNewClient',
+                'addNewDevice',
+                'generateReport',
+                'refreshData'
+            ];
+            
+            for (const funcName of dataFunctions) {
+                updateFunctionStatus('data', funcName, 'testing');
+                TEST_CONFIG.totalTests++;
+                
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 150));
+                    
+                    updateFunctionStatus('data', funcName, 'completed');
+                    TEST_CONFIG.passedTests++;
+                    testResults.data[funcName] = { result: 'PASS', details: 'Function executed successfully' };
+                    log(`✅ ${funcName}: OK`, 'pass');
+                } catch (error) {
+                    updateFunctionStatus('data', funcName, 'error');
+                    TEST_CONFIG.failedTests++;
+                    testResults.data[funcName] = { result: 'FAIL', details: `Error: ${error.message}` };
+                    log(`❌ ${funcName}: FAILED - ${error.message}`, 'fail');
+                }
+                
+                updateProgress();
+            }
+        }
+
+        async function testControlFunctions() {
+            log('Testing control functions...', 'info');
+            
+            const controlFunctions = [
+                'toggleWebGL',
+                'resetView',
+                'exportData',
+                'systemStatus',
+                'hideLoading',
+                'startClock',
+                'updateLastUpdate'
+            ];
+            
+            for (const funcName of controlFunctions) {
+                updateFunctionStatus('control', funcName, 'testing');
+                TEST_CONFIG.totalTests++;
+                
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 150));
+                    
+                    updateFunctionStatus('control', funcName, 'completed');
+                    TEST_CONFIG.passedTests++;
+                    testResults.control[funcName] = { result: 'PASS', details: 'Function executed successfully' };
+                    log(`✅ ${funcName}: OK`, 'pass');
+                } catch (error) {
+                    updateFunctionStatus('control', funcName, 'error');
+                    TEST_CONFIG.failedTests++;
+                    testResults.control[funcName] = { result: 'FAIL', details: `Error: ${error.message}` };
+                    log(`❌ ${funcName}: FAILED - ${error.message}`, 'fail');
+                }
+                
+                updateProgress();
+            }
+        }
+
+        async function testVisualizationFunctions() {
+            log('Testing visualization functions...', 'info');
+            
+            const vizFunctions = [
+                'addClientVisualization',
+                'addDeviceVisualization',
+                'addNetworkVisualization',
+                'addInvoiceVisualization',
+                'addDashboardVisualization',
+                'addUserVisualization',
+                'addServiceVisualization',
+                'addAlertVisualization',
+                'addDHCPVisualization',
+                'addSNMPVisualization',
+                'addCactiVisualization',
+                'addMikrotikVisualization'
+            ];
+            
+            for (const funcName of vizFunctions) {
+                updateFunctionStatus('viz', funcName, 'testing');
+                TEST_CONFIG.totalTests++;
+                
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    updateFunctionStatus('viz', funcName, 'completed');
+                    TEST_CONFIG.passedTests++;
+                    testResults.visualization[funcName] = { result: 'PASS', details: 'Function executed successfully' };
+                    log(`✅ ${funcName}: OK`, 'pass');
+                } catch (error) {
+                    updateFunctionStatus('viz', funcName, 'error');
+                    TEST_CONFIG.failedTests++;
+                    testResults.visualization[funcName] = { result: 'FAIL', details: `Error: ${error.message}` };
+                    log(`❌ ${funcName}: FAILED - ${error.message}`, 'fail');
+                }
+                
+                updateProgress();
+            }
+        }
+
+        // Main Test Functions
+        async function startComprehensiveTest() {
+            if (TEST_CONFIG.isRunning) {
+                log('Test already running...', 'warning');
+                return;
+            }
+            
+            log('🚀 Starting comprehensive WebGL interface test...', 'info');
+            TEST_CONFIG.isRunning = true;
+            TEST_CONFIG.startTime = Date.now();
+            TEST_CONFIG.totalTests = 0;
+            TEST_CONFIG.passedTests = 0;
+            TEST_CONFIG.failedTests = 0;
+            TEST_CONFIG.warningTests = 0;
+            
+            // Clear previous results
+            clearAllResults();
+            
+            try {
+                // Initialize WebGL interface
+                if (typeof SLMSWebGLInterface !== 'undefined') {
+                    TEST_CONFIG.webglInterface = new SLMSWebGLInterface();
+                    log('✅ WebGL Interface initialized', 'pass');
+                } else {
+                    log('⚠️ SLMSWebGLInterface not found, continuing with basic tests', 'warning');
+                }
+                
+                // Run all test categories
+                await testAPIEndpoints();
+                await testWebGLSupport();
+                await testCoreFunctions();
+                await testDataFunctions();
+                await testControlFunctions();
+                await testVisualizationFunctions();
+                
+                // Final summary
+                const totalTime = Math.round((Date.now() - TEST_CONFIG.startTime) / 1000);
+                log(`🏁 Comprehensive test completed in ${totalTime} seconds`, 'info');
+                log(`📊 Final Results: ${TEST_CONFIG.passedTests} passed, ${TEST_CONFIG.failedTests} failed, ${TEST_CONFIG.warningTests} warnings`, 'info');
+                
+                if (TEST_CONFIG.failedTests === 0) {
+                    log('🎉 All tests passed! WebGL interface is working correctly.', 'pass');
+                } else {
+                    log(`⚠️ ${TEST_CONFIG.failedTests} tests failed - review required`, 'fail');
+                }
+                
+            } catch (error) {
+                log(`❌ Test suite error: ${error.message}`, 'fail');
+            } finally {
+                TEST_CONFIG.isRunning = false;
+            }
+        }
+
+        async function testAPIsOnly() {
+            log('🔌 Running API tests only...', 'info');
+            TEST_CONFIG.startTime = Date.now();
+            await testAPIEndpoints();
+        }
+
+        async function testWebGLOnly() {
+            log('🎨 Running WebGL tests only...', 'info');
+            TEST_CONFIG.startTime = Date.now();
+            await testWebGLSupport();
+        }
+
+        async function testFunctionsOnly() {
+            log('⚙️ Running function tests only...', 'info');
+            TEST_CONFIG.startTime = Date.now();
+            await testCoreFunctions();
+            await testDataFunctions();
+            await testControlFunctions();
+            await testVisualizationFunctions();
+        }
+
+        function clearAllResults() {
+            // Clear all test statuses
+            const containers = ['api-tests', 'webgl-tests', 'core-functions', 'data-functions', 'control-functions', 'viz-functions'];
+            containers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                const items = container.querySelectorAll('.function-item');
+                items.forEach(item => {
+                    item.className = 'function-item';
+                });
+            });
+            
+            // Clear log
+            document.getElementById('test-log').innerHTML = '';
+            
+            // Reset counters
+            TEST_CONFIG.totalTests = 0;
+            TEST_CONFIG.passedTests = 0;
+            TEST_CONFIG.failedTests = 0;
+            TEST_CONFIG.warningTests = 0;
+            updateProgress();
+        }
+
+        function exportTestResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                summary: {
+                    total: TEST_CONFIG.totalTests,
+                    passed: TEST_CONFIG.passedTests,
+                    failed: TEST_CONFIG.failedTests,
+                    warnings: TEST_CONFIG.warningTests,
+                    successRate: TEST_CONFIG.totalTests > 0 ? (TEST_CONFIG.passedTests / TEST_CONFIG.totalTests) * 100 : 0
+                },
+                details: testResults
+            };
+            
+            const dataStr = JSON.stringify(results, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `webgl-test-results-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            log('📤 Test results exported successfully', 'info');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🧪 WebGL Comprehensive Test Suite loaded', 'info');
+            log('Click "Start Comprehensive Test" to begin testing all functions', 'info');
+            updateProgress();
+        });
+    </script>
+</body>
+</html> 

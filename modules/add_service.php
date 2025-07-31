@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Dodaj Usługę';
 $pdo = get_pdo();
 
@@ -7,7 +8,7 @@ $clients = $pdo->query('SELECT id, name FROM clients ORDER BY name')->fetchAll(P
 $error = '';
 $success = '';
 
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $client_id = $_POST['client_id'] ?? '';
     $service_type = $_POST['service_type'] ?? '';
     

@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/../modules/helpers/auth_helper.php';
 
 // Require login
@@ -27,7 +28,7 @@ try {
 }
 
 // Handle form submission
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_config = [
         'cacti' => [
             'devices' => isset($_POST['cacti_devices']),
@@ -401,5 +402,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php
 $content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
+require_once '../partials/layout.php';
 ?> 

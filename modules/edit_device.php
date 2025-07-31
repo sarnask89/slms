@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Edytuj Urządzenie';
 $pdo = get_pdo();
 $id = $_GET['id'] ?? null;
@@ -54,7 +55,7 @@ if ($selected_network_id) {
     }
 }
 // Handle update
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $stmt = $pdo->prepare('UPDATE devices SET name=?, type=?, ip_address=?, mac_address=?, location=?, client_id=?, network_id=? WHERE id=?');
         $stmt->execute([

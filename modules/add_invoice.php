@@ -1,9 +1,10 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Add Invoice';
 $pdo = get_pdo();
 $clients = $pdo->query('SELECT id, name FROM clients')->fetchAll(PDO::FETCH_ASSOC);
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare('INSERT INTO invoices (client_id, date_issued, due_date, total_amount, status) VALUES (?, ?, ?, ?, ?)');
     $stmt->execute([
         $_POST['client_id'],

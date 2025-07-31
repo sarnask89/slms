@@ -105,7 +105,24 @@
         // Firefox Debugger Settings
         "firefox-debugger.port": 6000,
         "firefox-debugger.host": "localhost",
-        "firefox-debugger.timeout": 30000
+        "firefox-debugger.timeout": 30000,
+        "sqltools.connections": [
+            {
+                "mysqlOptions": {
+                    "authProtocol": "default",
+                    "enableSsl": "Disabled"
+                },
+                "previewLimit": 50,
+                "server": "localhost",
+                "port": 3306,
+                "driver": "MariaDB",
+                "name": "lmsd",
+                "group": "lms",
+                "database": "slmsdb",
+                "username": "root",
+                "password": "1234qwer!"
+            }
+        ]
     },
     "extensions": {
         "recommendations": [
@@ -120,7 +137,8 @@
             "zardoy.inline-debugger",
             "devsense.intelli-php-vscode",
             "anysphere.remote-containers",
-            "kilocode.kilo-code"
+            "kilocode.kilo-code",
+            "mtxr.sqltools"
         ]
     },
     "launch": {

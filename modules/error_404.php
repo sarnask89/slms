@@ -1,7 +1,8 @@
 <?php
 $pageTitle = '404 - Page Not Found';
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/helpers/auth_helper.php';
+require_once 'module_loader.php';
+
+require_once 'helpers/auth_helper.php';
 ?>
 <!DOCTYPE html>
 <html lang="pl">

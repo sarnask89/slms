@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Control Console - WebGL 3D</title>
+    <title>SLMS v1.2.0 - Research-First Network Control Console</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -262,55 +262,27 @@
             overflow-y: auto;
         }
 
-        /* 3D Knobs */
-        .knob-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .knob {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, #3a3a3a, #2a2a2a, #3a3a3a);
-            border: 3px solid var(--accent-blue);
-            position: relative;
-            cursor: pointer;
+        /* Research Panel */
+        .research-panel {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border: 2px solid var(--accent-purple);
+            border-radius: 8px;
+            padding: 20px;
             box-shadow: 
-                0 4px 8px rgba(0, 0, 0, 0.6),
-                inset 0 2px 4px rgba(0, 0, 0, 0.8);
-            transition: all 0.3s ease;
+                0 8px 32px rgba(0, 0, 0, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 20px rgba(139, 92, 246, 0.3);
         }
 
-        .knob::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 4px;
-            height: 20px;
-            background: var(--accent-green);
-            transform: translate(-50%, -50%) rotate(45deg);
-            border-radius: 2px;
-            box-shadow: 0 0 8px var(--accent-green);
-        }
-
-        .knob:hover {
-            box-shadow: 
-                0 6px 12px rgba(0, 0, 0, 0.8),
-                inset 0 2px 4px rgba(0, 0, 0, 0.8),
-                0 0 15px var(--shadow-deep);
-            transform: scale(1.05);
-        }
-
-        .knob-label {
-            font-size: 12px;
+        .research-title {
+            font-size: 14px;
+            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
+            letter-spacing: 2px;
+            color: var(--accent-purple);
+            margin-bottom: 15px;
             text-align: center;
+            text-shadow: 0 0 8px var(--accent-purple);
         }
 
         /* Statistics Display */
@@ -498,7 +470,7 @@
     <div id="loading">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <h3>INITIALIZING NETWORK CONSOLE</h3>
+            <h3>INITIALIZING RESEARCH-FIRST NETWORK CONSOLE</h3>
             <p id="loading-status">Establishing 3D visualization protocols...</p>
             <div id="loading-progress" style="margin-top: 20px; font-size: 12px; color: var(--text-secondary);"></div>
         </div>
@@ -509,16 +481,20 @@
         <!-- Header -->
         <header class="console-header">
             <div class="header-title">
-                <i class="bi bi-cpu"></i> NETWORK CONTROL CONSOLE
+                <i class="bi bi-cpu"></i> SLMS v1.2.0 - RESEARCH-FIRST NETWORK CONSOLE
             </div>
             <div class="header-status">
                 <div class="status-indicator">
                     <div class="status-dot"></div>
-                    SYSTEM ONLINE
+                    RESEARCH ACTIVE
                 </div>
                 <div class="status-indicator">
                     <i class="bi bi-wifi"></i>
                     <span id="webgl-status">WEBGL ACTIVE</span>
+                </div>
+                <div class="status-indicator">
+                    <i class="bi bi-search"></i>
+                    <span id="discovery-status">DISCOVERY ACTIVE</span>
                 </div>
             </div>
         </header>
@@ -526,16 +502,16 @@
         <!-- Sidebar -->
         <aside class="console-sidebar">
             <div class="panel-3d">
-                <div class="panel-title">Navigation</div>
+                <div class="panel-title">Research & Discovery</div>
                 <div class="d-grid gap-3">
-                    <button class="btn-3d" onclick="resetView()">
-                        <i class="bi bi-camera"></i> Reset View
+                    <button class="btn-3d" onclick="startResearch()">
+                        <i class="bi bi-search"></i> Start Research
                     </button>
-                    <button class="btn-3d" onclick="refreshData()">
-                        <i class="bi bi-arrow-clockwise"></i> Refresh Data
+                    <button class="btn-3d" onclick="discoverNetwork()">
+                        <i class="bi bi-wifi"></i> Discover Network
                     </button>
-                    <button class="btn-3d" onclick="toggleAutoRefresh()">
-                        <i class="bi bi-play-circle"></i> Auto Refresh
+                    <button class="btn-3d" onclick="runImprovementLoop()">
+                        <i class="bi bi-arrow-clockwise"></i> Run Improvement Loop
                     </button>
                 </div>
             </div>
@@ -546,18 +522,22 @@
                     <option value="topology">Network Topology</option>
                     <option value="traffic">Traffic Flow</option>
                     <option value="status">Device Status</option>
+                    <option value="research">Research Data</option>
                 </select>
             </div>
 
             <div class="panel-3d">
                 <div class="panel-title">System Controls</div>
-                <div class="knob-container">
-                    <div class="knob" onclick="adjustBrightness()"></div>
-                    <div class="knob-label">Brightness</div>
-                </div>
-                <div class="knob-container">
-                    <div class="knob" onclick="adjustContrast()"></div>
-                    <div class="knob-label">Contrast</div>
+                <div class="d-grid gap-2">
+                    <button class="btn-3d btn-sm" onclick="resetView()">
+                        <i class="bi bi-camera"></i> Reset View
+                    </button>
+                    <button class="btn-3d btn-sm" onclick="refreshData()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh Data
+                    </button>
+                    <button class="btn-3d btn-sm" onclick="toggleAutoRefresh()">
+                        <i class="bi bi-play-circle"></i> Auto Refresh
+                    </button>
                 </div>
             </div>
         </aside>
@@ -569,24 +549,24 @@
 
         <!-- Controls Panel -->
         <aside class="console-controls">
-            <div class="panel-3d">
-                <div class="panel-title">Network Statistics</div>
+            <div class="research-panel">
+                <div class="research-title">Research Status</div>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-value" id="total-devices">0</div>
+                        <div class="stat-value" id="research-findings">0</div>
+                        <div class="stat-label">Findings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="discovered-devices">0</div>
                         <div class="stat-label">Devices</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="online-devices">0</div>
-                        <div class="stat-label">Online</div>
+                        <div class="stat-value" id="adaptations">0</div>
+                        <div class="stat-label">Adaptations</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="total-connections">0</div>
-                        <div class="stat-label">Connections</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="total-traffic">0</div>
-                        <div class="stat-label">MB/s</div>
+                        <div class="stat-value" id="research-score">0</div>
+                        <div class="stat-label">Score</div>
                     </div>
                 </div>
             </div>
@@ -620,11 +600,11 @@
             </div>
             <div>
                 <i class="bi bi-activity"></i> 
-                <span id="system-status">SYSTEM OPERATIONAL</span>
+                <span id="system-status">RESEARCH-FIRST SYSTEM OPERATIONAL</span>
             </div>
             <div>
                 <i class="bi bi-gear"></i> 
-                <span>v2.1.0 - WebGL Enhanced</span>
+                <span>v1.2.0 - Research-First Network Adaptation</span>
             </div>
         </footer>
     </div>
@@ -641,18 +621,19 @@
         let refreshInterval;
         let selectedDevice = null;
         let initializationTimeout;
+        let researchData = {};
 
         // Sample network data for demo
         const sampleNetworkData = {
             devices: [
-                { id: 1, name: 'Main Router', type: 'router', x: 0, y: 0, z: 10, status: 'online' },
-                { id: 2, name: 'Core Switch 1', type: 'switch', x: -15, y: 0, z: 5, status: 'online' },
-                { id: 3, name: 'Core Switch 2', type: 'switch', x: 15, y: 0, z: 5, status: 'online' },
-                { id: 4, name: 'Web Server', type: 'server', x: -10, y: 15, z: 0, status: 'online' },
-                { id: 5, name: 'Database Server', type: 'server', x: 10, y: 15, z: 0, status: 'online' },
-                { id: 6, name: 'Client PC 1', type: 'other', x: -20, y: -10, z: 0, status: 'online' },
-                { id: 7, name: 'Client PC 2', type: 'other', x: 20, y: -10, z: 0, status: 'online' },
-                { id: 8, name: 'Printer', type: 'other', x: 0, y: -20, z: 0, status: 'offline' }
+                { id: 1, name: 'Main Router', type: 'router', x: 0, y: 0, z: 10, status: 'online', vendor: 'Cisco' },
+                { id: 2, name: 'Core Switch 1', type: 'switch', x: -15, y: 0, z: 5, status: 'online', vendor: 'HP' },
+                { id: 3, name: 'Core Switch 2', type: 'switch', x: 15, y: 0, z: 5, status: 'online', vendor: 'HP' },
+                { id: 4, name: 'Web Server', type: 'server', x: -10, y: 15, z: 0, status: 'online', vendor: 'Dell' },
+                { id: 5, name: 'Database Server', type: 'server', x: 10, y: 15, z: 0, status: 'online', vendor: 'Dell' },
+                { id: 6, name: 'Client PC 1', type: 'other', x: -20, y: -10, z: 0, status: 'online', vendor: 'Unknown' },
+                { id: 7, name: 'Client PC 2', type: 'other', x: 20, y: -10, z: 0, status: 'online', vendor: 'Unknown' },
+                { id: 8, name: 'Mikrotik Router', type: 'mikrotik', x: 0, y: -20, z: 0, status: 'online', vendor: 'Mikrotik' }
             ],
             connections: [
                 { from: 1, to: 2, bandwidth: 1000 },
@@ -757,6 +738,7 @@
                         switch: 0x00ff88,
                         other: 0xff6b35,
                         server: 0x8b5cf6,
+                        mikrotik: 0xff6b35,
                         offline: 0x666666
                     }
                 });
@@ -771,10 +753,10 @@
                 // Setup event listeners
                 setupEventListeners();
                 
-                updateLoadingStatus('Starting auto refresh...', 90);
+                updateLoadingStatus('Starting research system...', 90);
                 
-                // Start auto refresh
-                startAutoRefresh();
+                // Start research system
+                startResearchSystem();
                 
                 updateLoadingStatus('Finalizing initialization...', 95);
                 
@@ -788,6 +770,7 @@
                 setTimeout(() => {
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('webgl-status').textContent = 'WEBGL ACTIVE';
+                    document.getElementById('discovery-status').textContent = 'DISCOVERY ACTIVE';
                 }, 1000);
                 
             } catch (error) {
@@ -824,10 +807,31 @@
 
         // Update statistics
         function updateStatistics(data) {
-            document.getElementById('total-devices').textContent = data.devices.length;
-            document.getElementById('online-devices').textContent = data.devices.filter(d => d.status === 'online').length;
-            document.getElementById('total-connections').textContent = data.connections.length;
-            document.getElementById('total-traffic').textContent = Math.floor(Math.random() * 100 + 50);
+            document.getElementById('discovered-devices').textContent = data.devices.length;
+            document.getElementById('research-findings').textContent = researchData.findings || 0;
+            document.getElementById('adaptations').textContent = researchData.adaptations || 0;
+            document.getElementById('research-score').textContent = researchData.score || 0;
+        }
+
+        // Start research system
+        function startResearchSystem() {
+            // Simulate research findings
+            researchData = {
+                findings: 15,
+                adaptations: 8,
+                score: 92,
+                lastUpdate: new Date()
+            };
+            
+            updateStatistics(sampleNetworkData);
+            
+            // Start research polling
+            setInterval(() => {
+                researchData.findings += Math.floor(Math.random() * 3);
+                researchData.adaptations += Math.floor(Math.random() * 2);
+                researchData.score = Math.min(100, researchData.score + Math.floor(Math.random() * 5));
+                updateStatistics(sampleNetworkData);
+            }, 30000); // Update every 30 seconds
         }
 
         // Setup event listeners
@@ -841,18 +845,42 @@
                     // Implement view mode switching
                 });
             }
+        }
 
-            // Auto refresh toggle
-            const autoRefresh = document.getElementById('auto-refresh');
-            if (autoRefresh) {
-                autoRefresh.addEventListener('change', function() {
-                    if (this.checked) {
-                        startAutoRefresh();
-                    } else {
-                        stopAutoRefresh();
-                    }
-                });
-            }
+        // Research functions
+        function startResearch() {
+            console.log('Starting research...');
+            // Simulate research process
+            researchData.findings += 5;
+            researchData.score += 10;
+            updateStatistics(sampleNetworkData);
+        }
+
+        function discoverNetwork() {
+            console.log('Discovering network...');
+            // Simulate network discovery
+            const newDevice = {
+                id: sampleNetworkData.devices.length + 1,
+                name: `Discovered Device ${sampleNetworkData.devices.length + 1}`,
+                type: 'other',
+                x: Math.random() * 40 - 20,
+                y: Math.random() * 40 - 20,
+                z: Math.random() * 20 - 10,
+                status: 'online',
+                vendor: 'Unknown'
+            };
+            
+            sampleNetworkData.devices.push(newDevice);
+            networkViewer.loadNetworkData(sampleNetworkData);
+            updateStatistics(sampleNetworkData);
+        }
+
+        function runImprovementLoop() {
+            console.log('Running improvement loop...');
+            // Simulate improvement loop
+            researchData.adaptations += 3;
+            researchData.score += 15;
+            updateStatistics(sampleNetworkData);
         }
 
         // Show device information
@@ -877,6 +905,10 @@
                     <span class="value">${device.type.toUpperCase()}</span>
                 </div>
                 <div class="device-detail">
+                    <span class="label">Vendor:</span>
+                    <span class="value">${device.vendor}</span>
+                </div>
+                <div class="device-detail">
                     <span class="label">Status:</span>
                     <span class="value ${statusClass}">
                         <i class="bi ${statusIcon}"></i> ${device.status.toUpperCase()}
@@ -884,7 +916,7 @@
                 </div>
                 <div class="device-detail">
                     <span class="label">Position:</span>
-                    <span class="value">(${device.position.x.toFixed(1)}, ${device.position.y.toFixed(1)}, ${device.position.z.toFixed(1)})</span>
+                    <span class="value">(${device.x.toFixed(1)}, ${device.y.toFixed(1)}, ${device.z.toFixed(1)})</span>
                 </div>
                 <div class="device-detail">
                     <span class="label">IP Address:</span>
@@ -933,27 +965,13 @@
 
         // Toggle auto refresh
         function toggleAutoRefresh() {
-            const checkbox = document.getElementById('auto-refresh');
-            if (checkbox) {
-                checkbox.checked = !checkbox.checked;
-                if (checkbox.checked) {
-                    startAutoRefresh();
-                } else {
-                    stopAutoRefresh();
-                }
-            }
-        }
-
-        // Start auto refresh
-        function startAutoRefresh() {
-            refreshInterval = setInterval(loadSampleData, 10000);
-        }
-
-        // Stop auto refresh
-        function stopAutoRefresh() {
             if (refreshInterval) {
                 clearInterval(refreshInterval);
                 refreshInterval = null;
+                console.log('Auto refresh stopped');
+            } else {
+                refreshInterval = setInterval(loadSampleData, 10000);
+                console.log('Auto refresh started');
             }
         }
 
@@ -963,19 +981,22 @@
             document.getElementById('current-time').textContent = now.toLocaleTimeString();
         }
 
-        // Adjust brightness (placeholder)
-        function adjustBrightness() {
-            console.log('Adjusting brightness...');
-        }
-
-        // Adjust contrast (placeholder)
-        function adjustContrast() {
-            console.log('Adjusting contrast...');
-        }
-
         // Export data (placeholder)
         function exportData() {
             console.log('Exporting data...');
+            const data = {
+                network: sampleNetworkData,
+                research: researchData,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'slms-network-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         // Initialize when DOM is ready
@@ -996,7 +1017,9 @@
             if (initializationTimeout) {
                 clearTimeout(initializationTimeout);
             }
-            stopAutoRefresh();
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
         });
     </script>
 </body>

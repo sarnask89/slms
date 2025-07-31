@@ -1,0 +1,1332 @@
+// SLMS WebGL Interface - Enhanced Module Management
+class SLMSWebGLInterface {
+    constructor() {
+        console.log('SLMSWebGLInterface constructor called');
+        
+        this.currentModule = null;
+        this.webglScene = null;
+        this.webglRenderer = null;
+        this.webglCamera = null;
+        this.animationId = null;
+        this.stats = {
+            clients: 0,
+            devices: 0,
+            networks: 0,
+            alerts: 0
+        };
+        this.moduleData = {};
+        this.apiBaseUrl = 'webgl_api.php';
+        this.moduleApiUrl = 'webgl_module_integration.php';
+        
+        console.log('Module API URL:', this.moduleApiUrl);
+        console.log('API Base URL:', this.apiBaseUrl);
+        
+        this.init();
+    }
+
+    init() {
+        console.log('Initializing SLMSWebGLInterface...');
+        
+        this.initializeWebGL();
+        this.initializeEventListeners();
+        this.updateSystemStats();
+        this.hideLoading();
+        this.startClock();
+        this.loadInitialData();
+        
+        console.log('SLMSWebGLInterface initialization complete');
+    }
+
+    initializeWebGL() {
+        const canvas = document.getElementById('webgl-canvas');
+        if (!canvas) {
+            console.error('WebGL canvas not found');
+            return;
+        }
+
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        
+        if (!gl) {
+            console.error('WebGL not supported');
+            document.getElementById('webgl-version').textContent = 'Not Supported';
+            return;
+        }
+
+        // Get WebGL version
+        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+        const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Unknown';
+        document.getElementById('webgl-version').textContent = renderer;
+
+        // Initialize Three.js
+        this.webglScene = new THREE.Scene();
+        this.webglScene.background = new THREE.Color(0x000000);
+
+        this.webglCamera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 1000);
+        this.webglCamera.position.z = 5;
+
+        this.webglRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        this.webglRenderer.setSize(canvas.width, canvas.height);
+        this.webglRenderer.setPixelRatio(window.devicePixelRatio);
+
+        // Add ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        this.webglScene.add(ambientLight);
+
+        // Add directional light
+        const directionalLight = new THREE.DirectionalLight(0x00d4ff, 1);
+        directionalLight.position.set(5, 5, 5);
+        this.webglScene.add(directionalLight);
+
+        // Create initial network visualization
+        this.createNetworkVisualization();
+
+        // Start animation loop
+        this.animate();
+    }
+
+    createNetworkVisualization() {
+        // Clear existing objects
+        while(this.webglScene.children.length > 0) { 
+            this.webglScene.remove(this.webglScene.children[0]); 
+        }
+
+        // Add lights back
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        this.webglScene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0x00d4ff, 1);
+        directionalLight.position.set(5, 5, 5);
+        this.webglScene.add(directionalLight);
+
+        // Create network nodes (representing devices)
+        const geometry = new THREE.SphereGeometry(0.1, 32, 32);
+        const material = new THREE.MeshPhongMaterial({ color: 0x00d4ff });
+
+        for (let i = 0; i < 10; i++) {
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.x = (Math.random() - 0.5) * 10;
+            sphere.position.y = (Math.random() - 0.5) * 10;
+            sphere.position.z = (Math.random() - 0.5) * 10;
+            this.webglScene.add(sphere);
+        }
+
+        // Create connection lines
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ff88 });
+        for (let i = 0; i < 5; i++) {
+            const points = [];
+            points.push(new THREE.Vector3(
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10
+            ));
+            points.push(new THREE.Vector3(
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10
+            ));
+
+            const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            const line = new THREE.Line(lineGeometry, lineMaterial);
+            this.webglScene.add(line);
+        }
+    }
+
+    animate() {
+        this.animationId = requestAnimationFrame(() => this.animate());
+        
+        // Rotate the scene
+        this.webglScene.rotation.y += 0.005;
+        
+        this.webglRenderer.render(this.webglScene, this.webglCamera);
+    }
+
+    initializeEventListeners() {
+        // Menu item clicks
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const module = item.getAttribute('data-module');
+                this.loadModule(module);
+            });
+        });
+
+        // Window resize
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('webgl-canvas');
+            const container = document.getElementById('webgl-container');
+            
+            if (canvas && container) {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            if (this.webglCamera && this.webglRenderer) {
+                this.webglCamera.aspect = canvas.width / canvas.height;
+                this.webglCamera.updateProjectionMatrix();
+                this.webglRenderer.setSize(canvas.width, canvas.height);
+                }
+            }
+        });
+
+        // Quick action buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-action]')) {
+                const action = e.target.getAttribute('data-action');
+                this.handleQuickAction(action);
+            }
+        });
+    }
+
+    async loadModule(moduleName) {
+        console.log('Loading module:', moduleName);
+        
+        // Update active menu item
+        const menuItems = document.querySelectorAll('.menu-item');
+        if (menuItems.length > 0) {
+            menuItems.forEach(item => {
+            item.classList.remove('active');
+        });
+        }
+        
+        const activeMenuItem = document.querySelector(`[data-module="${moduleName}"]`);
+        if (activeMenuItem) {
+            activeMenuItem.classList.add('active');
+        }
+
+        // Update current module
+        this.currentModule = moduleName;
+        const currentModuleElement = document.getElementById('current-module');
+        if (currentModuleElement) {
+            currentModuleElement.textContent = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
+        }
+        
+        const currentStatusElement = document.getElementById('current-status');
+        if (currentStatusElement) {
+            currentStatusElement.textContent = 'Loading module...';
+        }
+
+        try {
+            console.log('Fetching module data for:', moduleName);
+            // Load module data
+            const response = await this.fetchModuleData(moduleName);
+            console.log('Module data response:', response);
+            
+            if (response.success) {
+                this.moduleData[moduleName] = response.data;
+                console.log('Module data loaded:', response.data);
+                this.updateVisualizationForModule(moduleName);
+                const statusElement = document.getElementById('current-status');
+                if (statusElement) {
+                    statusElement.textContent = 'Module loaded';
+                }
+                this.updateLastUpdate();
+                
+                // Update statistics
+                this.updateModuleStats(moduleName, response.data);
+            } else {
+                const statusElement = document.getElementById('current-status');
+                if (statusElement) {
+                    statusElement.textContent = 'Error loading module';
+                }
+                console.error('Module load error:', response.message);
+            }
+        } catch (error) {
+            const statusElement = document.getElementById('current-status');
+            if (statusElement) {
+                statusElement.textContent = 'Error loading module';
+            }
+            console.error('Module load error:', error);
+        }
+    }
+
+    async fetchModuleData(moduleName) {
+        const url = `${this.moduleApiUrl}?action=get_module_data&module=${moduleName}`;
+        console.log('Fetching from URL:', url);
+        
+        try {
+            const response = await fetch(url);
+            console.log('Fetch response status:', response.status);
+            console.log('Fetch response ok:', response.ok);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Parsed JSON data:', data);
+            return data;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            throw error;
+        }
+    }
+
+    updateVisualizationForModule(moduleName) {
+        // Display real data instead of WebGL visualization
+        this.displayModuleData(moduleName);
+    }
+
+    displayModuleData(moduleName) {
+        const mainContainer = document.querySelector('.console-main');
+        if (!mainContainer) return;
+
+        const data = this.moduleData[moduleName];
+        if (!data || !Array.isArray(data)) {
+            mainContainer.innerHTML = '<div class="no-data">No data available for this module</div>';
+            return;
+        }
+
+        switch(moduleName) {
+            case 'clients':
+                this.displayClientsTable(data);
+                break;
+            case 'devices':
+                this.displayDevicesTable(data);
+                break;
+            case 'networks':
+                this.displayNetworksTable(data);
+                break;
+            case 'invoices':
+                this.displayInvoicesTable(data);
+                break;
+            case 'users':
+                this.displayUsersTable(data);
+                break;
+            case 'services':
+                this.displayServicesTable(data);
+                break;
+            case 'alerts':
+                this.displayAlertsTable(data);
+                break;
+            case 'dhcp':
+                this.displayDHCPTable(data);
+                break;
+            case 'snmp':
+                this.displaySNMPTable(data);
+                break;
+            case 'cacti':
+                this.displayCactiTable(data);
+                break;
+            default:
+                this.displayGenericTable(data, moduleName);
+                break;
+        }
+    }
+
+    displayClientsTable(data) {
+        const mainContainer = document.querySelector('.console-main');
+        const tableHTML = `
+            <div class="data-container">
+                <div class="data-header">
+                    <h3>📋 Clients Management</h3>
+                    <button class="btn-3d" onclick="addNewClient()">➕ Add New Client</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(client => `
+                                <tr>
+                                    <td>${client.id}</td>
+                                    <td>${client.name || `${client.first_name || ''} ${client.last_name || ''}`.trim() || '-'}</td>
+                                    <td>${client.email || '-'}</td>
+                                    <td>${client.phone || '-'}</td>
+                                    <td>${client.address || '-'}</td>
+                                    <td>${client.city || '-'}</td>
+                                    <td><span class="status-badge ${client.status}">${client.status}</span></td>
+                                    <td>${new Date(client.created_at).toLocaleDateString()}</td>
+                                    <td>
+                                        <button class="btn-small" onclick="editClient(${client.id})">✏️</button>
+                                        <button class="btn-small" onclick="deleteClient(${client.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="data-footer">
+                    <span>Total: ${data.length} clients</span>
+                </div>
+            </div>
+        `;
+        mainContainer.innerHTML = tableHTML;
+    }
+
+    displayDevicesTable(data) {
+        const mainContainer = document.querySelector('.console-main');
+        const tableHTML = `
+            <div class="data-container">
+                <div class="data-header">
+                    <h3>🖥️ Device Management</h3>
+                    <button class="btn-3d" onclick="addNewDevice()">➕ Add New Device</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>IP Address</th>
+                                <th>MAC Address</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(device => `
+                                <tr>
+                                    <td>${device.id}</td>
+                                    <td>${device.name}</td>
+                                    <td><span class="type-badge ${device.type}">${device.type}</span></td>
+                                    <td>${device.ip_address || '-'}</td>
+                                    <td>${device.mac_address || '-'}</td>
+                                    <td>${device.location || '-'}</td>
+                                    <td><span class="status-badge ${device.status}">${device.status}</span></td>
+                                    <td>${new Date(device.created_at).toLocaleDateString()}</td>
+                                    <td>
+                                        <button class="btn-small" onclick="editDevice(${device.id})">✏️</button>
+                                        <button class="btn-small" onclick="deleteDevice(${device.id})">🗑️</button>
+                                        <button class="btn-small" onclick="pingDevice(${device.id})">📡</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="data-footer">
+                    <span>Total: ${data.length} devices</span>
+                </div>
+            </div>
+        `;
+        mainContainer.innerHTML = tableHTML;
+    }
+
+    displayGenericTable(data, moduleName) {
+        const mainContainer = document.querySelector('.console-main');
+        if (!data || data.length === 0) {
+            mainContainer.innerHTML = `<div class="no-data">No data available for ${moduleName}</div>`;
+            return;
+        }
+
+        const columns = Object.keys(data[0]);
+        const tableHTML = `
+            <div class="data-container">
+                <div class="data-header">
+                    <h3>📊 ${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)} Management</h3>
+                    <button class="btn-3d" onclick="addNew${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}()">➕ Add New</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                ${columns.map(col => `<th>${col.charAt(0).toUpperCase() + col.slice(1)}</th>`).join('')}
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(row => `
+                                <tr>
+                                    ${columns.map(col => `<td>${row[col] || '-'}</td>`).join('')}
+                                    <td>
+                                        <button class="btn-small" onclick="edit${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}(${row.id})">✏️</button>
+                                        <button class="btn-small" onclick="delete${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}(${row.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="data-footer">
+                    <span>Total: ${data.length} records</span>
+                </div>
+            </div>
+        `;
+        mainContainer.innerHTML = tableHTML;
+    }
+
+    // Client management functions
+    async editClient(clientId) {
+        const client = this.moduleData.clients?.find(c => c.id == clientId);
+        if (!client) {
+            alert('Client not found');
+            return;
+        }
+
+        const firstName = prompt('Enter first name:', client.first_name);
+        if (!firstName) return;
+        
+        const lastName = prompt('Enter last name:', client.last_name);
+        if (!lastName) return;
+        
+        const email = prompt('Enter email:', client.email);
+        if (!email) return;
+        
+        const phone = prompt('Enter phone:', client.phone);
+        const address = prompt('Enter address:', client.address);
+        const city = prompt('Enter city:', client.city);
+        
+        try {
+            const formData = new URLSearchParams();
+            formData.append('action', 'execute_module_function');
+            formData.append('module', 'clients');
+            formData.append('function', 'edit');
+            formData.append('id', clientId);
+            formData.append('first_name', firstName);
+            formData.append('last_name', lastName);
+            formData.append('email', email);
+            if (phone) formData.append('phone', phone);
+            if (address) formData.append('address', address);
+            if (city) formData.append('city', city);
+            
+            const response = await fetch(this.moduleApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString()
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert('Client updated successfully!');
+                this.refreshData();
+            } else {
+                alert('Error updating client: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error updating client: ' + error.message);
+        }
+    }
+
+    async deleteClient(clientId) {
+        if (!confirm('Are you sure you want to delete this client?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(this.moduleApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=execute_module_function&module=clients&function=delete&id=${clientId}`
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert('Client deleted successfully!');
+                this.refreshData();
+            } else {
+                alert('Error deleting client: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error deleting client: ' + error.message);
+        }
+    }
+
+    // Device management functions
+    async editDevice(deviceId) {
+        const device = this.moduleData.devices?.find(d => d.id == deviceId);
+        if (!device) {
+            alert('Device not found');
+            return;
+        }
+
+        const name = prompt('Enter device name:', device.name);
+        if (!name) return;
+        
+        const type = prompt('Enter device type (router/switch/server/access_point/firewall/other):', device.type);
+        if (!type) return;
+        
+        const ipAddress = prompt('Enter IP address:', device.ip_address);
+        const macAddress = prompt('Enter MAC address:', device.mac_address);
+        const location = prompt('Enter location:', device.location);
+        
+        try {
+            const formData = new URLSearchParams();
+            formData.append('action', 'execute_module_function');
+            formData.append('module', 'devices');
+            formData.append('function', 'edit');
+            formData.append('id', deviceId);
+            formData.append('name', name);
+            formData.append('type', type);
+            if (ipAddress) formData.append('ip_address', ipAddress);
+            if (macAddress) formData.append('mac_address', macAddress);
+            if (location) formData.append('location', location);
+            
+            const response = await fetch(this.moduleApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString()
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert('Device updated successfully!');
+                this.refreshData();
+            } else {
+                alert('Error updating device: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error updating device: ' + error.message);
+        }
+    }
+
+    async deleteDevice(deviceId) {
+        if (!confirm('Are you sure you want to delete this device?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(this.moduleApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=execute_module_function&module=devices&function=delete&id=${deviceId}`
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert('Device deleted successfully!');
+                this.refreshData();
+            } else {
+                alert('Error deleting device: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error deleting device: ' + error.message);
+        }
+    }
+
+    async pingDevice(deviceId) {
+        const device = this.moduleData.devices?.find(d => d.id == deviceId);
+        if (!device) {
+            alert('Device not found');
+            return;
+        }
+
+        if (!device.ip_address) {
+            alert('No IP address configured for this device');
+            return;
+        }
+
+        try {
+            const response = await fetch(this.moduleApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=execute_module_function&module=devices&function=ping&id=${deviceId}&ip=${device.ip_address}`
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert(`Ping result: ${result.message}`);
+            } else {
+                alert('Ping failed: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error pinging device: ' + error.message);
+        }
+    }
+
+    // Universal Search Function
+    async performUniversalSearch(searchTerm, searchModule = 'all') {
+        const searchResultsContainer = document.getElementById('search-results');
+        searchResultsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Searching...</div>';
+        searchResultsContainer.classList.add('active');
+
+        try {
+            let allResults = [];
+            
+            // Define searchable modules
+            const searchableModules = searchModule === 'all' 
+                ? ['clients', 'devices', 'networks', 'users', 'services', 'alerts']
+                : [searchModule];
+
+            // Search in each module
+            for (const moduleName of searchableModules) {
+                if (this.moduleData[moduleName]) {
+                    const moduleResults = this.searchInModule(moduleName, searchTerm);
+                    allResults = allResults.concat(moduleResults);
+                }
+            }
+
+            // Display results
+            this.displaySearchResults(allResults, searchTerm);
+            
+        } catch (error) {
+            console.error('Search error:', error);
+            searchResultsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #ff4444;">Search error: ' + error.message + '</div>';
+        }
+    }
+
+    searchInModule(moduleName, searchTerm) {
+        const results = [];
+        const data = this.moduleData[moduleName];
+        
+        if (!data || !Array.isArray(data)) return results;
+
+        const searchLower = searchTerm.toLowerCase();
+        
+        data.forEach(item => {
+            let matchFound = false;
+            let matchDetails = '';
+
+            // Search in all fields
+            Object.keys(item).forEach(key => {
+                const value = String(item[key] || '').toLowerCase();
+                if (value.includes(searchLower)) {
+                    matchFound = true;
+                    matchDetails += `${key}: ${item[key]}, `;
+                }
+            });
+
+            if (matchFound) {
+                results.push({
+                    module: moduleName,
+                    item: item,
+                    details: matchDetails.slice(0, -2) // Remove last comma and space
+                });
+            }
+        });
+
+        return results;
+    }
+
+    displaySearchResults(results, searchTerm) {
+        const searchResultsContainer = document.getElementById('search-results');
+        
+        if (results.length === 0) {
+            searchResultsContainer.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: #888;">
+                    No results found for "${searchTerm}"
+                </div>
+            `;
+            return;
+        }
+
+        const resultsHTML = results.map(result => {
+            const item = result.item;
+            let title = '';
+            let subtitle = '';
+
+            // Generate title and subtitle based on module type
+            switch (result.module) {
+                case 'clients':
+                    title = `${item.first_name} ${item.last_name}`;
+                    subtitle = `Email: ${item.email || 'N/A'} | Phone: ${item.phone || 'N/A'}`;
+                    break;
+                case 'devices':
+                    title = item.name;
+                    subtitle = `Type: ${item.type} | IP: ${item.ip_address || 'N/A'} | Status: ${item.status}`;
+                    break;
+                case 'networks':
+                    title = item.name || item.network_name || 'Network';
+                    subtitle = `Subnet: ${item.subnet || 'N/A'} | Status: ${item.status || 'N/A'}`;
+                    break;
+                case 'users':
+                    title = item.username || item.name || 'User';
+                    subtitle = `Email: ${item.email || 'N/A'} | Role: ${item.role || 'N/A'}`;
+                    break;
+                case 'services':
+                    title = item.name || item.service_name || 'Service';
+                    subtitle = `Type: ${item.type || 'N/A'} | Status: ${item.status || 'N/A'}`;
+                    break;
+                case 'alerts':
+                    title = item.title || item.message || 'Alert';
+                    subtitle = `Severity: ${item.severity || 'N/A'} | Status: ${item.status || 'N/A'}`;
+                    break;
+                default:
+                    title = item.name || item.title || 'Item';
+                    subtitle = result.details;
+            }
+
+            return `
+                <div class="search-result-item" onclick="navigateToSearchResult('${result.module}', ${item.id})">
+                    <div class="search-result-title">
+                        ${title}
+                        <span class="search-result-module">${result.module}</span>
+                    </div>
+                    <div class="search-result-details">${subtitle}</div>
+                </div>
+            `;
+        }).join('');
+
+        searchResultsContainer.innerHTML = `
+            <div style="padding: 10px 15px; background: #1a1a1a; border-bottom: 1px solid #333; font-weight: bold; color: #00d4ff;">
+                Found ${results.length} result(s) for "${searchTerm}"
+            </div>
+            ${resultsHTML}
+        `;
+    }
+                this.addCactiVisualization();
+                break;
+            case 'mikrotik':
+                this.addMikrotikVisualization();
+                break;
+            default:
+                // Default network visualization
+                break;
+        }
+    }
+
+    addClientVisualization() {
+        const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+        const material = new THREE.MeshPhongMaterial({ color: 0x00ff88 });
+        
+        const clientData = this.moduleData['clients'] || [];
+        const count = Math.min(clientData.length, 10);
+        
+        for (let i = 0; i < count; i++) {
+            const cube = new THREE.Mesh(geometry, material);
+            cube.position.x = (Math.random() - 0.5) * 8;
+            cube.position.y = (Math.random() - 0.5) * 8;
+            cube.position.z = (Math.random() - 0.5) * 8;
+            this.webglScene.add(cube);
+        }
+    }
+
+    addDeviceVisualization() {
+        const geometry = new THREE.CylinderGeometry(0.1, 0.1, 0.3, 8);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff6b35 });
+        
+        const deviceData = this.moduleData['devices'] || [];
+        const count = Math.min(deviceData.length, 10);
+        
+        for (let i = 0; i < count; i++) {
+            const cylinder = new THREE.Mesh(geometry, material);
+            cylinder.position.x = (Math.random() - 0.5) * 8;
+            cylinder.position.y = (Math.random() - 0.5) * 8;
+            cylinder.position.z = (Math.random() - 0.5) * 8;
+            this.webglScene.add(cylinder);
+        }
+    }
+
+    addNetworkVisualization() {
+        const geometry = new THREE.TorusGeometry(2, 0.1, 16, 100);
+        const material = new THREE.MeshPhongMaterial({ color: 0x8b5cf6 });
+        const torus = new THREE.Mesh(geometry, material);
+        this.webglScene.add(torus);
+    }
+
+    addInvoiceVisualization() {
+        const geometry = new THREE.PlaneGeometry(0.3, 0.2);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff4757 });
+        
+        const invoiceData = this.moduleData['invoices'] || [];
+        const count = Math.min(invoiceData.length, 10);
+        
+        for (let i = 0; i < count; i++) {
+            const plane = new THREE.Mesh(geometry, material);
+            plane.position.x = (Math.random() - 0.5) * 8;
+            plane.position.y = (Math.random() - 0.5) * 8;
+            plane.position.z = (Math.random() - 0.5) * 8;
+            plane.rotation.x = Math.random() * Math.PI;
+            plane.rotation.y = Math.random() * Math.PI;
+            this.webglScene.add(plane);
+        }
+    }
+
+    addDashboardVisualization() {
+        // Create a more complex visualization with multiple elements
+        const geometries = [
+            new THREE.SphereGeometry(0.15, 32, 32),
+            new THREE.BoxGeometry(0.2, 0.2, 0.2),
+            new THREE.CylinderGeometry(0.1, 0.1, 0.3, 8)
+        ];
+        
+        const materials = [
+            new THREE.MeshPhongMaterial({ color: 0x00d4ff }),
+            new THREE.MeshPhongMaterial({ color: 0x00ff88 }),
+            new THREE.MeshPhongMaterial({ color: 0xff6b35 })
+        ];
+        
+        for (let i = 0; i < 12; i++) {
+            const geometry = geometries[i % geometries.length];
+            const material = materials[i % materials.length];
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = (Math.random() - 0.5) * 10;
+            mesh.position.y = (Math.random() - 0.5) * 10;
+            mesh.position.z = (Math.random() - 0.5) * 10;
+            this.webglScene.add(mesh);
+        }
+    }
+
+    addUserVisualization() {
+        const geometry = new THREE.OctahedronGeometry(0.15);
+        const material = new THREE.MeshPhongMaterial({ color: 0x00d4ff });
+        
+        const userData = this.moduleData['users'] || [];
+        const count = Math.min(userData.length, 8);
+        
+        for (let i = 0; i < count; i++) {
+            const octahedron = new THREE.Mesh(geometry, material);
+            octahedron.position.x = (Math.random() - 0.5) * 8;
+            octahedron.position.y = (Math.random() - 0.5) * 8;
+            octahedron.position.z = (Math.random() - 0.5) * 8;
+            this.webglScene.add(octahedron);
+        }
+    }
+
+    addServiceVisualization() {
+        const geometry = new THREE.DodecahedronGeometry(0.12);
+        const material = new THREE.MeshPhongMaterial({ color: 0x00ff88 });
+        
+        const serviceData = this.moduleData['services'] || [];
+        const count = Math.min(serviceData.length, 6);
+        
+        for (let i = 0; i < count; i++) {
+            const dodecahedron = new THREE.Mesh(geometry, material);
+            dodecahedron.position.x = (Math.random() - 0.5) * 8;
+            dodecahedron.position.y = (Math.random() - 0.5) * 8;
+            dodecahedron.position.z = (Math.random() - 0.5) * 8;
+            this.webglScene.add(dodecahedron);
+        }
+    }
+
+    addAlertVisualization() {
+        const geometry = new THREE.TetrahedronGeometry(0.15);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff4757 });
+        
+        const alertData = this.moduleData['alerts'] || [];
+        const count = Math.min(alertData.length, 5);
+        
+        for (let i = 0; i < count; i++) {
+            const tetrahedron = new THREE.Mesh(geometry, material);
+            tetrahedron.position.x = (Math.random() - 0.5) * 8;
+            tetrahedron.position.y = (Math.random() - 0.5) * 8;
+            tetrahedron.position.z = (Math.random() - 0.5) * 8;
+            this.webglScene.add(tetrahedron);
+        }
+    }
+
+    addDHCPVisualization() {
+        const geometry = new THREE.SphereGeometry(0.08, 16, 16);
+        const material = new THREE.MeshPhongMaterial({ color: 0x00d4ff });
+        
+        for (let i = 0; i < 15; i++) {
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.x = (Math.random() - 0.5) * 10;
+            sphere.position.y = (Math.random() - 0.5) * 10;
+            sphere.position.z = (Math.random() - 0.5) * 10;
+            this.webglScene.add(sphere);
+        }
+    }
+
+    addSNMPVisualization() {
+        const geometry = new THREE.ConeGeometry(0.1, 0.2, 8);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff6b35 });
+        
+        for (let i = 0; i < 8; i++) {
+            const cone = new THREE.Mesh(geometry, material);
+            cone.position.x = (Math.random() - 0.5) * 8;
+            cone.position.y = (Math.random() - 0.5) * 8;
+            cone.position.z = (Math.random() - 0.5) * 8;
+            this.webglScene.add(cone);
+        }
+    }
+
+    addCactiVisualization() {
+        const geometry = new THREE.RingGeometry(0.5, 0.7, 32);
+        const material = new THREE.MeshPhongMaterial({ color: 0x8b5cf6 });
+        
+        for (let i = 0; i < 3; i++) {
+            const ring = new THREE.Mesh(geometry, material);
+            ring.position.x = (Math.random() - 0.5) * 6;
+            ring.position.y = (Math.random() - 0.5) * 6;
+            ring.position.z = (Math.random() - 0.5) * 6;
+            ring.rotation.x = Math.random() * Math.PI;
+            ring.rotation.y = Math.random() * Math.PI;
+            this.webglScene.add(ring);
+        }
+    }
+
+    addMikrotikVisualization() {
+        const geometry = new THREE.BoxGeometry(0.25, 0.15, 0.1);
+        const material = new THREE.MeshPhongMaterial({ color: 0x00ff88 });
+        
+        for (let i = 0; i < 4; i++) {
+            const box = new THREE.Mesh(geometry, material);
+            box.position.x = (Math.random() - 0.5) * 6;
+            box.position.y = (Math.random() - 0.5) * 6;
+            box.position.z = (Math.random() - 0.5) * 6;
+            box.rotation.x = Math.random() * Math.PI;
+            box.rotation.y = Math.random() * Math.PI;
+            this.webglScene.add(box);
+        }
+    }
+
+    async updateSystemStats() {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}?action=get_stats`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.stats = data.data;
+                
+                const clientCountElement = document.getElementById('client-count');
+                const deviceCountElement = document.getElementById('device-count');
+                const networkCountElement = document.getElementById('network-count');
+                const alertCountElement = document.getElementById('alert-count');
+                
+                if (clientCountElement) clientCountElement.textContent = this.stats.clients;
+                if (deviceCountElement) deviceCountElement.textContent = this.stats.devices;
+                if (networkCountElement) networkCountElement.textContent = this.stats.networks;
+                if (alertCountElement) alertCountElement.textContent = this.stats.alerts;
+            }
+        } catch (error) {
+            console.error('Error updating stats:', error);
+        }
+
+        // Update every 10 seconds
+        setTimeout(() => this.updateSystemStats(), 10000);
+    }
+
+    updateModuleStats(moduleName, data) {
+        const count = data.length || 0;
+        
+        // Update specific module statistics if available
+        switch(moduleName) {
+            case 'clients':
+                const clientElement = document.getElementById('client-count');
+                if (clientElement) clientElement.textContent = count;
+                break;
+            case 'devices':
+                const deviceElement = document.getElementById('device-count');
+                if (deviceElement) deviceElement.textContent = count;
+                break;
+            case 'networks':
+                const networkElement = document.getElementById('network-count');
+                if (networkElement) networkElement.textContent = count;
+                break;
+            case 'alerts':
+                const alertElement = document.getElementById('alert-count');
+                if (alertElement) alertElement.textContent = count;
+                break;
+        }
+    }
+
+    async loadInitialData() {
+        // Load clients data by default
+        await this.loadModule('clients');
+    }
+
+    handleQuickAction(action) {
+        switch(action) {
+            case 'add_client':
+                this.addNewClient();
+                break;
+            case 'add_device':
+                this.addNewDevice();
+                break;
+            case 'generate_report':
+                this.generateReport();
+                break;
+            case 'refresh_data':
+                this.refreshData();
+                break;
+            case 'toggle_webgl':
+                this.toggleWebGL();
+                break;
+            case 'reset_view':
+                this.resetView();
+                break;
+            case 'export_data':
+                this.exportData();
+                break;
+            case 'system_status':
+                this.systemStatus();
+                break;
+        }
+    }
+
+    async addNewClient() {
+        const name = prompt('Enter client name:');
+        if (!name) return;
+        
+        const email = prompt('Enter client email (optional):');
+        const phone = prompt('Enter client phone (optional):');
+        const address = prompt('Enter client address (optional):');
+        const city = prompt('Enter client city (optional):');
+        
+        try {
+            const formData = new URLSearchParams();
+            formData.append('action', 'execute_module_function');
+            formData.append('module', 'clients');
+            formData.append('function', 'add');
+            formData.append('name', name);
+            if (email) formData.append('email', email);
+            if (phone) formData.append('phone', phone);
+            if (address) formData.append('address', address);
+            if (city) formData.append('city', city);
+            
+            const response = await fetch(this.moduleApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString()
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert('Client added successfully!');
+                this.refreshData();
+            } else {
+                alert('Error adding client: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error adding client: ' + error.message);
+        }
+    }
+
+    async addNewDevice() {
+        const name = prompt('Enter device name:');
+        if (!name) return;
+        
+        const type = prompt('Enter device type (router/switch/server/access_point/firewall/other):');
+        if (!type) return;
+        
+        const ipAddress = prompt('Enter IP address (optional):');
+        const macAddress = prompt('Enter MAC address (optional):');
+        const location = prompt('Enter location (optional):');
+        const model = prompt('Enter device model (optional):');
+        
+        try {
+            const formData = new URLSearchParams();
+            formData.append('action', 'execute_module_function');
+            formData.append('module', 'devices');
+            formData.append('function', 'add');
+            formData.append('name', name);
+            formData.append('type', type);
+            if (ipAddress) formData.append('ip_address', ipAddress);
+            if (macAddress) formData.append('mac_address', macAddress);
+            if (location) formData.append('location', location);
+            if (model) formData.append('model', model);
+            
+            const response = await fetch(this.moduleApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString()
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert('Device added successfully!');
+                this.refreshData();
+            } else {
+                alert('Error adding device: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error adding device: ' + error.message);
+        }
+    }
+
+    async generateReport() {
+        if (!this.currentModule) {
+            alert('Please select a module first');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${this.moduleApiUrl}?action=export_module_data&module=${this.currentModule}&format=json`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = result.filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('Report generated successfully!');
+            } else {
+                alert('Error generating report: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error generating report: ' + error.message);
+        }
+    }
+
+    async refreshData() {
+        if (this.currentModule) {
+            await this.loadModule(this.currentModule);
+        }
+        this.updateSystemStats();
+        document.getElementById('current-status').textContent = 'Data refreshed';
+        this.updateLastUpdate();
+    }
+
+    toggleWebGL() {
+        const canvas = document.getElementById('webgl-canvas');
+        if (canvas.style.display === 'none') {
+            canvas.style.display = 'block';
+            this.animate();
+        } else {
+            canvas.style.display = 'none';
+            if (this.animationId) {
+                cancelAnimationFrame(this.animationId);
+            }
+        }
+    }
+
+    resetView() {
+        if (this.webglCamera) {
+            this.webglCamera.position.set(0, 0, 5);
+            this.webglCamera.lookAt(0, 0, 0);
+        }
+        if (this.webglScene) {
+            this.webglScene.rotation.set(0, 0, 0);
+        }
+    }
+
+    async exportData() {
+        if (!this.currentModule) {
+            alert('Please select a module first');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${this.moduleApiUrl}?action=export_module_data&module=${this.currentModule}&format=csv`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const blob = new Blob([result.data], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = result.filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('Data exported successfully!');
+            } else {
+                alert('Error exporting data: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error exporting data: ' + error.message);
+        }
+    }
+
+    async systemStatus() {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}?action=system_status`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const status = result.data;
+                alert(`System Status:\n` +
+                      `WebGL Support: ${status.webgl_support ? 'Yes' : 'No'}\n` +
+                      `PHP Version: ${status.php_version}\n` +
+                      `Database: ${status.database_connection}\n` +
+                      `Server Time: ${status.server_time}\n` +
+                      `Status: ${status.uptime}`);
+            } else {
+                alert('Error getting system status: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error getting system status: ' + error.message);
+        }
+    }
+
+    hideLoading() {
+        setTimeout(() => {
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.display = 'none';
+            }
+        }, 2000);
+    }
+
+    startClock() {
+        const updateClock = () => {
+            const now = new Date();
+            const timeElement = document.getElementById('current-time');
+            if (timeElement) {
+                timeElement.textContent = now.toLocaleTimeString();
+            }
+        };
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+
+    updateLastUpdate() {
+        const now = new Date();
+        const lastUpdateElement = document.getElementById('last-update');
+        if (lastUpdateElement) {
+            lastUpdateElement.textContent = now.toLocaleTimeString();
+        }
+    }
+}
+
+// Initialize the interface when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.slmsInterface = new SLMSWebGLInterface();
+});
+
+// Global functions for button actions
+function addNewClient() {
+    if (window.slmsInterface) {
+        window.slmsInterface.addNewClient();
+    }
+}
+
+function addNewDevice() {
+    if (window.slmsInterface) {
+        window.slmsInterface.addNewDevice();
+    }
+}
+
+function generateReport() {
+    if (window.slmsInterface) {
+        window.slmsInterface.generateReport();
+    }
+}
+
+function refreshData() {
+    if (window.slmsInterface) {
+        window.slmsInterface.refreshData();
+    }
+}
+
+function toggleWebGL() {
+    if (window.slmsInterface) {
+        window.slmsInterface.toggleWebGL();
+    }
+}
+
+function resetView() {
+    if (window.slmsInterface) {
+        window.slmsInterface.resetView();
+    }
+}
+
+function exportData() {
+    if (window.slmsInterface) {
+        window.slmsInterface.exportData();
+    }
+}
+
+function systemStatus() {
+    if (window.slmsInterface) {
+        window.slmsInterface.systemStatus();
+    }
+} 

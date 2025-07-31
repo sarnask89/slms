@@ -1,9 +1,10 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
-    if (php_sapi_name() !== "cli" && session_status() === PHP_SESSION_NONE) { if (php_sapi_name() !== "cli" && session_status() === PHP_SESSION_NONE) { session_start(); } }
+    session_start();
 }
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/helpers/auth_helper.php';
+require_once 'module_loader.php';
+
+require_once 'helpers/auth_helper.php';
 
 // Require admin access
 require_admin();
@@ -356,5 +357,5 @@ function getActionBadgeColor($action) {
 }
 
 $content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
+require_once '../partials/layout.php';
 ?> 

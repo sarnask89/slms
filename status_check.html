@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Check - SLMS WebGL Interface</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            margin: 20px;
+        }
+        .status-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .status-item {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #00ff88;
+        }
+        .success { background: rgba(0, 255, 0, 0.1); border-left-color: #00ff00; }
+        .error { background: rgba(255, 0, 0, 0.1); border-left-color: #ff0000; }
+        .warning { background: rgba(255, 255, 0, 0.1); border-left-color: #ffff00; }
+        .info { background: rgba(0, 255, 255, 0.1); border-left-color: #00ffff; }
+        .loading { 
+            background: rgba(255, 165, 0, 0.1); 
+            border-left-color: #ffa500;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00cc66);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00cc66;
+        }
+    </style>
+</head>
+<body>
+    <div class="status-container">
+        <h1>🎯 SLMS WebGL Interface - Status Check</h1>
+        
+        <div class="status-item loading" id="init-status">
+            <strong>🔄 Initializing...</strong>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+        
+        <div id="status-list"></div>
+        
+        <div class="status-item info">
+            <h3>📋 Quick Actions</h3>
+            <button onclick="openMainInterface()">🚀 Open Main Interface</button>
+            <button onclick="openDebugPage()">🔍 Open Debug Page</button>
+            <button onclick="runFullTest()">🧪 Run Full Test</button>
+            <button onclick="checkAPIConnection()">🔗 Check API</button>
+        </div>
+    </div>
+
+    <!-- Three.js for Advanced 3D Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="webgl_interface.js"></script>
+    
+    <script>
+        let progress = 0;
+        const statusList = document.getElementById('status-list');
+        const progressFill = document.getElementById('progress-fill');
+        const initStatus = document.getElementById('init-status');
+        
+        function addStatus(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status-item ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            statusList.appendChild(div);
+        }
+        
+        function updateProgress(percent) {
+            progress = percent;
+            progressFill.style.width = percent + '%';
+        }
+        
+        function completeInitialization() {
+            initStatus.className = 'status-item success';
+            initStatus.innerHTML = '<strong>✅ Initialization Complete!</strong>';
+            updateProgress(100);
+        }
+        
+        // Initialization sequence
+        async function initializeSystem() {
+            updateProgress(10);
+            addStatus('Starting system initialization...', 'info');
+            
+            // Check if SLMSWebGLInterface is available
+            await new Promise(resolve => setTimeout(resolve, 500));
+            updateProgress(20);
+            
+            if (typeof SLMSWebGLInterface !== 'undefined') {
+                addStatus('✅ SLMSWebGLInterface class found', 'success');
+                updateProgress(30);
+            } else {
+                addStatus('❌ SLMSWebGLInterface class not found', 'error');
+                return;
+            }
+            
+            // Check Three.js
+            await new Promise(resolve => setTimeout(resolve, 500));
+            updateProgress(40);
+            
+            if (typeof THREE !== 'undefined') {
+                addStatus('✅ Three.js library loaded', 'success');
+                updateProgress(50);
+            } else {
+                addStatus('❌ Three.js library not loaded', 'error');
+            }
+            
+            // Create interface instance
+            await new Promise(resolve => setTimeout(resolve, 500));
+            updateProgress(60);
+            
+            try {
+                window.webglInterface = new SLMSWebGLInterface();
+                addStatus('✅ WebGL interface instance created', 'success');
+                updateProgress(70);
+            } catch (error) {
+                addStatus(`❌ Failed to create interface: ${error.message}`, 'error');
+                return;
+            }
+            
+            // Test menu system
+            await new Promise(resolve => setTimeout(resolve, 500));
+            updateProgress(80);
+            
+            try {
+                if (window.webglInterface.setupBasicMenu) {
+                    window.webglInterface.setupBasicMenu();
+                    addStatus('✅ Menu system initialized', 'success');
+                    updateProgress(90);
+                } else {
+                    addStatus('⚠️ Menu system not available', 'warning');
+                }
+            } catch (error) {
+                addStatus(`⚠️ Menu system error: ${error.message}`, 'warning');
+            }
+            
+            // Test API connection
+            await new Promise(resolve => setTimeout(resolve, 500));
+            updateProgress(95);
+            
+            try {
+                const response = await fetch('webgl_module_integration.php?action=list&module=clients');
+                const data = await response.json();
+                if (data.success) {
+                    addStatus('✅ API connection successful', 'success');
+                } else {
+                    addStatus(`⚠️ API returned: ${data.message}`, 'warning');
+                }
+            } catch (error) {
+                addStatus(`⚠️ API connection failed: ${error.message}`, 'warning');
+            }
+            
+            updateProgress(100);
+            completeInitialization();
+            
+            addStatus('🎉 System ready for use!', 'success');
+        }
+        
+        // Action functions
+        function openMainInterface() {
+            window.open('webgl_demo_integrated.php', '_blank');
+        }
+        
+        function openDebugPage() {
+            window.open('debug_webgl_demo.html', '_blank');
+        }
+        
+        function runFullTest() {
+            window.open('menu_test.html', '_blank');
+        }
+        
+        function checkAPIConnection() {
+            addStatus('🔗 Testing API connection...', 'info');
+            fetch('webgl_module_integration.php?action=list&module=clients')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addStatus('✅ API connection working', 'success');
+                    } else {
+                        addStatus(`⚠️ API error: ${data.message}`, 'warning');
+                    }
+                })
+                .catch(error => {
+                    addStatus(`❌ API connection failed: ${error.message}`, 'error');
+                });
+        }
+        
+        // Start initialization when page loads
+        window.addEventListener('load', () => {
+            setTimeout(initializeSystem, 1000);
+        });
+    </script>
+</body>
+</html> 

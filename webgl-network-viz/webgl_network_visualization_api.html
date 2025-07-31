@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Scanner - WebGL Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #webgl-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            min-width: 300px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .control-panel h2 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .control-group select,
+        .control-group input,
+        .control-group button {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .control-group button {
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .control-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .control-group button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+            min-width: 250px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .status-panel h3 {
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .status-value {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        .device-info-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 0;
+            width: 600px;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .device-info-header {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            padding: 20px;
+            color: #000;
+            position: relative;
+        }
+
+        .device-info-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .device-info-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            color: #000;
+            font-size: 20px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .device-info-close:hover {
+            background: rgba(0, 0, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        .device-info-content {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .device-info-section {
+            margin-bottom: 25px;
+        }
+
+        .device-info-section h4 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .device-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .device-info-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .device-info-label {
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .device-info-value {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .device-status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .status-offline {
+            background: #ff4444;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+        }
+
+        .status-unknown {
+            background: #ffaa00;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+        }
+
+        .device-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .device-action-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .device-action-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .device-action-btn.primary {
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            color: #000;
+            border: none;
+        }
+
+        .device-action-btn.primary:hover {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+        }
+
+        .device-interfaces {
+            margin-top: 15px;
+        }
+
+        .interface-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .interface-name {
+            color: #00d4ff;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .interface-details {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .device-connections {
+            margin-top: 15px;
+        }
+
+        .connection-item {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .connection-direction {
+            color: #00ff88;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .connection-details {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .device-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1999;
+            display: none;
+        }
+
+        /* Device hover effects */
+        .device-mesh-hover {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Loading states for device info */
+        .device-info-loading {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* Error states */
+        .device-info-error {
+            color: #ff4444;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #333;
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+            color: #ffffff;
+            z-index: 3000;
+            display: none;
+        }
+
+        .error {
+            border-color: #ff4444;
+        }
+
+        .success {
+            border-color: #00ff88;
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #666;
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .legend h4 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .performance-panel {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #8b5cf6;
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .performance-panel h4 {
+            color: #8b5cf6;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .performance-item {
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="webgl-canvas"></canvas>
+        
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h2>Network Scanner Controls</h2>
+            
+            <div class="control-group">
+                <label for="api-url">API Server URL:</label>
+                <input type="text" id="api-url" value="http://localhost:8000" placeholder="API Server URL">
+            </div>
+            
+            <div class="control-group">
+                <label for="visualization-mode">Visualization Mode:</label>
+                <select id="visualization-mode">
+                    <option value="topology">Network Topology</option>
+                    <option value="devices">Device List</option>
+                    <option value="monitoring">Performance Monitoring</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="layout-algorithm">Layout Algorithm:</label>
+                <select id="layout-algorithm">
+                    <option value="force-directed">Force Directed</option>
+                    <option value="hierarchical">Hierarchical</option>
+                    <option value="circular">Circular</option>
+                    <option value="organic">Organic Growth</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button id="connect-btn">Connect to API</button>
+            </div>
+            
+            <div class="control-group">
+                <button id="refresh-btn" disabled>Refresh Data</button>
+            </div>
+            
+            <div class="control-group">
+                <button id="start-scan-btn" disabled>Start Network Scan</button>
+            </div>
+            
+            <div class="control-group">
+                <button id="toggle-animation-btn">Toggle Animation</button>
+            </div>
+        </div>
+        
+        <!-- Status Panel -->
+        <div class="status-panel">
+            <h3>Network Status</h3>
+            <div class="status-item">
+                <span>API Status:</span>
+                <span id="api-status" class="status-value">Disconnected</span>
+            </div>
+            <div class="status-item">
+                <span>Devices:</span>
+                <span id="device-count" class="status-value">0</span>
+            </div>
+            <div class="status-item">
+                <span>Connections:</span>
+                <span id="connection-count" class="status-value">0</span>
+            </div>
+            <div class="status-item">
+                <span>Interfaces:</span>
+                <span id="interface-count" class="status-value">0</span>
+            </div>
+            <div class="status-item">
+                <span>Online Devices:</span>
+                <span id="online-count" class="status-value">0</span>
+            </div>
+            <div class="status-item">
+                <span>Last Update:</span>
+                <span id="last-update" class="status-value">Never</span>
+            </div>
+        </div>
+        
+        <!-- Device Overlay -->
+        <div class="device-overlay" id="device-overlay"></div>
+        
+        <!-- Device Info Panel -->
+        <div class="device-info-panel" id="device-info-panel">
+            <div class="device-info-header">
+                <h3>Device Information</h3>
+                <button class="device-info-close" id="close-device-info">&times;</button>
+            </div>
+            <div class="device-info-content">
+                <div class="device-info-section">
+                    <h4>Basic Info</h4>
+                    <div class="device-info-grid">
+                        <div class="device-info-item">
+                            <span class="device-info-label">Hostname:</span>
+                            <span class="device-info-value" id="device-hostname"></span>
+                        </div>
+                        <div class="device-info-item">
+                            <span class="device-info-label">IP Address:</span>
+                            <span class="device-info-value" id="device-ip"></span>
+                        </div>
+                        <div class="device-info-item">
+                            <span class="device-info-label">Device Type:</span>
+                            <span class="device-info-value" id="device-type"></span>
+                        </div>
+                        <div class="device-info-item">
+                            <span class="device-info-label">Vendor:</span>
+                            <span class="device-info-value" id="device-vendor"></span>
+                        </div>
+                        <div class="device-info-item">
+                            <span class="device-info-label">Model:</span>
+                            <span class="device-info-value" id="device-model"></span>
+                        </div>
+                        <div class="device-info-item">
+                            <span class="device-info-label">Status:</span>
+                            <span class="device-info-value" id="device-status">
+                                <span class="device-status-indicator status-unknown"></span> Unknown
+                            </span>
+                        </div>
+                        <div class="device-info-item">
+                            <span class="device-info-label">Last Seen:</span>
+                            <span class="device-info-value" id="device-last-seen"></span>
+                        </div>
+                    </div>
+                </div>
+                                 <div class="device-info-section">
+                     <h4>Interfaces</h4>
+                     <div class="device-interfaces" id="device-interfaces">
+                         <p>Loading interfaces...</p>
+                     </div>
+                 </div>
+                                 <div class="device-info-section">
+                     <h4>Connections</h4>
+                     <div class="device-connections" id="device-connections">
+                         <p>Loading connections...</p>
+                     </div>
+                 </div>
+                <div class="device-actions">
+                    <button class="device-action-btn primary" id="scan-interfaces-btn">Scan Interfaces</button>
+                    <button class="device-action-btn" id="refresh-device-btn">Refresh Device</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Performance Panel -->
+        <div class="performance-panel">
+            <h4>Performance</h4>
+            <div class="performance-item">
+                <span>FPS: </span>
+                <span id="fps-counter">0</span>
+            </div>
+            <div class="performance-item">
+                <span>Draw Calls: </span>
+                <span id="draw-calls">0</span>
+            </div>
+            <div class="performance-item">
+                <span>Triangles: </span>
+                <span id="triangles">0</span>
+            </div>
+            <div class="performance-item">
+                <span>Memory: </span>
+                <span id="memory-usage">0 MB</span>
+            </div>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend">
+            <h4>Device Types</h4>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #00d4ff;"></div>
+                <span>Router</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #00ff88;"></div>
+                <span>Switch</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #8b5cf6;"></div>
+                <span>Server</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ff6b35;"></div>
+                <span>Other</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #666666;"></div>
+                <span>Offline</span>
+            </div>
+        </div>
+        
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loading-overlay">
+            <div class="loading-spinner"></div>
+        </div>
+        
+        <!-- Notification -->
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <!-- Three.js and dependencies -->
+    <script>
+        // Check if Three.js is loaded
+        function checkThreeJS() {
+            if (typeof THREE === 'undefined') {
+                console.error('Three.js library not loaded!');
+                document.getElementById('notification').innerHTML = 
+                    '<div class="alert alert-danger">Error: Three.js library failed to load. Please check your internet connection.</div>';
+                return false;
+            }
+            return true;
+        }
+    </script>
+    
+    <!-- Primary Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js" 
+            onerror="console.error('Primary Three.js CDN failed')"></script>
+    
+    <!-- Fallback Three.js CDN -->
+    <script>
+        if (typeof THREE === 'undefined') {
+            console.log('Loading fallback Three.js...');
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/three@0.158.0/build/three.min.js';
+            script.onload = function() {
+                console.log('Fallback Three.js loaded successfully');
+                loadOrbitControls();
+            };
+            script.onerror = function() {
+                console.log('CDN failed, trying local Three.js...');
+                loadLocalThreeJS();
+            };
+            document.head.appendChild(script);
+        } else {
+            loadOrbitControls();
+        }
+        
+        function loadLocalThreeJS() {
+            const script = document.createElement('script');
+            script.src = 'assets/js/three.min.js';
+            script.onload = function() {
+                console.log('Local Three.js loaded successfully');
+                loadOrbitControls();
+            };
+            script.onerror = function() {
+                console.error('All Three.js sources failed');
+                document.getElementById('notification').innerHTML = 
+                    '<div class="alert alert-danger">Critical Error: Unable to load Three.js library. Please check your internet connection.</div>';
+            };
+            document.head.appendChild(script);
+        }
+        
+        function loadOrbitControls() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js';
+            script.onload = function() {
+                console.log('OrbitControls loaded successfully');
+                loadStats();
+            };
+            script.onerror = function() {
+                console.log('CDN OrbitControls failed, trying local...');
+                loadLocalOrbitControls();
+            };
+            document.head.appendChild(script);
+        }
+        
+        function loadLocalOrbitControls() {
+            const script = document.createElement('script');
+            script.src = 'assets/js/OrbitControls-compat.js';
+            script.onload = function() {
+                console.log('Local OrbitControls compatibility wrapper loaded successfully');
+                loadStats();
+            };
+            script.onerror = function() {
+                console.error('OrbitControls compatibility wrapper failed to load');
+                loadStats();
+            };
+            document.head.appendChild(script);
+        }
+        
+        function loadStats() {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js';
+            script.onload = function() {
+                console.log('Stats.js loaded successfully');
+                if (typeof THREE !== 'undefined') {
+                    initializeApp();
+                }
+            };
+            script.onerror = function() {
+                console.log('CDN Stats failed, trying local...');
+                loadLocalStats();
+            };
+            document.head.appendChild(script);
+        }
+        
+        function loadLocalStats() {
+            const script = document.createElement('script');
+            script.src = 'assets/js/Stats.min.js';
+            script.onload = function() {
+                console.log('Local Stats.js loaded successfully');
+                if (typeof THREE !== 'undefined') {
+                    initializeApp();
+                }
+            };
+            script.onerror = function() {
+                console.error('Stats.js failed to load');
+                if (typeof THREE !== 'undefined') {
+                    initializeApp();
+                }
+            };
+            document.head.appendChild(script);
+        }
+        
+        function initializeApp() {
+            if (typeof THREE === 'undefined') {
+                console.error('Three.js still not available');
+                return;
+            }
+            
+            // Initialize the application
+            window.addEventListener('DOMContentLoaded', function() {
+                if (typeof NetworkVisualizationAPI !== 'undefined') {
+                    window.networkViz = new NetworkVisualizationAPI();
+                }
+            });
+        }
+    </script>
+
+    <script>
+        class NetworkVisualizationAPI {
+            constructor() {
+                // Check if Three.js is available
+                if (typeof THREE === 'undefined') {
+                    console.error('Three.js library not loaded!');
+                    document.getElementById('notification').innerHTML = 
+                        '<div class="alert alert-danger">Error: Three.js library not available. Please refresh the page.</div>';
+                    return;
+                }
+                
+                this.apiUrl = 'http://localhost:8000';
+                this.connected = false;
+                this.data = {
+                    devices: [],
+                    connections: [],
+                    interfaces: []
+                };
+                
+                // Three.js components
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.controls = null;
+                
+                // Visualization objects
+                this.deviceMeshes = new Map();
+                this.connectionLines = new Map();
+                this.devicePositions = new Map();
+                this.currentDevice = null;
+                
+                // Animation
+                this.animationEnabled = true;
+                this.clock = new THREE.Clock();
+                
+                // Performance monitoring
+                if (typeof Stats !== 'undefined') {
+                    this.stats = new Stats();
+                    this.stats.dom.style.position = 'absolute';
+                    this.stats.dom.style.top = '10px';
+                    this.stats.dom.style.left = '10px';
+                    document.body.appendChild(this.stats.dom);
+                }
+                
+                this.init();
+                this.setupEventListeners();
+            }
+            
+            init() {
+                this.createScene();
+                this.createCamera();
+                this.createRenderer();
+                this.createControls();
+                this.createLighting();
+                this.animate();
+            }
+            
+            createScene() {
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x0a0a0a);
+                
+                // Add fog for depth
+                this.scene.fog = new THREE.Fog(0x0a0a0a, 50, 200);
+            }
+            
+            createCamera() {
+                this.camera = new THREE.PerspectiveCamera(
+                    75,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    1000
+                );
+                this.camera.position.set(0, 0, 50);
+            }
+            
+            createRenderer() {
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: document.getElementById('webgl-canvas'),
+                    antialias: true,
+                    alpha: true
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            }
+            
+            createControls() {
+                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                this.controls.enableDamping = true;
+                this.controls.dampingFactor = 0.05;
+                this.controls.screenSpacePanning = false;
+                this.controls.minDistance = 10;
+                this.controls.maxDistance = 200;
+            }
+            
+            createLighting() {
+                // Ambient light
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+                this.scene.add(ambientLight);
+                
+                // Directional light
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(50, 50, 50);
+                directionalLight.castShadow = true;
+                directionalLight.shadow.mapSize.width = 2048;
+                directionalLight.shadow.mapSize.height = 2048;
+                this.scene.add(directionalLight);
+                
+                // Point lights for atmosphere
+                const pointLight1 = new THREE.PointLight(0x00d4ff, 0.5, 100);
+                pointLight1.position.set(-30, 30, 30);
+                this.scene.add(pointLight1);
+                
+                const pointLight2 = new THREE.PointLight(0x00ff88, 0.5, 100);
+                pointLight2.position.set(30, -30, -30);
+                this.scene.add(pointLight2);
+            }
+            
+            setupEventListeners() {
+                // Control panel events
+                document.getElementById('connect-btn').addEventListener('click', () => this.connectToAPI());
+                document.getElementById('refresh-btn').addEventListener('click', () => this.refreshData());
+                document.getElementById('start-scan-btn').addEventListener('click', () => this.startScan());
+                document.getElementById('toggle-animation-btn').addEventListener('click', () => this.toggleAnimation());
+                
+                // API URL change
+                document.getElementById('api-url').addEventListener('change', (e) => {
+                    this.apiUrl = e.target.value;
+                });
+                
+                // Window resize
+                window.addEventListener('resize', () => this.onWindowResize());
+                
+                // Mouse events for device selection
+                this.renderer.domElement.addEventListener('click', (event) => this.onMouseClick(event));
+                this.renderer.domElement.addEventListener('mousemove', (event) => this.onMouseMove(event));
+
+                                 // Device Info Panel events
+                 document.getElementById('close-device-info').addEventListener('click', () => this.hideDeviceInfo());
+                 document.getElementById('device-overlay').addEventListener('click', () => this.hideDeviceInfo());
+                 document.getElementById('scan-interfaces-btn').addEventListener('click', () => this.scanInterfaces());
+                 document.getElementById('refresh-device-btn').addEventListener('click', () => this.refreshDevice());
+            }
+            
+            async connectToAPI() {
+                try {
+                    this.showLoading(true);
+                    this.showNotification('Connecting to API...', 'info');
+                    
+                    // Test API connection
+                    const response = await fetch(`${this.apiUrl}/`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    this.connected = true;
+                    
+                    this.updateStatus('Connected', 'success');
+                    this.showNotification('Connected to API successfully!', 'success');
+                    
+                    // Enable buttons
+                    document.getElementById('refresh-btn').disabled = false;
+                    document.getElementById('start-scan-btn').disabled = false;
+                    
+                    // Load initial data
+                    await this.refreshData();
+                    
+                } catch (error) {
+                    console.error('API connection error:', error);
+                    this.connected = false;
+                    this.updateStatus('Connection Failed', 'error');
+                    this.showNotification(`Connection failed: ${error.message}`, 'error');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+            
+            async refreshData() {
+                if (!this.connected) {
+                    this.showNotification('Not connected to API', 'error');
+                    return;
+                }
+                
+                try {
+                    this.showLoading(true);
+                    this.showNotification('Refreshing data...', 'info');
+                    
+                    // Fetch topology data
+                    const response = await fetch(`${this.apiUrl}/api/topology`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        this.data = result.data;
+                        this.updateVisualization();
+                        this.updateStatus();
+                        this.showNotification(`Loaded ${this.data.devices.length} devices and ${this.data.connections.length} connections`, 'success');
+                    } else {
+                        throw new Error(result.message || 'Failed to load data');
+                    }
+                    
+                } catch (error) {
+                    console.error('Data refresh error:', error);
+                    this.showNotification(`Failed to refresh data: ${error.message}`, 'error');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+            
+            async startScan() {
+                if (!this.connected) {
+                    this.showNotification('Not connected to API', 'error');
+                    return;
+                }
+                
+                try {
+                    this.showNotification('Starting network scan...', 'info');
+                    
+                    const response = await fetch(`${this.apiUrl}/api/scan/start`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            scan_type: 'full',
+                            network_ranges: ['192.168.1.0/24', '10.0.0.0/24'],
+                            timeout: 300
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        this.showNotification('Network scan started successfully!', 'success');
+                        // Refresh data after a delay
+                        setTimeout(() => this.refreshData(), 10000);
+                    } else {
+                        throw new Error(result.message || 'Failed to start scan');
+                    }
+                    
+                } catch (error) {
+                    console.error('Scan start error:', error);
+                    this.showNotification(`Failed to start scan: ${error.message}`, 'error');
+                }
+            }
+            
+            updateVisualization() {
+                this.clearScene();
+                this.createDeviceMeshes();
+                this.createConnectionLines();
+                this.applyLayout();
+            }
+            
+            clearScene() {
+                // Remove existing device meshes
+                this.deviceMeshes.forEach(mesh => {
+                    this.scene.remove(mesh);
+                });
+                this.deviceMeshes.clear();
+                
+                // Remove existing connection lines
+                this.connectionLines.forEach(line => {
+                    this.scene.remove(line);
+                });
+                this.connectionLines.clear();
+                
+                this.devicePositions.clear();
+            }
+            
+            createDeviceMeshes() {
+                this.data.devices.forEach(device => {
+                    const mesh = this.createDeviceMesh(device);
+                    this.deviceMeshes.set(device.id, mesh);
+                    this.scene.add(mesh);
+                });
+            }
+            
+            createDeviceMesh(device) {
+                // Create geometry based on device type
+                let geometry;
+                const size = 2;
+                
+                switch (device.device_type) {
+                    case 'router':
+                        geometry = new THREE.IcosahedronGeometry(size, 1);
+                        break;
+                    case 'switch':
+                        geometry = new THREE.BoxGeometry(size * 1.5, size, size * 1.5);
+                        break;
+                    case 'server':
+                        geometry = new THREE.CylinderGeometry(size, size, size * 2, 8);
+                        break;
+                    default:
+                        geometry = new THREE.SphereGeometry(size, 8, 6);
+                }
+                
+                // Create material with device-specific color
+                const color = this.getDeviceColor(device);
+                const material = new THREE.MeshPhongMaterial({
+                    color: color,
+                    shininess: 30,
+                    specular: 0x444444,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                
+                // Store device data
+                mesh.userData = {
+                    device: device,
+                    type: 'device'
+                };
+                
+                // Add glow effect for online devices
+                if (device.status === 'online') {
+                    this.addGlowEffect(mesh, color);
+                }
+                
+                return mesh;
+            }
+            
+            getDeviceColor(device) {
+                if (device.status === 'offline') return 0x666666;
+                
+                switch (device.device_type) {
+                    case 'router': return 0x00d4ff;
+                    case 'switch': return 0x00ff88;
+                    case 'server': return 0x8b5cf6;
+                    default: return 0xff6b35;
+                }
+            }
+            
+            addGlowEffect(mesh, color) {
+                const glowGeometry = mesh.geometry.clone();
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: color,
+                    transparent: true,
+                    opacity: 0.3,
+                    side: THREE.BackSide
+                });
+                
+                const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+                glowMesh.scale.multiplyScalar(1.2);
+                mesh.add(glowMesh);
+                
+                // Animate glow
+                const animateGlow = () => {
+                    if (this.animationEnabled) {
+                        glowMesh.material.opacity = 0.2 + Math.sin(Date.now() * 0.003) * 0.1;
+                        requestAnimationFrame(animateGlow);
+                    }
+                };
+                animateGlow();
+            }
+            
+            createConnectionLines() {
+                this.data.connections.forEach(connection => {
+                    const sourceDevice = this.deviceMeshes.get(connection.source_device_id);
+                    const targetDevice = this.deviceMeshes.get(connection.target_device_id);
+                    
+                    if (sourceDevice && targetDevice) {
+                        const line = this.createConnectionLine(sourceDevice, targetDevice, connection);
+                        this.connectionLines.set(connection.id, line);
+                        this.scene.add(line);
+                    }
+                });
+            }
+            
+            createConnectionLine(sourceMesh, targetMesh, connection) {
+                const geometry = new THREE.BufferGeometry();
+                const material = new THREE.LineBasicMaterial({
+                    color: connection.status === 'active' ? 0x00ff88 : 0x666666,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                
+                const line = new THREE.Line(geometry, material);
+                line.userData = {
+                    connection: connection,
+                    sourceMesh: sourceMesh,
+                    targetMesh: targetMesh,
+                    type: 'connection'
+                };
+                
+                return line;
+            }
+            
+            applyLayout() {
+                const layoutAlgorithm = document.getElementById('layout-algorithm').value;
+                
+                switch (layoutAlgorithm) {
+                    case 'force-directed':
+                        this.applyForceDirectedLayout();
+                        break;
+                    case 'hierarchical':
+                        this.applyHierarchicalLayout();
+                        break;
+                    case 'circular':
+                        this.applyCircularLayout();
+                        break;
+                    case 'organic':
+                        this.applyOrganicLayout();
+                        break;
+                }
+                
+                // Update connection lines
+                this.updateConnectionLines();
+            }
+            
+            applyForceDirectedLayout() {
+                const devices = Array.from(this.deviceMeshes.values());
+                const positions = new Map();
+                
+                // Initialize random positions
+                devices.forEach(device => {
+                    positions.set(device, new THREE.Vector3(
+                        (Math.random() - 0.5) * 50,
+                        (Math.random() - 0.5) * 50,
+                        (Math.random() - 0.5) * 50
+                    ));
+                });
+                
+                // Apply force-directed algorithm
+                for (let iteration = 0; iteration < 100; iteration++) {
+                    // Repulsion between all devices
+                    devices.forEach(device1 => {
+                        devices.forEach(device2 => {
+                            if (device1 !== device2) {
+                                const pos1 = positions.get(device1);
+                                const pos2 = positions.get(device2);
+                                const distance = pos1.distanceTo(pos2);
+                                
+                                if (distance > 0) {
+                                    const force = 100 / (distance * distance);
+                                    const direction = pos1.clone().sub(pos2).normalize();
+                                    pos1.add(direction.multiplyScalar(force * 0.1));
+                                }
+                            }
+                        });
+                    });
+                    
+                    // Attraction for connected devices
+                    this.data.connections.forEach(connection => {
+                        const sourceDevice = this.deviceMeshes.get(connection.source_device_id);
+                        const targetDevice = this.deviceMeshes.get(connection.target_device_id);
+                        
+                        if (sourceDevice && targetDevice) {
+                            const pos1 = positions.get(sourceDevice);
+                            const pos2 = positions.get(targetDevice);
+                            const distance = pos1.distanceTo(pos2);
+                            
+                            if (distance > 0) {
+                                const force = Math.min(distance * 0.1, 2);
+                                const direction = pos2.clone().sub(pos1).normalize();
+                                pos1.add(direction.multiplyScalar(force));
+                                pos2.sub(direction.multiplyScalar(force));
+                            }
+                        }
+                    });
+                }
+                
+                // Apply positions
+                devices.forEach(device => {
+                    device.position.copy(positions.get(device));
+                    this.devicePositions.set(device, positions.get(device));
+                });
+            }
+            
+            applyHierarchicalLayout() {
+                const devices = Array.from(this.deviceMeshes.values());
+                const routers = devices.filter(d => d.userData.device.device_type === 'router');
+                const switches = devices.filter(d => d.userData.device.device_type === 'switch');
+                const others = devices.filter(d => !['router', 'switch'].includes(d.userData.device.device_type));
+                
+                // Position routers at the top
+                routers.forEach((router, index) => {
+                    const angle = (index / routers.length) * Math.PI * 2;
+                    const radius = 30;
+                    router.position.set(
+                        Math.cos(angle) * radius,
+                        20,
+                        Math.sin(angle) * radius
+                    );
+                    this.devicePositions.set(router, router.position.clone());
+                });
+                
+                // Position switches in the middle
+                switches.forEach((switch_, index) => {
+                    const angle = (index / switches.length) * Math.PI * 2;
+                    const radius = 20;
+                    switch_.position.set(
+                        Math.cos(angle) * radius,
+                        0,
+                        Math.sin(angle) * radius
+                    );
+                    this.devicePositions.set(switch_, switch_.position.clone());
+                });
+                
+                // Position other devices at the bottom
+                others.forEach((device, index) => {
+                    const angle = (index / others.length) * Math.PI * 2;
+                    const radius = 15;
+                    device.position.set(
+                        Math.cos(angle) * radius,
+                        -20,
+                        Math.sin(angle) * radius
+                    );
+                    this.devicePositions.set(device, device.position.clone());
+                });
+            }
+            
+            applyCircularLayout() {
+                const devices = Array.from(this.deviceMeshes.values());
+                const radius = 25;
+                
+                devices.forEach((device, index) => {
+                    const angle = (index / devices.length) * Math.PI * 2;
+                    device.position.set(
+                        Math.cos(angle) * radius,
+                        0,
+                        Math.sin(angle) * radius
+                    );
+                    this.devicePositions.set(device, device.position.clone());
+                });
+            }
+            
+            applyOrganicLayout() {
+                const devices = Array.from(this.deviceMeshes.values());
+                
+                devices.forEach((device, index) => {
+                    const angle = (index / devices.length) * Math.PI * 2;
+                    const radius = 20 + Math.sin(index * 0.5) * 10;
+                    const height = Math.cos(index * 0.3) * 10;
+                    
+                    device.position.set(
+                        Math.cos(angle) * radius,
+                        height,
+                        Math.sin(angle) * radius
+                    );
+                    this.devicePositions.set(device, device.position.clone());
+                });
+            }
+            
+            updateConnectionLines() {
+                this.connectionLines.forEach(line => {
+                    const sourcePos = line.userData.sourceMesh.position;
+                    const targetPos = line.userData.targetMesh.position;
+                    
+                    const points = [
+                        sourcePos.clone(),
+                        targetPos.clone()
+                    ];
+                    
+                    line.geometry.setFromPoints(points);
+                });
+            }
+            
+            onMouseMove(event) {
+                const mouse = new THREE.Vector2();
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(mouse, this.camera);
+                
+                const intersects = raycaster.intersectObjects(Array.from(this.deviceMeshes.values()));
+                
+                // Reset all device meshes
+                this.deviceMeshes.forEach(mesh => {
+                    mesh.scale.set(1, 1, 1);
+                    mesh.material.emissive.setHex(0x000000);
+                });
+                
+                // Highlight hovered device
+                if (intersects.length > 0) {
+                    const mesh = intersects[0].object;
+                    mesh.scale.set(1.2, 1.2, 1.2);
+                    mesh.material.emissive.setHex(0x333333);
+                    document.body.style.cursor = 'pointer';
+                } else {
+                    document.body.style.cursor = 'default';
+                }
+            }
+            
+            onMouseClick(event) {
+                const mouse = new THREE.Vector2();
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(mouse, this.camera);
+                
+                const intersects = raycaster.intersectObjects(Array.from(this.deviceMeshes.values()));
+                
+                if (intersects.length > 0) {
+                    const device = intersects[0].object.userData.device;
+                    this.showDeviceInfo(device);
+                } else {
+                    this.hideDeviceInfo();
+                }
+            }
+            
+                         showDeviceInfo(device) {
+                 this.currentDevice = device;
+                 const panel = document.getElementById('device-info-panel');
+                 
+                 // Populate device info fields
+                document.getElementById('device-hostname').textContent = device.hostname || 'Unknown';
+                document.getElementById('device-ip').textContent = device.ip_address;
+                document.getElementById('device-type').textContent = device.device_type;
+                document.getElementById('device-vendor').textContent = device.vendor || 'Unknown';
+                document.getElementById('device-model').textContent = device.model || 'Unknown';
+                document.getElementById('device-status').innerHTML = `
+                    <span class="device-status-indicator ${device.status === 'online' ? 'status-online' : device.status === 'offline' ? 'status-offline' : 'status-unknown'}"></span> ${device.status}
+                `;
+                document.getElementById('device-last-seen').textContent = new Date(device.last_seen).toLocaleString();
+
+                // Fetch and display interfaces
+                this.fetchDeviceInterfaces(device.id).then(interfaces => {
+                    const interfaceContent = document.getElementById('device-interfaces');
+                    interfaceContent.innerHTML = ''; // Clear previous interfaces
+                    if (interfaces && interfaces.length > 0) {
+                        interfaces.forEach(iface => {
+                            const item = document.createElement('div');
+                            item.className = 'interface-item';
+                            item.innerHTML = `
+                                <div class="interface-name">
+                                    <span class="device-info-label">Name:</span>
+                                    <span class="device-info-value">${iface.name}</span>
+                                </div>
+                                <div class="interface-details">
+                                    <span class="device-info-label">IP:</span>
+                                    <span class="device-info-value">${iface.ip_address}</span>
+                                </div>
+                                <div class="interface-details">
+                                    <span class="device-info-label">MAC:</span>
+                                    <span class="device-info-value">${iface.mac_address}</span>
+                                </div>
+                                <div class="interface-details">
+                                    <span class="device-info-label">Speed:</span>
+                                    <span class="device-info-value">${iface.speed || 'N/A'}</span>
+                                </div>
+                            `;
+                            interfaceContent.appendChild(item);
+                        });
+                    } else {
+                        interfaceContent.innerHTML = '<p>No interfaces found for this device.</p>';
+                    }
+                });
+
+                // Fetch and display connections
+                this.fetchDeviceConnections(device.id).then(connections => {
+                    const connectionContent = document.getElementById('device-connections');
+                    connectionContent.innerHTML = ''; // Clear previous connections
+                    if (connections && connections.length > 0) {
+                        connections.forEach(conn => {
+                            const item = document.createElement('div');
+                            item.className = 'connection-item';
+                            item.innerHTML = `
+                                <div class="connection-direction">
+                                    <span class="device-info-label">Direction:</span>
+                                    <span class="device-info-value">${conn.direction}</span>
+                                </div>
+                                <div class="connection-details">
+                                    <span class="device-info-label">Source:</span>
+                                    <span class="device-info-value">${conn.source_device_name}</span>
+                                </div>
+                                <div class="connection-details">
+                                    <span class="device-info-label">Target:</span>
+                                    <span class="device-info-value">${conn.target_device_name}</span>
+                                </div>
+                                <div class="connection-details">
+                                    <span class="device-info-label">Status:</span>
+                                    <span class="device-info-value">${conn.status}</span>
+                                </div>
+                            `;
+                            connectionContent.appendChild(item);
+                        });
+                    } else {
+                        connectionContent.innerHTML = '<p>No connections found for this device.</p>';
+                    }
+                });
+
+                                 // Update action buttons
+                 document.getElementById('scan-interfaces-btn').disabled = false;
+                 document.getElementById('refresh-device-btn').disabled = false;
+ 
+                 // Show overlay and panel
+                 document.getElementById('device-overlay').style.display = 'block';
+                 panel.style.display = 'block';
+            }
+            
+                         hideDeviceInfo() {
+                 document.getElementById('device-overlay').style.display = 'none';
+                 document.getElementById('device-info-panel').style.display = 'none';
+                 document.getElementById('scan-interfaces-btn').disabled = true;
+                 document.getElementById('refresh-device-btn').disabled = true;
+                 this.currentDevice = null;
+             }
+
+            async fetchDeviceInterfaces(deviceId) {
+                try {
+                    const response = await fetch(`${this.apiUrl}/api/device/${deviceId}/interfaces`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    const result = await response.json();
+                    return result.data;
+                } catch (error) {
+                    console.error('Failed to fetch interfaces:', error);
+                    return [];
+                }
+            }
+
+                         async fetchDeviceConnections(deviceId) {
+                 try {
+                     const response = await fetch(`${this.apiUrl}/api/device/${deviceId}/connections`);
+                     if (!response.ok) {
+                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                     }
+                     const result = await response.json();
+                     return result.data;
+                 } catch (error) {
+                     console.error('Failed to fetch connections:', error);
+                     return [];
+                 }
+             }
+             
+             async scanInterfaces() {
+                 const deviceId = this.currentDevice?.id;
+                 if (!deviceId) return;
+                 
+                 try {
+                     this.showNotification('Scanning device interfaces...', 'info');
+                     
+                     const response = await fetch(`${this.apiUrl}/api/device/${deviceId}/scan-interfaces`, {
+                         method: 'POST'
+                     });
+                     
+                     if (!response.ok) {
+                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                     }
+                     
+                     const result = await response.json();
+                     
+                     if (result.success) {
+                         this.showNotification('Interface scan completed successfully!', 'success');
+                         // Refresh the device info to show updated interfaces
+                         this.showDeviceInfo(this.currentDevice);
+                     } else {
+                         throw new Error(result.message || 'Scan failed');
+                     }
+                     
+                 } catch (error) {
+                     console.error('Interface scan failed:', error);
+                     this.showNotification(`Interface scan failed: ${error.message}`, 'error');
+                 }
+             }
+             
+             async refreshDevice() {
+                 const deviceId = this.currentDevice?.id;
+                 if (!deviceId) return;
+                 
+                 try {
+                     this.showNotification('Refreshing device information...', 'info');
+                     
+                     const response = await fetch(`${this.apiUrl}/api/device/${deviceId}/refresh`, {
+                         method: 'POST'
+                     });
+                     
+                     if (!response.ok) {
+                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                     }
+                     
+                     const result = await response.json();
+                     
+                     if (result.success) {
+                         this.showNotification('Device refreshed successfully!', 'success');
+                         // Update the current device data
+                         this.currentDevice = result.data;
+                         // Refresh the device info display
+                         this.showDeviceInfo(this.currentDevice);
+                     } else {
+                         throw new Error(result.message || 'Refresh failed');
+                     }
+                     
+                 } catch (error) {
+                     console.error('Device refresh failed:', error);
+                     this.showNotification(`Device refresh failed: ${error.message}`, 'error');
+                 }
+             }
+            
+            toggleAnimation() {
+                this.animationEnabled = !this.animationEnabled;
+                const button = document.getElementById('toggle-animation-btn');
+                button.textContent = this.animationEnabled ? 'Pause Animation' : 'Resume Animation';
+            }
+            
+            updateStatus(status = null, type = 'info') {
+                if (status) {
+                    document.getElementById('api-status').textContent = status;
+                    document.getElementById('api-status').className = `status-value ${type}`;
+                }
+                
+                document.getElementById('device-count').textContent = this.data.devices.length;
+                document.getElementById('connection-count').textContent = this.data.connections.length;
+                document.getElementById('interface-count').textContent = this.data.interfaces.length;
+                document.getElementById('online-count').textContent = this.data.devices.filter(d => d.status === 'online').length;
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+            }
+            
+            showLoading(show) {
+                document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+            }
+            
+            showNotification(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+            
+            onWindowResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                if (this.animationEnabled) {
+                    // Rotate devices slightly
+                    this.deviceMeshes.forEach(mesh => {
+                        mesh.rotation.y += 0.005;
+                    });
+                    
+                    // Animate connection lines
+                    this.connectionLines.forEach(line => {
+                        if (line.userData.connection.status === 'active') {
+                            line.material.opacity = 0.6 + Math.sin(Date.now() * 0.005) * 0.2;
+                        }
+                    });
+                }
+                
+                this.controls.update();
+                this.renderer.render(this.scene, this.camera);
+                
+                // Update performance stats
+                if (this.stats) {
+                    this.stats.update();
+                    document.getElementById('fps-counter').textContent = Math.round(this.stats.getFPS());
+                    document.getElementById('draw-calls').textContent = this.renderer.info.render.calls;
+                    document.getElementById('triangles').textContent = this.renderer.info.render.triangles;
+                    document.getElementById('memory-usage').textContent = Math.round(this.renderer.info.memory.geometries);
+                }
+            }
+        }
+        
+        // Initialize the application
+        const app = new NetworkVisualizationAPI();
+    </script>
+</body>
+</html> 

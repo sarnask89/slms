@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Edytuj Pakiet TV';
 $pdo = get_pdo();
 
@@ -22,7 +23,7 @@ if (!$package) {
     exit;
 }
 
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $tv_package = trim($_POST['tv_package'] ?? '');
     $price = (float)($_POST['price'] ?? 0);

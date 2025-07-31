@@ -1,0 +1,428 @@
+=== WebGL Interface Audit Started: czw, 31 lip 2025, 01:37:38 CEST ===
+[0;34m[01:37:38][0m Starting WebGL Interface Audit Script
+[0;34m[01:37:38][0m Working directory: /var/www/html
+[0;34m[01:37:38][0m === STEP 1: SCANNING SOURCE CODE ===
+[0;36m[INFO][0m Scanning WebGL interface files...
+[0;32m[SUCCESS][0m Found: webgl_demo_integrated.php
+[0;32m[SUCCESS][0m Found: webgl_interface.js
+[0;32m[SUCCESS][0m Found: webgl_module_integration.php
+[0;32m[SUCCESS][0m Found: config.php
+[0;36m[INFO][0m Scanning JavaScript files...
+[0;36m[INFO][0m Scanning PHP files...
+[0;36m[INFO][0m Checking database structure...
+[1;33m[WARNING][0m Cannot access database directly
+[0;32m[SUCCESS][0m Source code scan completed
+[0;34m[01:38:06][0m === STEP 2: RESEARCHING ERRORS AND IMPROVEMENTS ===
+[0;36m[INFO][0m Checking PHP syntax errors...
+[0;32m[SUCCESS][0m PHP syntax OK: adaptive_ai_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: admin_menu_enhanced.php
+[0;32m[SUCCESS][0m PHP syntax OK: admin_menu.php
+[0;32m[SUCCESS][0m PHP syntax OK: ai_assistant_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: auth_status.php
+[0;32m[SUCCESS][0m PHP syntax OK: bridge_portal.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_advanced_debug.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_auto_repair.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_loader.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_loader.test.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_test_debug.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_warning_checklist.php
+[0;32m[SUCCESS][0m PHP syntax OK: comprehensive_optimization.php
+[0;32m[SUCCESS][0m PHP syntax OK: comprehensive_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: config.example.php
+[0;32m[SUCCESS][0m PHP syntax OK: config_optimized.php
+[0;32m[SUCCESS][0m PHP syntax OK: config.php
+[0;32m[SUCCESS][0m PHP syntax OK: continuous_improvement_loop.php
+[0;32m[SUCCESS][0m PHP syntax OK: create_hierarchical_menu.php
+[0;32m[SUCCESS][0m PHP syntax OK: create_missing_snmp_tables.php
+[0;32m[SUCCESS][0m PHP syntax OK: create_proper_migrated_modules.php
+[0;32m[SUCCESS][0m PHP syntax OK: create_snmp_graph_table.php
+[0;32m[SUCCESS][0m PHP syntax OK: cron_poll_interfaces.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_all_modules23.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_all_modules.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_cacti_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_librenms_complete.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_optimization_tool.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_php.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_webgl.php
+[0;32m[SUCCESS][0m PHP syntax OK: demo_bridge_nat.php
+[0;32m[SUCCESS][0m PHP syntax OK: enable_auth.php
+[0;32m[SUCCESS][0m PHP syntax OK: error_monitor.php
+[0;32m[SUCCESS][0m PHP syntax OK: final_debug_report.php
+[0;32m[SUCCESS][0m PHP syntax OK: final_performance_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_cacti_config.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_config_paths_correct.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_config_paths.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_database_schema.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_layout_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_module_includes.php
+[0;32m[SUCCESS][0m PHP syntax OK: index.php
+[0;32m[SUCCESS][0m PHP syntax OK: integrate_webgl_with_existing_modules.php
+[0;32m[SUCCESS][0m PHP syntax OK: integrity_check.php
+[0;32m[SUCCESS][0m PHP syntax OK: librenms_status_report.php
+[0;32m[SUCCESS][0m PHP syntax OK: lms_db_init.php
+[0;32m[SUCCESS][0m PHP syntax OK: migrate_to_framework_final.php
+[0;32m[SUCCESS][0m PHP syntax OK: migrate_to_framework.php
+[0;32m[SUCCESS][0m PHP syntax OK: migrate_to_framework_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_ajax.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_database_manager.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_model_manager.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_performance_monitor.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_prediction_engine.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_training_engine.php
+[0;32m[SUCCESS][0m PHP syntax OK: optimized_performance.php
+[0;32m[SUCCESS][0m PHP syntax OK: performance_benchmark.php
+[0;32m[SUCCESS][0m PHP syntax OK: performance_optimizer.php
+[0;32m[SUCCESS][0m PHP syntax OK: phpinfo.php
+[0;32m[SUCCESS][0m PHP syntax OK: reset_credentials.php
+[0;32m[SUCCESS][0m PHP syntax OK: restore_auth.php
+[0;32m[SUCCESS][0m PHP syntax OK: routeros_api.class.php
+[0;32m[SUCCESS][0m PHP syntax OK: routeros_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: run_migrated_framework.php
+[0;32m[SUCCESS][0m PHP syntax OK: run_optimization.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_access_level_tables.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_apache_slms.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_bridge_nat.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_captive_portal.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_default_credentials.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_librenms.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_skeleton_devices.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_webgl_tables.php
+[0;32m[SUCCESS][0m PHP syntax OK: simple_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: snmp_analysis_report.php
+[0;32m[SUCCESS][0m PHP syntax OK: source_code_research_loop.php
+[0;32m[SUCCESS][0m PHP syntax OK: sql_console.php
+[0;32m[SUCCESS][0m PHP syntax OK: system_health_checker.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_ai_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_basic.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_bridge_complete.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_cacti_mock.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_curl.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_device_connectivity.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_device_query.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_librenms_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_rest.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_simple.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_socket2.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_socket.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_web.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mndp_enhanced.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_modules_batch.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_opcache_detailed.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_opcache_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_pages.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_performance.php
+[0;32m[SUCCESS][0m PHP syntax OK: test.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_post.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_server.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_simple_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_simple_librenms.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_simple_opcache.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_simple.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_snmp_functions.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_snmp_graphing_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_snmp_mndp_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_suite.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_webgl_final.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_webgl_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_webgl_setup.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_webgl_step_by_step.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_web.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_web_query.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_xdebug_web.php
+[0;32m[SUCCESS][0m PHP syntax OK: update_branding.php
+[0;32m[SUCCESS][0m PHP syntax OK: update_menu_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_dashboard.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_demo_fallback.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_demo_integrated.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_demo.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_demo_simple.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_module_integration.php
+[0;36m[INFO][0m Checking JavaScript syntax...
+[1;33m[WARNING][0m Node.js not available for JS syntax checking
+[0;36m[INFO][0m Checking for common issues...
+[0;32m[SUCCESS][0m JavaScript functions found
+[0;32m[SUCCESS][0m API endpoints found
+[0;32m[SUCCESS][0m Database connection functions found
+[0;32m[SUCCESS][0m Error handling found
+[0;36m[INFO][0m Analyzing performance patterns...
+[1;33m[WARNING][0m Large file detected: ai_assistant_api.php (1883 lines)
+[1;33m[WARNING][0m Large file detected: webgl_demo_fallback.php (1164 lines)
+[1;33m[WARNING][0m Large file detected: webgl_demo_integrated.php (1481 lines)
+[1;33m[WARNING][0m Large file detected: webgl_demo.php (1025 lines)
+[1;33m[WARNING][0m Large file detected: webgl_module_integration.php (1072 lines)
+[1;33m[WARNING][0m Large file detected: webgl_interface.js (2848 lines)
+[1;33m[WARNING][0m Timers detected - check for memory leaks
+[0;32m[SUCCESS][0m Error and improvement research completed
+[0;34m[01:38:14][0m === STEP 3: RUNNING TESTS ===
+[0;36m[INFO][0m Running CURL API tests...
+[0;32m[SUCCESS][0m Main page accessible
+[0;32m[SUCCESS][0m API test passed: action=list&module=clients
+[0;32m[SUCCESS][0m API test passed: action=list&module=devices
+[0;32m[SUCCESS][0m API test passed: action=list&module=scan_jobs
+[0;32m[SUCCESS][0m API test passed: action=list&module=core_devices
+[0;32m[SUCCESS][0m API test passed: action=list&module=client_devices
+[0;32m[SUCCESS][0m API test passed: action=get_module_functions&module=scan_jobs
+[0;36m[INFO][0m Testing POST operations...
+[0;32m[SUCCESS][0m POST test passed: scan job creation
+[0;36m[INFO][0m Running console tests...
+[0;32m[SUCCESS][0m Apache service is running
+[0;36m[INFO][0m PHP version: 8.2.29
+[0;32m[SUCCESS][0m Disk space OK: 40% used
+[0;36m[INFO][0m Memory usage: %
+[0;36m[INFO][0m Running browser compatibility tests...
+[0;32m[SUCCESS][0m Modern JavaScript features detected
+[0;32m[SUCCESS][0m WebGL/Three.js detected
+[1;33m[WARNING][0m No responsive design detected
+[0;32m[SUCCESS][0m All tests completed
+[0;34m[01:38:14][0m === STEP 4: DEBUGGING AND FIXING ===
+[0;36m[INFO][0m Checking for common issues...
+[0;36m[INFO][0m Checking JavaScript syntax...
+[0;36m[INFO][0m Checking PHP syntax...
+[0;36m[INFO][0m Checking for missing function implementations...
+[0;32m[SUCCESS][0m Function found: addNewClientDevice
+[0;32m[SUCCESS][0m Function found: addNewCoreDevice
+[0;32m[SUCCESS][0m Function found: addNewScanJob
+[0;32m[SUCCESS][0m Function found: startScanJob
+[0;32m[SUCCESS][0m Function found: stopScanJob
+[0;32m[SUCCESS][0m Function found: viewScanResults
+[0;36m[INFO][0m Checking API endpoint consistency...
+[0;32m[SUCCESS][0m Module defined: clients
+[0;32m[SUCCESS][0m Module defined: devices
+[0;32m[SUCCESS][0m Module defined: scan_jobs
+[0;32m[SUCCESS][0m Module defined: core_devices
+[0;32m[SUCCESS][0m Module defined: client_devices
+[0;32m[SUCCESS][0m Module defined: mikrotik
+[0;32m[SUCCESS][0m Module defined: dhcp
+[0;32m[SUCCESS][0m Module defined: snmp
+[0;32m[SUCCESS][0m Module defined: vlans
+[0;32m[SUCCESS][0m Module defined: ip_ranges
+[0;32m[SUCCESS][0m Module defined: network_segments
+[0;32m[SUCCESS][0m Module defined: device_categories
+[0;36m[INFO][0m Applying performance optimizations...
+[1;33m[WARNING][0m Large file detected: webgl_interface.js (2848 lines) - consider splitting
+[0;36m[INFO][0m Running security checks...
+[0;32m[SUCCESS][0m No obvious SQL injection vulnerabilities
+[0;32m[SUCCESS][0m No obvious XSS vulnerabilities
+[0;32m[SUCCESS][0m Debugging and fixing completed
+[0;34m[01:38:20][0m === STEP 5: RECURSIVE AUDIT ===
+[0;36m[INFO][0m Starting recursive audit cycle...
+[0;34m[01:38:20][0m === STEP 1: SCANNING SOURCE CODE ===
+[0;36m[INFO][0m Scanning WebGL interface files...
+[0;32m[SUCCESS][0m Found: webgl_demo_integrated.php
+[0;32m[SUCCESS][0m Found: webgl_interface.js
+[0;32m[SUCCESS][0m Found: webgl_module_integration.php
+[0;32m[SUCCESS][0m Found: config.php
+[0;36m[INFO][0m Scanning JavaScript files...
+[0;36m[INFO][0m Scanning PHP files...
+[0;36m[INFO][0m Checking database structure...
+[1;33m[WARNING][0m Cannot access database directly
+[0;32m[SUCCESS][0m Source code scan completed
+[0;34m[01:38:41][0m === STEP 2: RESEARCHING ERRORS AND IMPROVEMENTS ===
+[0;36m[INFO][0m Checking PHP syntax errors...
+[0;32m[SUCCESS][0m PHP syntax OK: adaptive_ai_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: admin_menu_enhanced.php
+[0;32m[SUCCESS][0m PHP syntax OK: admin_menu.php
+[0;32m[SUCCESS][0m PHP syntax OK: ai_assistant_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: auth_status.php
+[0;32m[SUCCESS][0m PHP syntax OK: bridge_portal.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_advanced_debug.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_auto_repair.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_loader.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_loader.test.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_test_debug.php
+[0;32m[SUCCESS][0m PHP syntax OK: cms_warning_checklist.php
+[0;32m[SUCCESS][0m PHP syntax OK: comprehensive_optimization.php
+[0;32m[SUCCESS][0m PHP syntax OK: comprehensive_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: config.example.php
+[0;32m[SUCCESS][0m PHP syntax OK: config_optimized.php
+[0;32m[SUCCESS][0m PHP syntax OK: config.php
+[0;32m[SUCCESS][0m PHP syntax OK: continuous_improvement_loop.php
+[0;32m[SUCCESS][0m PHP syntax OK: create_hierarchical_menu.php
+[0;32m[SUCCESS][0m PHP syntax OK: create_missing_snmp_tables.php
+[0;32m[SUCCESS][0m PHP syntax OK: create_proper_migrated_modules.php
+[0;32m[SUCCESS][0m PHP syntax OK: create_snmp_graph_table.php
+[0;32m[SUCCESS][0m PHP syntax OK: cron_poll_interfaces.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_all_modules23.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_all_modules.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_cacti_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_librenms_complete.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_optimization_tool.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_php.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: debug_webgl.php
+[0;32m[SUCCESS][0m PHP syntax OK: demo_bridge_nat.php
+[0;32m[SUCCESS][0m PHP syntax OK: enable_auth.php
+[0;32m[SUCCESS][0m PHP syntax OK: error_monitor.php
+[0;32m[SUCCESS][0m PHP syntax OK: final_debug_report.php
+[0;32m[SUCCESS][0m PHP syntax OK: final_performance_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_cacti_config.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_config_paths_correct.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_config_paths.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_database_schema.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_layout_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: fix_module_includes.php
+[0;32m[SUCCESS][0m PHP syntax OK: index.php
+[0;32m[SUCCESS][0m PHP syntax OK: integrate_webgl_with_existing_modules.php
+[0;32m[SUCCESS][0m PHP syntax OK: integrity_check.php
+[0;32m[SUCCESS][0m PHP syntax OK: librenms_status_report.php
+[0;32m[SUCCESS][0m PHP syntax OK: lms_db_init.php
+[0;32m[SUCCESS][0m PHP syntax OK: migrate_to_framework_final.php
+[0;32m[SUCCESS][0m PHP syntax OK: migrate_to_framework.php
+[0;32m[SUCCESS][0m PHP syntax OK: migrate_to_framework_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_ajax.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_database_manager.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_model_manager.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_performance_monitor.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_prediction_engine.php
+[0;32m[SUCCESS][0m PHP syntax OK: ml_training_engine.php
+[0;32m[SUCCESS][0m PHP syntax OK: optimized_performance.php
+[0;32m[SUCCESS][0m PHP syntax OK: performance_benchmark.php
+[0;32m[SUCCESS][0m PHP syntax OK: performance_optimizer.php
+[0;32m[SUCCESS][0m PHP syntax OK: phpinfo.php
+[0;32m[SUCCESS][0m PHP syntax OK: reset_credentials.php
+[0;32m[SUCCESS][0m PHP syntax OK: restore_auth.php
+[0;32m[SUCCESS][0m PHP syntax OK: routeros_api.class.php
+[0;32m[SUCCESS][0m PHP syntax OK: routeros_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: run_migrated_framework.php
+[0;32m[SUCCESS][0m PHP syntax OK: run_optimization.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_access_level_tables.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_apache_slms.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_bridge_nat.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_captive_portal.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_default_credentials.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_librenms.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_skeleton_devices.php
+[0;32m[SUCCESS][0m PHP syntax OK: setup_webgl_tables.php
+[0;32m[SUCCESS][0m PHP syntax OK: simple_test.php
+[0;32m[SUCCESS][0m PHP syntax OK: snmp_analysis_report.php
+[0;32m[SUCCESS][0m PHP syntax OK: source_code_research_loop.php
+[0;32m[SUCCESS][0m PHP syntax OK: sql_console.php
+[0;32m[SUCCESS][0m PHP syntax OK: system_health_checker.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_ai_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_basic.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_bridge_complete.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_cacti_mock.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_curl.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_device_connectivity.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_device_query.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_librenms_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_rest.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_simple.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_socket2.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_socket.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mikrotik_web.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_mndp_enhanced.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_modules_batch.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_opcache_detailed.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_opcache_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_pages.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_performance.php
+[0;32m[SUCCESS][0m PHP syntax OK: test.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_post.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_server.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_simple_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_simple_librenms.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_simple_opcache.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_simple.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_snmp_functions.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_snmp_graphing_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_snmp_mndp_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_suite.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_system.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_webgl_final.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_webgl_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_webgl_setup.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_webgl_step_by_step.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_web.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_web_query.php
+[0;32m[SUCCESS][0m PHP syntax OK: test_xdebug_web.php
+[0;32m[SUCCESS][0m PHP syntax OK: update_branding.php
+[0;32m[SUCCESS][0m PHP syntax OK: update_menu_integration.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_api.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_dashboard.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_demo_fallback.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_demo_integrated.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_demo.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_demo_simple.php
+[0;32m[SUCCESS][0m PHP syntax OK: webgl_module_integration.php
+[0;36m[INFO][0m Checking JavaScript syntax...
+[1;33m[WARNING][0m Node.js not available for JS syntax checking
+[0;36m[INFO][0m Checking for common issues...
+[0;32m[SUCCESS][0m JavaScript functions found
+[0;32m[SUCCESS][0m API endpoints found
+[0;32m[SUCCESS][0m Database connection functions found
+[0;32m[SUCCESS][0m Error handling found
+[0;36m[INFO][0m Analyzing performance patterns...
+[1;33m[WARNING][0m Large file detected: ai_assistant_api.php (1883 lines)
+[1;33m[WARNING][0m Large file detected: webgl_demo_fallback.php (1164 lines)
+[1;33m[WARNING][0m Large file detected: webgl_demo_integrated.php (1481 lines)
+[1;33m[WARNING][0m Large file detected: webgl_demo.php (1025 lines)
+[1;33m[WARNING][0m Large file detected: webgl_module_integration.php (1072 lines)
+[1;33m[WARNING][0m Large file detected: webgl_interface.js (2848 lines)
+[1;33m[WARNING][0m Timers detected - check for memory leaks
+[0;32m[SUCCESS][0m Error and improvement research completed
+[0;34m[01:38:48][0m === STEP 3: RUNNING TESTS ===
+[0;36m[INFO][0m Running CURL API tests...
+[0;32m[SUCCESS][0m Main page accessible
+[0;32m[SUCCESS][0m API test passed: action=list&module=clients
+[0;32m[SUCCESS][0m API test passed: action=list&module=devices
+[0;32m[SUCCESS][0m API test passed: action=list&module=scan_jobs
+[0;32m[SUCCESS][0m API test passed: action=list&module=core_devices
+[0;32m[SUCCESS][0m API test passed: action=list&module=client_devices
+[0;32m[SUCCESS][0m API test passed: action=get_module_functions&module=scan_jobs
+[0;36m[INFO][0m Testing POST operations...
+[0;32m[SUCCESS][0m POST test passed: scan job creation
+[0;36m[INFO][0m Running console tests...
+[0;32m[SUCCESS][0m Apache service is running
+[0;36m[INFO][0m PHP version: 8.2.29
+[0;32m[SUCCESS][0m Disk space OK: 40% used
+[0;36m[INFO][0m Memory usage: %
+[0;36m[INFO][0m Running browser compatibility tests...
+[0;32m[SUCCESS][0m Modern JavaScript features detected
+[0;32m[SUCCESS][0m WebGL/Three.js detected
+[1;33m[WARNING][0m No responsive design detected
+[0;32m[SUCCESS][0m All tests completed
+[0;34m[01:38:49][0m === STEP 4: DEBUGGING AND FIXING ===
+[0;36m[INFO][0m Checking for common issues...
+[0;36m[INFO][0m Checking JavaScript syntax...
+[0;36m[INFO][0m Checking PHP syntax...
+[0;36m[INFO][0m Checking for missing function implementations...
+[0;32m[SUCCESS][0m Function found: addNewClientDevice
+[0;32m[SUCCESS][0m Function found: addNewCoreDevice
+[0;32m[SUCCESS][0m Function found: addNewScanJob
+[0;32m[SUCCESS][0m Function found: startScanJob
+[0;32m[SUCCESS][0m Function found: stopScanJob
+[0;32m[SUCCESS][0m Function found: viewScanResults
+[0;36m[INFO][0m Checking API endpoint consistency...
+[0;32m[SUCCESS][0m Module defined: clients
+[0;32m[SUCCESS][0m Module defined: devices
+[0;32m[SUCCESS][0m Module defined: scan_jobs
+[0;32m[SUCCESS][0m Module defined: core_devices
+[0;32m[SUCCESS][0m Module defined: client_devices
+[0;32m[SUCCESS][0m Module defined: mikrotik
+[0;32m[SUCCESS][0m Module defined: dhcp
+[0;32m[SUCCESS][0m Module defined: snmp
+[0;32m[SUCCESS][0m Module defined: vlans
+[0;32m[SUCCESS][0m Module defined: ip_ranges
+[0;32m[SUCCESS][0m Module defined: network_segments
+[0;32m[SUCCESS][0m Module defined: device_categories
+[0;36m[INFO][0m Applying performance optimizations...
+[1;33m[WARNING][0m Large file detected: webgl_interface.js (2848 lines) - consider splitting
+[0;36m[INFO][0m Running security checks...
+[0;32m[SUCCESS][0m No obvious SQL injection vulnerabilities
+[0;32m[SUCCESS][0m No obvious XSS vulnerabilities
+[0;32m[SUCCESS][0m Debugging and fixing completed
+[0;32m[SUCCESS][0m Audit cycle completed successfully
+[0;34m[01:38:55][0m === FINAL AUDIT REPORT ===
+[0;32m[SUCCESS][0m WebGL Interface Audit completed successfully!
+[0;34m[01:38:55][0m Check logs for details:
+[0;34m[01:38:55][0m   - Main log: /var/www/html/webgl_audit.log
+[0;34m[01:38:55][0m   - Errors: /var/www/html/webgl_errors.log
+[0;34m[01:38:55][0m   - Performance: /var/www/html/webgl_performance.log

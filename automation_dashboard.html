@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant Automation Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 5px solid #007bff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .status-card.healthy {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        }
+        
+        .status-card.warning {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        }
+        
+        .status-card.error {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .card-status {
+            font-size: 0.9em;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .status-online {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status-offline {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .status-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .metric-label {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .log-section {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .log-container {
+            background: #212529;
+            color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .refresh-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .refresh-indicator.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .status-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="refresh-indicator" id="refreshIndicator">
+        🔄 Refreshing...
+    </div>
+    
+    <div class="dashboard">
+        <div class="header">
+            <h1>🤖 AI Assistant Automation Dashboard</h1>
+            <p>Real-time monitoring and control for your AI assistant ecosystem</p>
+        </div>
+        
+        <div class="status-grid" id="statusGrid">
+            <!-- Status cards will be populated by JavaScript -->
+        </div>
+        
+        <div class="controls">
+            <h3>🎛️ Automation Controls</h3>
+            <div class="control-buttons">
+                <button class="btn btn-primary" onclick="runFullAutomation()">
+                    🚀 Run Full Automation
+                </button>
+                <button class="btn btn-success" onclick="startServices()">
+                    🔧 Start All Services
+                </button>
+                <button class="btn btn-warning" onclick="runTests()">
+                    🧪 Run Tests
+                </button>
+                <button class="btn btn-primary" onclick="generateReport()">
+                    📊 Generate Report
+                </button>
+                <button class="btn btn-success" onclick="startMonitoring()">
+                    📡 Start Monitoring
+                </button>
+                <button class="btn btn-danger" onclick="stopMonitoring()">
+                    ⏹️ Stop Monitoring
+                </button>
+                <a href="automation_report.html" class="btn btn-primary" target="_blank">
+                    📋 View Report
+                </a>
+                <a href="debug_ai_integration.html" class="btn btn-warning" target="_blank">
+                    🐛 Debug Tools
+                </a>
+            </div>
+        </div>
+        
+        <div class="log-section">
+            <h3>📝 Live Logs</h3>
+            <div class="log-container" id="logContainer">
+                <!-- Logs will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let monitoringInterval;
+        let isMonitoring = false;
+        
+        // Service definitions
+        const services = [
+            {
+                name: 'AI Assistant API',
+                url: '/ai_assistant_api.php?action=model_status',
+                icon: '🤖',
+                type: 'api'
+            },
+            {
+                name: 'Adaptive AI API',
+                url: '/adaptive_ai_api.php?action=suggest_improvements',
+                icon: '🧠',
+                type: 'api'
+            },
+            {
+                name: 'LocalAI Service',
+                url: 'http://localhost:8080/v1/models',
+                icon: '🤖',
+                type: 'ml'
+            },
+            {
+                name: 'Focused ML Service',
+                url: 'http://localhost:8000/health',
+                icon: '🔬',
+                type: 'ml'
+            },
+            {
+                name: 'Database',
+                url: '/ai_assistant_api.php?action=model_status',
+                icon: '🗄️',
+                type: 'database'
+            }
+        ];
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+            setInterval(updateDashboard, 30000); // Update every 30 seconds
+        });
+        
+        async function updateDashboard() {
+            showRefreshIndicator();
+            
+            const statusGrid = document.getElementById('statusGrid');
+            statusGrid.innerHTML = '';
+            
+            for (const service of services) {
+                const card = await createStatusCard(service);
+                statusGrid.appendChild(card);
+            }
+            
+            hideRefreshIndicator();
+        }
+        
+        async function createStatusCard(service) {
+            const card = document.createElement('div');
+            card.className = 'status-card';
+            
+            try {
+                const response = await fetch(service.url, { 
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                const isHealthy = response.ok;
+                const responseTime = response.headers.get('x-response-time') || 'N/A';
+                
+                card.classList.add(isHealthy ? 'healthy' : 'error');
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-icon">${service.icon}</div>
+                        <div>
+                            <h3 class="card-title">${service.name}</h3>
+                            <span class="card-status ${isHealthy ? 'status-online' : 'status-offline'}">
+                                ${isHealthy ? 'Online' : 'Offline'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-value">${isHealthy ? '✅' : '❌'}</div>
+                            <div class="metric-label">Status</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">${responseTime}</div>
+                            <div class="metric-label">Response Time</div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                card.classList.add('error');
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-icon">${service.icon}</div>
+                        <div>
+                            <h3 class="card-title">${service.name}</h3>
+                            <span class="card-status status-offline">Offline</span>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-value">❌</div>
+                            <div class="metric-label">Status</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">Error</div>
+                            <div class="metric-label">Connection Failed</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return card;
+        }
+        
+        async function runFullAutomation() {
+            addLog('🚀 Starting full automation...');
+            try {
+                const response = await fetch('/automate_everything.py', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'run_full_automation' })
+                });
+                
+                if (response.ok) {
+                    addLog('✅ Full automation completed successfully');
+                } else {
+                    addLog('❌ Full automation failed');
+                }
+            } catch (error) {
+                addLog(`❌ Automation error: ${error.message}`);
+            }
+        }
+        
+        async function startServices() {
+            addLog('🔧 Starting all services...');
+            try {
+                const response = await fetch('/automate_everything.py', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'start_services' })
+                });
+                
+                if (response.ok) {
+                    addLog('✅ Services started successfully');
+                } else {
+                    addLog('❌ Failed to start services');
+                }
+            } catch (error) {
+                addLog(`❌ Service start error: ${error.message}`);
+            }
+        }
+        
+        async function runTests() {
+            addLog('🧪 Running automated tests...');
+            try {
+                const response = await fetch('/automate_everything.py', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'run_tests' })
+                });
+                
+                if (response.ok) {
+                    addLog('✅ Tests completed successfully');
+                } else {
+                    addLog('❌ Tests failed');
+                }
+            } catch (error) {
+                addLog(`❌ Test error: ${error.message}`);
+            }
+        }
+        
+        async function generateReport() {
+            addLog('📊 Generating automation report...');
+            try {
+                const response = await fetch('/automate_everything.py', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'generate_report' })
+                });
+                
+                if (response.ok) {
+                    addLog('✅ Report generated successfully');
+                    window.open('automation_report.html', '_blank');
+                } else {
+                    addLog('❌ Failed to generate report');
+                }
+            } catch (error) {
+                addLog(`❌ Report generation error: ${error.message}`);
+            }
+        }
+        
+        function startMonitoring() {
+            if (!isMonitoring) {
+                isMonitoring = true;
+                addLog('📡 Starting continuous monitoring...');
+                monitoringInterval = setInterval(updateDashboard, 10000); // Update every 10 seconds
+            }
+        }
+        
+        function stopMonitoring() {
+            if (isMonitoring) {
+                isMonitoring = false;
+                addLog('⏹️ Stopped continuous monitoring');
+                clearInterval(monitoringInterval);
+            }
+        }
+        
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function showRefreshIndicator() {
+            const indicator = document.getElementById('refreshIndicator');
+            indicator.classList.add('show');
+        }
+        
+        function hideRefreshIndicator() {
+            const indicator = document.getElementById('refreshIndicator');
+            indicator.classList.remove('show');
+        }
+        
+        // Add initial log entry
+        addLog('🤖 AI Assistant Automation Dashboard initialized');
+    </script>
+</body>
+</html> 

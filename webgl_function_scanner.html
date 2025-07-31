@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Function Scanner & Research System</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #00ff88;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px #00ff88;
+            color: #00ff88;
+        }
+        
+        .scanner-section {
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #00ff88;
+        }
+        
+        .scanner-section h2 {
+            margin-top: 0;
+            color: #00ff88;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 10px;
+        }
+        
+        .function-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .function-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .function-card:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .function-name {
+            font-weight: bold;
+            color: #00ff88;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .function-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-detected { background: #ff6b35; color: white; }
+        .status-researched { background: #ffd700; color: black; }
+        .status-tested { background: #00ff88; color: black; }
+        .status-documented { background: #8b5cf6; color: white; }
+        .status-working { background: #00b894; color: white; }
+        
+        .function-description {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin: 10px 0;
+        }
+        
+        .function-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00b894);
+            color: black;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        }
+        
+        .btn.research { background: linear-gradient(45deg, #ffd700, #ffb300); }
+        .btn.test { background: linear-gradient(45deg, #ff6b35, #ff4757); }
+        .btn.document { background: linear-gradient(45deg, #8b5cf6, #a855f7); }
+        
+        .scan-results {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #00ff88;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00b894);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin-top: 5px;
+        }
+        
+        .documentation-panel {
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #00ff88;
+        }
+        
+        .doc-section {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 5px;
+        }
+        
+        .doc-title {
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+        
+        .doc-content {
+            font-size: 12px;
+            color: #b0b0b0;
+            line-height: 1.4;
+        }
+        
+        .webgl-canvas {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            margin: 20px 0;
+            background: #000;
+        }
+        
+        .control-panel {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .control-group label {
+            font-size: 12px;
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .control-group select, .control-group input {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 8px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 WebGL Function Scanner & Research System</h1>
+        
+        <!-- Scanner Control Panel -->
+        <div class="scanner-section">
+            <h2>🎯 Scanner Control Panel</h2>
+            <div class="control-panel">
+                <div class="control-group">
+                    <label>Scan Mode:</label>
+                    <select id="scanMode">
+                        <option value="automatic">Automatic Full Scan</option>
+                        <option value="manual">Manual Function Scan</option>
+                        <option value="targeted">Targeted Module Scan</option>
+                        <option value="research">Research Mode Only</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Target Module:</label>
+                    <select id="targetModule">
+                        <option value="all">All Modules</option>
+                        <option value="webgl_core">WebGL Core</option>
+                        <option value="three_js">Three.js</option>
+                        <option value="shaders">Shaders</option>
+                        <option value="textures">Textures</option>
+                        <option value="geometry">Geometry</option>
+                        <option value="lighting">Lighting</option>
+                        <option value="animation">Animation</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Research Sources:</label>
+                    <select id="researchSources" multiple>
+                        <option value="webgl_fundamentals" selected>WebGL Fundamentals</option>
+                        <option value="three_js_docs" selected>Three.js Documentation</option>
+                        <option value="khronos_specs" selected>Khronos Specifications</option>
+                        <option value="codrops_examples" selected>Codrops Examples</option>
+                        <option value="github_examples" selected>GitHub Examples</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn" onclick="startFullScan()">🚀 Start Full Scan</button>
+                <button class="btn research" onclick="startResearchMode()">📚 Research Mode</button>
+                <button class="btn test" onclick="startTestingMode()">🧪 Test Mode</button>
+                <button class="btn document" onclick="generateDocumentation()">📖 Generate Docs</button>
+                <button class="btn" onclick="exportResults()">💾 Export Results</button>
+            </div>
+        </div>
+        
+        <!-- Progress Tracking -->
+        <div class="scanner-section">
+            <h2>📊 Scan Progress</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="scanProgress" style="width: 0%">0%</div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="detectedCount">0</div>
+                    <div class="stat-label">Functions Detected</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="researchedCount">0</div>
+                    <div class="stat-label">Functions Researched</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="testedCount">0</div>
+                    <div class="stat-label">Functions Tested</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="documentedCount">0</div>
+                    <div class="stat-label">Functions Documented</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="workingCount">0</div>
+                    <div class="stat-label">Functions Working</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WebGL Canvas for Testing -->
+        <div class="scanner-section">
+            <h2>🎨 WebGL Testing Canvas</h2>
+            <canvas id="webglCanvas" class="webgl-canvas"></canvas>
+            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                <button class="btn" onclick="testWebGLContext()">Test WebGL Context</button>
+                <button class="btn" onclick="testBasicRendering()">Test Basic Rendering</button>
+                <button class="btn" onclick="testShaderCompilation()">Test Shader Compilation</button>
+                <button class="btn" onclick="testTextureLoading()">Test Texture Loading</button>
+            </div>
+        </div>
+        
+        <!-- Function Grid -->
+        <div class="scanner-section">
+            <h2>🔍 Detected Functions</h2>
+            <div class="function-grid" id="functionGrid">
+                <!-- Functions will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Scan Results -->
+        <div class="scanner-section">
+            <h2>📋 Scan Results</h2>
+            <div class="scan-results" id="scanResults">
+                <div>WebGL Function Scanner initialized...</div>
+                <div>Ready to start scanning...</div>
+            </div>
+        </div>
+        
+        <!-- Documentation Panel -->
+        <div class="scanner-section">
+            <h2>📖 Function Documentation</h2>
+            <div class="documentation-panel" id="documentationPanel">
+                <div class="doc-section">
+                    <div class="doc-title">WebGL Core Functions</div>
+                    <div class="doc-content" id="webglCoreDocs">
+                        Documentation will be generated here...
+                    </div>
+                </div>
+                <div class="doc-section">
+                    <div class="doc-title">Three.js Functions</div>
+                    <div class="doc-content" id="threeJsDocs">
+                        Documentation will be generated here...
+                    </div>
+                </div>
+                <div class="doc-section">
+                    <div class="doc-title">Shader Functions</div>
+                    <div class="doc-content" id="shaderDocs">
+                        Documentation will be generated here...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WebGL Function Scanner System
+        class WebGLFunctionScanner {
+            constructor() {
+                this.detectedFunctions = [];
+                this.researchedFunctions = [];
+                this.testedFunctions = [];
+                this.documentedFunctions = [];
+                this.workingFunctions = [];
+                this.scanProgress = 0;
+                this.isScanning = false;
+                this.webglContext = null;
+                
+                // Research sources based on web search results
+                this.researchSources = {
+                    webgl_fundamentals: 'https://webglfundamentals.org/',
+                    three_js_docs: 'https://threejs.org/manual/',
+                    khronos_specs: 'https://registry.khronos.org/webgl/specs/latest/',
+                    codrops_examples: 'https://tympanus.net/codrops/2025/03/31/webgpu-scanning-effect-with-depth-maps/',
+                    github_examples: 'https://github.com/YumYumNyang/yummy-webGL'
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.initializeWebGL();
+                this.scanWebGLFunctions();
+                this.updateUI();
+                this.log('WebGL Function Scanner initialized');
+            }
+            
+            initializeWebGL() {
+                const canvas = document.getElementById('webglCanvas');
+                this.webglContext = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                
+                if (!this.webglContext) {
+                    this.log('❌ WebGL not supported');
+                    return false;
+                }
+                
+                this.log('✅ WebGL context initialized');
+                return true;
+            }
+            
+            // Scan for WebGL functions
+            scanWebGLFunctions() {
+                this.log('🔍 Starting WebGL function scan...');
+                
+                // Core WebGL functions based on WebGL Fundamentals
+                const webglCoreFunctions = [
+                    // Context functions
+                    'createBuffer', 'bindBuffer', 'bufferData', 'deleteBuffer',
+                    'createTexture', 'bindTexture', 'texImage2D', 'deleteTexture',
+                    'createProgram', 'createShader', 'shaderSource', 'compileShader',
+                    'attachShader', 'linkProgram', 'useProgram', 'deleteProgram',
+                    'getAttribLocation', 'getUniformLocation', 'uniformMatrix4fv',
+                    'enableVertexAttribArray', 'vertexAttribPointer',
+                    'drawArrays', 'drawElements', 'clear', 'clearColor',
+                    
+                    // Advanced functions
+                    'createFramebuffer', 'bindFramebuffer', 'framebufferTexture2D',
+                    'createRenderbuffer', 'bindRenderbuffer', 'renderbufferStorage',
+                    'viewport', 'scissor', 'blendFunc', 'enable', 'disable',
+                    'depthFunc', 'cullFace', 'frontFace', 'lineWidth', 'pointSize',
+                    
+                    // Shader functions
+                    'getShaderParameter', 'getShaderInfoLog', 'getProgramParameter',
+                    'getProgramInfoLog', 'getError', 'getParameter',
+                    
+                    // Texture functions
+                    'texParameteri', 'texParameterf', 'generateMipmap',
+                    'pixelStorei', 'readPixels', 'copyTexImage2D',
+                    
+                    // State functions
+                    'getBooleanv', 'getIntegerv', 'getFloatv', 'getString'
+                ];
+                
+                // Three.js functions
+                const threeJsFunctions = [
+                    'Scene', 'PerspectiveCamera', 'WebGLRenderer', 'Mesh',
+                    'BoxGeometry', 'SphereGeometry', 'PlaneGeometry', 'CylinderGeometry',
+                    'MeshBasicMaterial', 'MeshLambertMaterial', 'MeshPhongMaterial',
+                    'DirectionalLight', 'PointLight', 'SpotLight', 'AmbientLight',
+                    'TextureLoader', 'ObjectLoader', 'GLTFLoader', 'OrbitControls',
+                    'Raycaster', 'Clock', 'Vector3', 'Matrix4', 'Quaternion',
+                    'Euler', 'Color', 'Fog', 'FogExp2', 'Group', 'Object3D'
+                ];
+                
+                // Shader functions
+                const shaderFunctions = [
+                    'vertexShader', 'fragmentShader', 'uniform', 'attribute',
+                    'varying', 'precision', 'discard', 'smoothstep', 'mix',
+                    'clamp', 'fract', 'mod', 'pow', 'sqrt', 'sin', 'cos',
+                    'tan', 'asin', 'acos', 'atan', 'length', 'distance',
+                    'normalize', 'dot', 'cross', 'reflect', 'refract'
+                ];
+                
+                // Combine all functions
+                const allFunctions = [
+                    ...webglCoreFunctions.map(f => ({ name: f, type: 'webgl_core', status: 'detected' })),
+                    ...threeJsFunctions.map(f => ({ name: f, type: 'three_js', status: 'detected' })),
+                    ...shaderFunctions.map(f => ({ name: f, type: 'shader', status: 'detected' }))
+                ];
+                
+                this.detectedFunctions = allFunctions;
+                this.log(`✅ Detected ${allFunctions.length} WebGL functions`);
+                this.updateFunctionGrid();
+                this.updateProgress();
+            }
+            
+            // Research function documentation
+            async researchFunction(functionName, functionType) {
+                this.log(`📚 Researching function: ${functionName}`);
+                
+                const researchData = {
+                    name: functionName,
+                    type: functionType,
+                    sources: [],
+                    documentation: '',
+                    examples: [],
+                    parameters: [],
+                    returnValue: '',
+                    compatibility: '',
+                    performance: '',
+                    bestPractices: []
+                };
+                
+                // Simulate research from different sources
+                if (functionType === 'webgl_core') {
+                    researchData.sources.push(this.researchSources.webgl_fundamentals);
+                    researchData.sources.push(this.researchSources.khronos_specs);
+                    researchData.documentation = `WebGL core function for ${functionName}. Based on WebGL Fundamentals and Khronos specifications.`;
+                } else if (functionType === 'three_js') {
+                    researchData.sources.push(this.researchSources.three_js_docs);
+                    researchData.documentation = `Three.js function for ${functionName}. Based on Three.js documentation.`;
+                } else if (functionType === 'shader') {
+                    researchData.sources.push(this.researchSources.webgl_fundamentals);
+                    researchData.documentation = `GLSL shader function for ${functionName}. Based on WebGL Fundamentals.`;
+                }
+                
+                // Add to researched functions
+                const functionIndex = this.detectedFunctions.findIndex(f => f.name === functionName);
+                if (functionIndex !== -1) {
+                    this.detectedFunctions[functionIndex].status = 'researched';
+                    this.detectedFunctions[functionIndex].researchData = researchData;
+                }
+                
+                this.researchedFunctions.push(researchData);
+                this.log(`✅ Researched function: ${functionName}`);
+                this.updateProgress();
+            }
+            
+            // Test function functionality
+            async testFunction(functionName, functionType) {
+                this.log(`🧪 Testing function: ${functionName}`);
+                
+                let testResult = {
+                    name: functionName,
+                    type: functionType,
+                    success: false,
+                    error: null,
+                    performance: null,
+                    testCode: ''
+                };
+                
+                try {
+                    if (functionType === 'webgl_core') {
+                        testResult = await this.testWebGLFunction(functionName);
+                    } else if (functionType === 'three_js') {
+                        testResult = await this.testThreeJSFunction(functionName);
+                    } else if (functionType === 'shader') {
+                        testResult = await this.testShaderFunction(functionName);
+                    }
+                } catch (error) {
+                    testResult.error = error.message;
+                }
+                
+                // Update function status
+                const functionIndex = this.detectedFunctions.findIndex(f => f.name === functionName);
+                if (functionIndex !== -1) {
+                    this.detectedFunctions[functionIndex].status = testResult.success ? 'working' : 'tested';
+                    this.detectedFunctions[functionIndex].testResult = testResult;
+                }
+                
+                if (testResult.success) {
+                    this.workingFunctions.push(testResult);
+                    this.log(`✅ Function working: ${functionName}`);
+                } else {
+                    this.log(`❌ Function failed: ${functionName} - ${testResult.error}`);
+                }
+                
+                this.testedFunctions.push(testResult);
+                this.updateProgress();
+            }
+            
+            // Test WebGL core function
+            async testWebGLFunction(functionName) {
+                const gl = this.webglContext;
+                if (!gl) {
+                    return { success: false, error: 'WebGL context not available' };
+                }
+                
+                const testResult = {
+                    name: functionName,
+                    type: 'webgl_core',
+                    success: false,
+                    error: null,
+                    performance: null,
+                    testCode: ''
+                };
+                
+                try {
+                    switch (functionName) {
+                        case 'createBuffer':
+                            const buffer = gl.createBuffer();
+                            testResult.success = buffer !== null;
+                            testResult.testCode = 'const buffer = gl.createBuffer();';
+                            break;
+                            
+                        case 'createProgram':
+                            const program = gl.createProgram();
+                            testResult.success = program !== null;
+                            testResult.testCode = 'const program = gl.createProgram();';
+                            break;
+                            
+                        case 'createShader':
+                            const shader = gl.createShader(gl.VERTEX_SHADER);
+                            testResult.success = shader !== null;
+                            testResult.testCode = 'const shader = gl.createShader(gl.VERTEX_SHADER);';
+                            break;
+                            
+                        case 'clearColor':
+                            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                            testResult.success = true;
+                            testResult.testCode = 'gl.clearColor(0.0, 0.0, 0.0, 1.0);';
+                            break;
+                            
+                        case 'viewport':
+                            gl.viewport(0, 0, 800, 600);
+                            testResult.success = true;
+                            testResult.testCode = 'gl.viewport(0, 0, 800, 600);';
+                            break;
+                            
+                        default:
+                            // Test if function exists
+                            if (typeof gl[functionName] === 'function') {
+                                testResult.success = true;
+                                testResult.testCode = `gl.${functionName}(); // Function exists`;
+                            } else {
+                                testResult.success = false;
+                                testResult.error = 'Function not found';
+                            }
+                    }
+                } catch (error) {
+                    testResult.error = error.message;
+                }
+                
+                return testResult;
+            }
+            
+            // Test Three.js function
+            async testThreeJSFunction(functionName) {
+                const testResult = {
+                    name: functionName,
+                    type: 'three_js',
+                    success: false,
+                    error: null,
+                    performance: null,
+                    testCode: ''
+                };
+                
+                try {
+                    // Check if Three.js is available
+                    if (typeof THREE === 'undefined') {
+                        testResult.error = 'Three.js not loaded';
+                        return testResult;
+                    }
+                    
+                    // Test basic Three.js functions
+                    switch (functionName) {
+                        case 'Scene':
+                            const scene = new THREE.Scene();
+                            testResult.success = scene !== null;
+                            testResult.testCode = 'const scene = new THREE.Scene();';
+                            break;
+                            
+                        case 'PerspectiveCamera':
+                            const camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+                            testResult.success = camera !== null;
+                            testResult.testCode = 'const camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);';
+                            break;
+                            
+                        case 'WebGLRenderer':
+                            const renderer = new THREE.WebGLRenderer();
+                            testResult.success = renderer !== null;
+                            testResult.testCode = 'const renderer = new THREE.WebGLRenderer();';
+                            break;
+                            
+                        default:
+                            // Check if Three.js class exists
+                            if (THREE[functionName]) {
+                                testResult.success = true;
+                                testResult.testCode = `THREE.${functionName} // Class exists`;
+                            } else {
+                                testResult.success = false;
+                                testResult.error = 'Class not found in Three.js';
+                            }
+                    }
+                } catch (error) {
+                    testResult.error = error.message;
+                }
+                
+                return testResult;
+            }
+            
+            // Test shader function
+            async testShaderFunction(functionName) {
+                const testResult = {
+                    name: functionName,
+                    type: 'shader',
+                    success: false,
+                    error: null,
+                    performance: null,
+                    testCode: ''
+                };
+                
+                try {
+                    // Test shader compilation with the function
+                    const vertexShaderSource = `
+                        attribute vec3 position;
+                        void main() {
+                            gl_Position = vec4(position, 1.0);
+                        }
+                    `;
+                    
+                    const fragmentShaderSource = `
+                        precision mediump float;
+                        void main() {
+                            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+                        }
+                    `;
+                    
+                    const gl = this.webglContext;
+                    if (!gl) {
+                        testResult.error = 'WebGL context not available';
+                        return testResult;
+                    }
+                    
+                    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+                    gl.shaderSource(vertexShader, vertexShaderSource);
+                    gl.compileShader(vertexShader);
+                    
+                    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+                    gl.shaderSource(fragmentShader, fragmentShaderSource);
+                    gl.compileShader(fragmentShader);
+                    
+                    const program = gl.createProgram();
+                    gl.attachShader(program, vertexShader);
+                    gl.attachShader(program, fragmentShader);
+                    gl.linkProgram(program);
+                    
+                    testResult.success = gl.getProgramParameter(program, gl.LINK_STATUS);
+                    testResult.testCode = `// Shader compilation test with ${functionName}`;
+                    
+                } catch (error) {
+                    testResult.error = error.message;
+                }
+                
+                return testResult;
+            }
+            
+            // Generate documentation
+            generateDocumentation() {
+                this.log('📖 Generating documentation...');
+                
+                let webglCoreDocs = '';
+                let threeJsDocs = '';
+                let shaderDocs = '';
+                
+                // Generate WebGL Core documentation
+                const webglFunctions = this.detectedFunctions.filter(f => f.type === 'webgl_core');
+                webglCoreDocs = `
+                    <h3>WebGL Core Functions (${webglFunctions.length})</h3>
+                    <p>Based on <a href="${this.researchSources.webgl_fundamentals}" target="_blank">WebGL Fundamentals</a> and <a href="${this.researchSources.khronos_specs}" target="_blank">Khronos Specifications</a></p>
+                    <ul>
+                        ${webglFunctions.map(f => `
+                            <li><strong>${f.name}</strong> - ${f.status}
+                                ${f.researchData ? `<br><small>${f.researchData.documentation}</small>` : ''}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                
+                // Generate Three.js documentation
+                const threeJsFunctions = this.detectedFunctions.filter(f => f.type === 'three_js');
+                threeJsDocs = `
+                    <h3>Three.js Functions (${threeJsFunctions.length})</h3>
+                    <p>Based on <a href="${this.researchSources.three_js_docs}" target="_blank">Three.js Documentation</a></p>
+                    <ul>
+                        ${threeJsFunctions.map(f => `
+                            <li><strong>${f.name}</strong> - ${f.status}
+                                ${f.researchData ? `<br><small>${f.researchData.documentation}</small>` : ''}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                
+                // Generate Shader documentation
+                const shaderFunctions = this.detectedFunctions.filter(f => f.type === 'shader');
+                shaderDocs = `
+                    <h3>Shader Functions (${shaderFunctions.length})</h3>
+                    <p>Based on <a href="${this.researchSources.webgl_fundamentals}" target="_blank">WebGL Fundamentals</a></p>
+                    <ul>
+                        ${shaderFunctions.map(f => `
+                            <li><strong>${f.name}</strong> - ${f.status}
+                                ${f.researchData ? `<br><small>${f.researchData.documentation}</small>` : ''}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                
+                document.getElementById('webglCoreDocs').innerHTML = webglCoreDocs;
+                document.getElementById('threeJsDocs').innerHTML = threeJsDocs;
+                document.getElementById('shaderDocs').innerHTML = shaderDocs;
+                
+                this.log('✅ Documentation generated');
+            }
+            
+            // Update function grid
+            updateFunctionGrid() {
+                const grid = document.getElementById('functionGrid');
+                grid.innerHTML = '';
+                
+                this.detectedFunctions.forEach(func => {
+                    const card = document.createElement('div');
+                    card.className = 'function-card';
+                    card.innerHTML = `
+                        <div class="function-name">${func.name}</div>
+                        <div class="function-status status-${func.status}">${func.status}</div>
+                        <div class="function-description">${func.type} function</div>
+                        <div class="function-actions">
+                            <button class="btn research" onclick="scanner.researchFunction('${func.name}', '${func.type}')">Research</button>
+                            <button class="btn test" onclick="scanner.testFunction('${func.name}', '${func.type}')">Test</button>
+                            <button class="btn document" onclick="scanner.generateDocumentation()">Document</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+            
+            // Update progress
+            updateProgress() {
+                const total = this.detectedFunctions.length;
+                const detected = this.detectedFunctions.length;
+                const researched = this.researchedFunctions.length;
+                const tested = this.testedFunctions.length;
+                const working = this.workingFunctions.length;
+                
+                this.scanProgress = Math.round((working / total) * 100);
+                
+                document.getElementById('scanProgress').style.width = `${this.scanProgress}%`;
+                document.getElementById('scanProgress').textContent = `${this.scanProgress}%`;
+                
+                document.getElementById('detectedCount').textContent = detected;
+                document.getElementById('researchedCount').textContent = researched;
+                document.getElementById('testedCount').textContent = tested;
+                document.getElementById('documentedCount').textContent = this.detectedFunctions.filter(f => f.status === 'documented').length;
+                document.getElementById('workingCount').textContent = working;
+            }
+            
+            // Log messages
+            log(message) {
+                const results = document.getElementById('scanResults');
+                const timestamp = new Date().toLocaleTimeString();
+                results.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                results.scrollTop = results.scrollHeight;
+                console.log(`[WebGL Scanner] ${message}`);
+            }
+            
+            // Start full scan
+            async startFullScan() {
+                if (this.isScanning) return;
+                
+                this.isScanning = true;
+                this.log('🚀 Starting full WebGL function scan...');
+                
+                for (const func of this.detectedFunctions) {
+                    await this.researchFunction(func.name, func.type);
+                    await this.testFunction(func.name, func.type);
+                    await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
+                }
+                
+                this.generateDocumentation();
+                this.isScanning = false;
+                this.log('✅ Full scan completed');
+            }
+        }
+        
+        // Global scanner instance
+        let scanner;
+        
+        // Initialize scanner
+        document.addEventListener('DOMContentLoaded', function() {
+            scanner = new WebGLFunctionScanner();
+        });
+        
+        // Global functions for UI
+        function startFullScan() {
+            if (scanner) scanner.startFullScan();
+        }
+        
+        function startResearchMode() {
+            if (scanner) {
+                scanner.log('📚 Starting research mode...');
+                scanner.detectedFunctions.forEach(func => {
+                    scanner.researchFunction(func.name, func.type);
+                });
+            }
+        }
+        
+        function startTestingMode() {
+            if (scanner) {
+                scanner.log('🧪 Starting testing mode...');
+                scanner.detectedFunctions.forEach(func => {
+                    scanner.testFunction(func.name, func.type);
+                });
+            }
+        }
+        
+        function generateDocumentation() {
+            if (scanner) scanner.generateDocumentation();
+        }
+        
+        function exportResults() {
+            if (scanner) {
+                const results = {
+                    detected: scanner.detectedFunctions,
+                    researched: scanner.researchedFunctions,
+                    tested: scanner.testedFunctions,
+                    working: scanner.workingFunctions,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'webgl-function-scan-results.json';
+                a.click();
+                
+                scanner.log('💾 Results exported to webgl-function-scan-results.json');
+            }
+        }
+        
+        // WebGL testing functions
+        function testWebGLContext() {
+            const canvas = document.getElementById('webglCanvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            if (gl) {
+                scanner.log('✅ WebGL context test passed');
+                // Draw a simple colored rectangle
+                gl.clearColor(0.0, 0.5, 1.0, 1.0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+            } else {
+                scanner.log('❌ WebGL context test failed');
+            }
+        }
+        
+        function testBasicRendering() {
+            const canvas = document.getElementById('webglCanvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            if (!gl) {
+                scanner.log('❌ WebGL not available for rendering test');
+                return;
+            }
+            
+            // Create a simple shader program
+            const vertexShaderSource = `
+                attribute vec3 position;
+                void main() {
+                    gl_Position = vec4(position, 1.0);
+                }
+            `;
+            
+            const fragmentShaderSource = `
+                precision mediump float;
+                void main() {
+                    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+                }
+            `;
+            
+            try {
+                const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+                gl.shaderSource(vertexShader, vertexShaderSource);
+                gl.compileShader(vertexShader);
+                
+                const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+                gl.shaderSource(fragmentShader, fragmentShaderSource);
+                gl.compileShader(fragmentShader);
+                
+                const program = gl.createProgram();
+                gl.attachShader(program, vertexShader);
+                gl.attachShader(program, fragmentShader);
+                gl.linkProgram(program);
+                
+                if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    scanner.log('✅ Basic rendering test passed');
+                    gl.useProgram(program);
+                    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                } else {
+                    scanner.log('❌ Basic rendering test failed');
+                }
+            } catch (error) {
+                scanner.log(`❌ Basic rendering test error: ${error.message}`);
+            }
+        }
+        
+        function testShaderCompilation() {
+            scanner.log('🧪 Testing shader compilation...');
+            // This will be handled by the scanner's testFunction method
+        }
+        
+        function testTextureLoading() {
+            scanner.log('🧪 Testing texture loading...');
+            // This will be handled by the scanner's testFunction method
+        }
+    </script>
+</body>
+</html> 

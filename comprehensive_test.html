@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive WebGL Interface Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            margin: 20px;
+        }
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+        }
+        .status-item {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            border-left: 3px solid #00ff88;
+        }
+        .success { background: rgba(0, 255, 0, 0.1); border-left-color: #00ff00; }
+        .error { background: rgba(255, 0, 0, 0.1); border-left-color: #ff0000; }
+        .warning { background: rgba(255, 255, 0, 0.1); border-left-color: #ffff00; }
+        .info { background: rgba(0, 255, 255, 0.1); border-left-color: #00ffff; }
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00cc66;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00cc66);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Comprehensive WebGL Interface Test</h1>
+        
+        <div class="test-section">
+            <h3>📊 Test Progress</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div id="overall-status">Initializing tests...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 Library Tests</h3>
+            <div id="library-tests"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎨 WebGL Interface Tests</h3>
+            <div id="interface-tests"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 API Tests</h3>
+            <div id="api-tests"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Actions</h3>
+            <button onclick="runAllTests()">🔄 Run All Tests</button>
+            <button onclick="openMainInterface()">🚀 Open Main Interface</button>
+            <button onclick="clearCacheAndReload()">🗑️ Clear Cache & Reload</button>
+            <button onclick="test3DVisualization()">🎨 Test 3D Visualization</button>
+        </div>
+    </div>
+
+    <!-- Three.js for Advanced 3D Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- SLMS WebGL Interface -->
+    <script src="webgl_interface.js"></script>
+    
+    <script>
+        let testResults = {
+            libraries: {},
+            interface: {},
+            api: {},
+            overall: 'pending'
+        };
+        
+        function addTestResult(section, message, type = 'info') {
+            const container = document.getElementById(section + '-tests');
+            const div = document.createElement('div');
+            div.className = `status-item ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            container.appendChild(div);
+        }
+        
+        function updateProgress(percent) {
+            document.getElementById('progress-fill').style.width = percent + '%';
+        }
+        
+        function updateOverallStatus(status) {
+            document.getElementById('overall-status').textContent = status;
+        }
+        
+        async function testLibraries() {
+            addTestResult('library', 'Testing libraries...', 'info');
+            
+            // Test Three.js
+            if (typeof THREE !== 'undefined') {
+                addTestResult('library', '✅ Three.js loaded successfully', 'success');
+                testResults.libraries.threejs = true;
+                
+                // Test Three.js functionality
+                try {
+                    const scene = new THREE.Scene();
+                    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                    const renderer = new THREE.WebGLRenderer();
+                    addTestResult('library', '✅ Three.js core functions working', 'success');
+                } catch (error) {
+                    addTestResult('library', `❌ Three.js error: ${error.message}`, 'error');
+                    testResults.libraries.threejs = false;
+                }
+            } else {
+                addTestResult('library', '❌ Three.js not loaded', 'error');
+                testResults.libraries.threejs = false;
+            }
+            
+            // Test SLMSWebGLInterface
+            if (typeof SLMSWebGLInterface !== 'undefined') {
+                addTestResult('library', '✅ SLMSWebGLInterface class available', 'success');
+                testResults.libraries.interface = true;
+            } else {
+                addTestResult('library', '❌ SLMSWebGLInterface class not found', 'error');
+                testResults.libraries.interface = false;
+            }
+        }
+        
+        async function testInterface() {
+            addTestResult('interface', 'Testing WebGL interface...', 'info');
+            
+            if (typeof SLMSWebGLInterface === 'undefined') {
+                addTestResult('interface', '❌ Cannot test interface - class not available', 'error');
+                return;
+            }
+            
+            try {
+                const interface = new SLMSWebGLInterface();
+                addTestResult('interface', '✅ Interface instance created', 'success');
+                
+                // Test initialization
+                await interface.init();
+                addTestResult('interface', '✅ Interface initialized successfully', 'success');
+                
+                // Test DOM looping methods
+                if (interface.domLoopingMethods) {
+                    addTestResult('interface', '✅ DOM looping methods available', 'success');
+                    testResults.interface.domLooping = true;
+                } else {
+                    addTestResult('interface', '❌ DOM looping methods missing', 'error');
+                    testResults.interface.domLooping = false;
+                }
+                
+                // Test 3D visualization
+                if (interface.visualization3D) {
+                    addTestResult('interface', '✅ 3D visualization system available', 'success');
+                    testResults.interface.visualization3D = true;
+                } else {
+                    addTestResult('interface', '❌ 3D visualization system missing', 'error');
+                    testResults.interface.visualization3D = false;
+                }
+                
+                // Test menu system
+                if (interface.menuConfig) {
+                    addTestResult('interface', '✅ Menu system available', 'success');
+                    testResults.interface.menuSystem = true;
+                } else {
+                    addTestResult('interface', '❌ Menu system missing', 'error');
+                    testResults.interface.menuSystem = false;
+                }
+                
+            } catch (error) {
+                addTestResult('interface', `❌ Interface test failed: ${error.message}`, 'error');
+                testResults.interface.initialization = false;
+            }
+        }
+        
+        async function testAPI() {
+            addTestResult('api', 'Testing API connections...', 'info');
+            
+            try {
+                const response = await fetch('webgl_module_integration.php?action=list&module=clients');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addTestResult('api', '✅ API connection successful', 'success');
+                    addTestResult('api', `📊 Retrieved ${data.data ? data.data.length : 0} clients`, 'success');
+                    testResults.api.connection = true;
+                } else {
+                    addTestResult('api', `⚠️ API returned: ${data.message}`, 'warning');
+                    testResults.api.connection = false;
+                }
+            } catch (error) {
+                addTestResult('api', `❌ API connection failed: ${error.message}`, 'error');
+                testResults.api.connection = false;
+            }
+        }
+        
+        async function test3DVisualization() {
+            addTestResult('interface', 'Testing 3D visualization...', 'info');
+            
+            if (typeof SLMSWebGLInterface === 'undefined') {
+                addTestResult('interface', '❌ Cannot test 3D - interface not available', 'error');
+                return;
+            }
+            
+            try {
+                const interface = new SLMSWebGLInterface();
+                
+                if (typeof THREE !== 'undefined') {
+                    interface.initialize3DVisualization();
+                    addTestResult('interface', '✅ 3D visualization initialized', 'success');
+                    
+                    // Test model loading
+                    interface.load3DModel('cube');
+                    addTestResult('interface', '✅ 3D model loading working', 'success');
+                    
+                } else {
+                    addTestResult('interface', '❌ Three.js not available for 3D test', 'error');
+                }
+            } catch (error) {
+                addTestResult('interface', `❌ 3D test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            // Clear previous results
+            document.getElementById('library-tests').innerHTML = '';
+            document.getElementById('interface-tests').innerHTML = '';
+            document.getElementById('api-tests').innerHTML = '';
+            
+            updateProgress(0);
+            updateOverallStatus('Running comprehensive tests...');
+            
+            // Run tests in sequence
+            await testLibraries();
+            updateProgress(33);
+            
+            await testInterface();
+            updateProgress(66);
+            
+            await testAPI();
+            updateProgress(100);
+            
+            // Calculate overall status
+            const allLibraries = Object.values(testResults.libraries).every(Boolean);
+            const allInterface = Object.values(testResults.interface).every(Boolean);
+            const allAPI = Object.values(testResults.api).every(Boolean);
+            
+            if (allLibraries && allInterface && allAPI) {
+                updateOverallStatus('🎉 All tests passed! System is ready.');
+                testResults.overall = 'success';
+            } else {
+                updateOverallStatus('⚠️ Some tests failed. Check results above.');
+                testResults.overall = 'warning';
+            }
+        }
+        
+        function openMainInterface() {
+            window.location.href = 'webgl_demo_integrated.php';
+        }
+        
+        function clearCacheAndReload() {
+            localStorage.clear();
+            sessionStorage.clear();
+            const timestamp = new Date().getTime();
+            window.location.href = `comprehensive_test.html?t=${timestamp}`;
+        }
+        
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html> 

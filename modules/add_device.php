@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Dodaj Urządzenie';
 $pdo = get_pdo();
 $clients = $pdo->query('SELECT id, name FROM clients')->fetchAll(PDO::FETCH_ASSOC);

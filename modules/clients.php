@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/helpers/column_helper.php';
 $pageTitle = 'Klienci';
 
@@ -7,8 +8,28 @@ $pageTitle = 'Klienci';
 
 $pdo = get_pdo();
 
-// SLMS-BAREBONE: The following section is commented out for minimal deployment
-// [Comment out all advanced/legacy features, keeping only CRUD]
+// Initialize column configurations if table exists
+if (column_configs_table_exists($pdo)) {
+    $default_client_configs = [
+        ['clients', 'id', 'identyfikator klienta', 'text', 1, 1, 1],
+        ['clients', 'name', 'nazwa klienta', 'text', 1, 1, 2],
+        ['clients', 'altname', 'alternatywna nazwa klienta', 'text', 0, 1, 3],
+        ['clients', 'address', 'adres', 'textarea', 1, 1, 4],
+        ['clients', 'post_name', 'nazwa korespondencyjna', 'text', 0, 1, 5],
+        ['clients', 'post_address', 'adres korespondencyjny', 'textarea', 0, 1, 6],
+        ['clients', 'location_name', 'nazwa lokalizacji', 'text', 0, 1, 7],
+        ['clients', 'location_address', 'adres lokalizacyjny', 'textarea', 0, 1, 8],
+        ['clients', 'email', 'e-mail', 'email', 1, 1, 9],
+        ['clients', 'bankaccount', 'alternatywny rachunek bankowy', 'text', 0, 1, 10],
+        ['clients', 'ten', 'NIP', 'text', 1, 1, 11],
+        ['clients', 'ssn', 'PESEL', 'text', 0, 1, 12],
+        ['clients', 'additional_info', 'informacje dodatkowe', 'textarea', 0, 1, 13],
+        ['clients', 'notes', 'notatki', 'textarea', 0, 1, 14],
+        ['clients', 'documentmemo', 'notatka na dokumentach', 'textarea', 0, 1, 15],
+        ['clients', 'contact_info', 'informacje kontaktowe', 'text', 0, 1, 16],
+    ];
+    initialize_module_columns($pdo, 'clients', $default_client_configs);
+}
 
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {

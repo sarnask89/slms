@@ -1,6 +1,7 @@
 <?php
 // check_auth.php - Simple authentication check and redirect
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 
 try {
     $pdo = get_pdo();
@@ -27,7 +28,7 @@ try {
     
     // Check if user is logged in
     if (session_status() === PHP_SESSION_NONE) {
-        if (php_sapi_name() !== "cli" && session_status() === PHP_SESSION_NONE) { if (php_sapi_name() !== "cli" && session_status() === PHP_SESSION_NONE) { session_start(); } }
+        session_start();
     }
     if (isset($_SESSION['user_id'])) {
         // User is logged in, redirect to main page

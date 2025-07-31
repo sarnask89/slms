@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Execute Config Script';
 $pdo = get_pdo();
 $id = $_GET['id'] ?? null;
@@ -9,7 +10,7 @@ $stmt->execute([$id, 'config_script']);
 $item = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$item) { echo 'Script not found or not allowed.'; exit; }
 $output = '';
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Security: Only allow execution if you trust your environment!
     $script = $item['script'];
     if ($script) {

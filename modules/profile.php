@@ -1,9 +1,10 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
-    if (php_sapi_name() !== "cli" && session_status() === PHP_SESSION_NONE) { if (php_sapi_name() !== "cli" && session_status() === PHP_SESSION_NONE) { session_start(); } }
+    session_start();
 }
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/helpers/auth_helper.php';
+require_once 'module_loader.php';
+
+require_once 'helpers/auth_helper.php';
 
 // Require login
 require_login();
@@ -19,7 +20,7 @@ $stmt->execute([$currentUser['id']]);
 $userData = $stmt->fetch();
 
 // Handle form submissions
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
     if ($action === 'update_profile') {
@@ -284,5 +285,5 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
+require_once '../partials/layout.php';
 ?> 

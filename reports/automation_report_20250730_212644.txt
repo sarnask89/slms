@@ -1,0 +1,21 @@
+AI Assistant & ML Model Automation Report
+Generated: śro, 30 lip 2025, 21:26:44 CEST
+==========================================
+
+System Status:
+- AI Assistant API: [2025-07-30 21:26:44] ✅ AI Assistant API is running on port 80
+✅ Running
+- Adaptive AI API: [2025-07-30 21:26:44] ✅ Adaptive AI API is running on port 80
+✅ Running
+- LocalAI: [2025-07-30 21:26:45] ❌ LocalAI is not running on port 8080
+❌ Not Running
+- Focused ML Service: [2025-07-30 21:26:45] ❌ Focused ML Service is not running on port 8000
+❌ Not Running
+
+Services Started:
+LocalAI started
+Focused ML Service started
+
+Test Results:
+
+

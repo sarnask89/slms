@@ -1,0 +1,56 @@
+# Network Scanner Daemon and API Server Requirements
+# Core dependencies for network scanning and visualization
+
+# Web framework and API
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+websockets==12.0
+
+# Network scanning and protocols
+pysnmp==4.4.12
+scapy==2.5.0
+
+# Async support
+aiohttp==3.9.1
+
+# Data handling
+pydantic==2.5.0
+
+# Optional: For daemon functionality
+python-daemon==3.0.1
+
+# Optional: For enhanced SNMP functionality
+pysnmp-mibs==0.1.6
+
+# Optional: For network discovery
+python-nmap==0.7.1
+
+# Optional: For enhanced packet manipulation
+dpkt==1.9.8
+
+# Optional: For configuration management
+pyyaml==6.0.1
+
+# Optional: For logging enhancements
+colorlog==6.8.0
+
+# Optional: For performance monitoring
+psutil==5.9.6
+
+# Optional: For web interface enhancements
+jinja2==3.1.2
+
+# Optional: For data visualization (if needed for charts)
+matplotlib==3.8.2
+plotly==5.17.0
+
+# Optional: For machine learning features (future enhancement)
+numpy==1.24.3
+pandas==2.1.4
+
+# Development dependencies (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1 

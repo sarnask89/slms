@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Edytuj Usługę';
 $pdo = get_pdo();
 
@@ -23,7 +24,7 @@ if (!$service) {
     exit;
 }
 
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $client_id = $_POST['client_id'] ?? '';
     $service_type = $_POST['service_type'] ?? '';
     

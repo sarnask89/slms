@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - SLMS WebGL Interface</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            margin: 20px;
+        }
+        .debug-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: rgba(0, 255, 0, 0.2); border: 1px solid #00ff00; }
+        .error { background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0000; }
+        .warning { background: rgba(255, 255, 0, 0.2); border: 1px solid #ffff00; }
+        .info { background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; }
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00cc66;
+        }
+        .console-sidebar {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .nav-primary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .nav-primary li {
+            margin: 5px 0;
+        }
+        .nav-primary a {
+            color: #00ff88;
+            text-decoration: none;
+            padding: 8px 12px;
+            display: block;
+            border-radius: 3px;
+            transition: background 0.3s;
+        }
+        .nav-primary a:hover {
+            background: rgba(0, 255, 136, 0.2);
+        }
+        .nav-primary a.active {
+            background: rgba(0, 255, 136, 0.3);
+            border-left: 3px solid #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 Debug - SLMS WebGL Interface</h1>
+        
+        <div id="debug-status"></div>
+        
+        <div class="status info">
+            <h3>📋 Test Controls</h3>
+            <button onclick="testBasicLoading()">🔍 Test Basic Loading</button>
+            <button onclick="testMenuSystem()">🍔 Test Menu System</button>
+            <button onclick="test3DVisualization()">🎨 Test 3D Visualization</button>
+            <button onclick="testAPIConnection()">🔗 Test API Connection</button>
+            <button onclick="clearDebug()">🗑️ Clear Debug</button>
+        </div>
+        
+        <div class="status info">
+            <h3>🎯 Menu Test Area</h3>
+            <div class="console-sidebar" id="menu-test-area">
+                <p>Menu will appear here when loaded...</p>
+            </div>
+        </div>
+        
+        <div class="status info">
+            <h3>📊 Console Output</h3>
+            <div id="console-output" style="background: rgba(0,0,0,0.8); padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- Three.js for Advanced 3D Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="webgl_interface.js"></script>
+    
+    <script>
+        // Debug logging
+        function log(message, type = 'info') {
+            const output = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.innerHTML = `<span style="color: #888;">[${timestamp}]</span> <span style="color: ${type === 'error' ? '#ff0000' : type === 'success' ? '#00ff00' : type === 'warning' ? '#ffff00' : '#00ffff'};">${message}</span>`;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function addStatus(message, type = 'info') {
+            const status = document.getElementById('debug-status');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            status.appendChild(div);
+        }
+
+        function clearDebug() {
+            document.getElementById('debug-status').innerHTML = '';
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        // Test basic loading
+        function testBasicLoading() {
+            log('Starting basic loading test...', 'info');
+            
+            try {
+                // Test if SLMSWebGLInterface is available
+                if (typeof SLMSWebGLInterface !== 'undefined') {
+                    log('✅ SLMSWebGLInterface class found', 'success');
+                    addStatus('SLMSWebGLInterface class found', 'success');
+                    
+                    // Test if we can create an instance
+                    const interface = new SLMSWebGLInterface();
+                    log('✅ SLMSWebGLInterface instance created', 'success');
+                    addStatus('SLMSWebGLInterface instance created', 'success');
+                    
+                    // Store globally for other tests
+                    window.webglInterface = interface;
+                    
+                } else {
+                    log('❌ SLMSWebGLInterface class not found', 'error');
+                    addStatus('SLMSWebGLInterface class not found', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Basic loading test failed: ${error.message}`, 'error');
+                addStatus(`Basic loading test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test menu system
+        function testMenuSystem() {
+            log('Testing menu system...', 'info');
+            
+            try {
+                if (window.webglInterface) {
+                    // Test basic menu setup
+                    if (window.webglInterface.setupBasicMenu) {
+                        log('✅ Basic menu setup method available', 'success');
+                        window.webglInterface.setupBasicMenu();
+                        log('✅ Basic menu setup executed', 'success');
+                        addStatus('Basic menu setup executed', 'success');
+                        
+                        // Check if menu was created
+                        const menuArea = document.getElementById('menu-test-area');
+                        if (menuArea.querySelector('.nav-primary')) {
+                            log('✅ Menu HTML created successfully', 'success');
+                            addStatus('Menu HTML created successfully', 'success');
+                        } else {
+                            log('⚠️ Menu HTML not found in test area', 'warning');
+                            addStatus('Menu HTML not found in test area', 'warning');
+                        }
+                    } else {
+                        log('❌ Basic menu setup method not found', 'error');
+                        addStatus('Basic menu setup method not found', 'error');
+                    }
+                } else {
+                    log('❌ WebGL interface not available', 'error');
+                    addStatus('WebGL interface not available', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Menu system test failed: ${error.message}`, 'error');
+                addStatus(`Menu system test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 3D visualization
+        function test3DVisualization() {
+            log('Testing 3D visualization...', 'info');
+            
+            try {
+                if (typeof THREE !== 'undefined') {
+                    log('✅ Three.js library loaded', 'success');
+                    addStatus('Three.js library loaded', 'success');
+                    
+                    if (window.webglInterface && window.webglInterface.initialize3DVisualization) {
+                        log('✅ 3D visualization method available', 'success');
+                        try {
+                            window.webglInterface.initialize3DVisualization();
+                            log('✅ 3D visualization initialized', 'success');
+                            addStatus('3D visualization initialized', 'success');
+                        } catch (error) {
+                            log(`⚠️ 3D visualization failed: ${error.message}`, 'warning');
+                            addStatus(`3D visualization failed: ${error.message}`, 'warning');
+                        }
+                    } else {
+                        log('❌ 3D visualization method not found', 'error');
+                        addStatus('3D visualization method not found', 'error');
+                    }
+                } else {
+                    log('❌ Three.js library not loaded', 'error');
+                    addStatus('Three.js library not loaded', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ 3D test failed: ${error.message}`, 'error');
+                addStatus(`3D test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test API connection
+        function testAPIConnection() {
+            log('Testing API connection...', 'info');
+            
+            try {
+                fetch('webgl_module_integration.php?action=list&module=clients')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            log('✅ API connection successful', 'success');
+                            addStatus('API connection successful', 'success');
+                        } else {
+                            log(`⚠️ API returned error: ${data.message}`, 'warning');
+                            addStatus(`API returned error: ${data.message}`, 'warning');
+                        }
+                    })
+                    .catch(error => {
+                        log(`❌ API connection failed: ${error.message}`, 'error');
+                        addStatus(`API connection failed: ${error.message}`, 'error');
+                    });
+            } catch (error) {
+                log(`❌ API test failed: ${error.message}`, 'error');
+                addStatus(`API test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-run basic test on page load
+        window.addEventListener('load', () => {
+            log('Page loaded, starting auto-test...', 'info');
+            setTimeout(() => {
+                testBasicLoading();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

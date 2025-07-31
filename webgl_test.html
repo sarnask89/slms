@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebGL Support Test</title>
+</head>
+<body>
+    <canvas id="webgl-canvas" width="100" height="100"></canvas>
+    <script>
+        const canvas = document.getElementById('webgl-canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        
+        if (gl) {
+            console.log('WebGL supported');
+            document.body.innerHTML += '<p>WebGL: SUPPORTED</p>';
+        } else {
+            console.log('WebGL not supported');
+            document.body.innerHTML += '<p>WebGL: NOT SUPPORTED</p>';
+        }
+    </script>
+</body>
+</html>

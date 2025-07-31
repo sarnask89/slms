@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 
 $pageTitle = 'Capacity Planning & Analysis';
 $pdo = get_pdo();
@@ -248,7 +249,7 @@ class CapacityPlanning {
 }
 
 // Handle analysis requests
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $capacitySystem = new CapacityPlanning($pdo);
     
     if (isset($_POST['analyze_growth'])) {

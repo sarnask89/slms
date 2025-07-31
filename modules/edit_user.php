@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/../modules/helpers/auth_helper.php';
 
 // Require admin access
@@ -18,7 +19,7 @@ if (!$user_id) {
 }
 
 // Handle form submission
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $role = $_POST['role'] ?? 'user';
@@ -261,5 +262,5 @@ function toggleUserStatus() {
 
 <?php
 $content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
+require_once '../partials/layout.php';
 ?> 

@@ -1,16 +1,4 @@
-<?phpif (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../modules/helpers/auth_helper.php';
-
-// Require login
-require_login();
-
-$pageTitle = 'Mikrotik Api';
-ob_start();
-?>
-
+<?php
 // MikroTik API Helper Class
 class MikroTikAPI {
     private $host;
@@ -324,12 +312,12 @@ function mikrotikSshCall($host, $username, $password, $command, $port = 22) {
     $escaped_user = escapeshellarg($username);
     
     // Use sshpass directly for faster execution - removed BatchMode=yes which can cause issues
-    $sshpass_command = "timeout 8 sshpass -p " . escapeshellarg($password) . " ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -p $port $escaped_user@$escaped_host $escaped_command 2>&1";
+    $sshpass_command = "timeout 8 sshpass -p " . escapeshellarg($password) . " ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -p $port $escaped_user@$escaped_host $escaped_command 2>&1";
     $output = shell_exec($sshpass_command);
     
     // If sshpass fails, try without password (for key-based auth)
     if (empty($output) || strpos($output, 'Permission denied') !== false) {
-        $ssh_command = "timeout 8 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -p $port $escaped_user@$escaped_host $escaped_command 2>&1";
+        $ssh_command = "timeout 8 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -p $port $escaped_user@$escaped_host $escaped_command 2>&1";
         $output = shell_exec($ssh_command);
     }
     
@@ -624,8 +612,3 @@ function parseAddressesFromSsh($ssh_output) {
     return $addresses;
 }
 ?> 
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
-?>

@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Network Visualization - Mesh Structures</title>
+    
+    <!-- Three.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000011;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        #network-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Control Interface */
+        .control-interface {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-width: 300px;
+        }
+
+        .interface-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .control-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #b0b0b0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-button {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            width: 100%;
+            font-size: 0.875rem;
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .control-button.secondary {
+            background: linear-gradient(135deg, #8b5cf6, #ff6b35);
+        }
+
+        .control-button.secondary:hover {
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .control-slider {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+            margin: 10px 0;
+        }
+
+        .control-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .control-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-label {
+            font-size: 0.75rem;
+            color: #b0b0b0;
+            margin-bottom: 5px;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-width: 250px;
+            display: none;
+        }
+
+        .info-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .info-item {
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+        }
+
+        .info-label {
+            color: #b0b0b0;
+        }
+
+        .info-value {
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        /* Performance Monitor */
+        .performance-monitor {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.75rem;
+            color: #b0b0b0;
+        }
+
+        .performance-item {
+            margin-bottom: 5px;
+        }
+
+        .performance-value {
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000011;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #ffffff;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .control-interface, .info-panel {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                width: auto;
+                min-width: auto;
+            }
+            
+            .info-panel {
+                top: auto;
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+            }
+            
+            .performance-monitor {
+                bottom: 10px;
+                right: 10px;
+                left: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Initializing Network Visualization...</div>
+    </div>
+
+    <!-- Network Container -->
+    <div id="network-container"></div>
+
+    <!-- Control Interface -->
+    <div class="control-interface">
+        <div class="interface-title">🌐 Network Mesh</div>
+        
+        <div class="control-section">
+            <div class="section-title">Mesh Generation</div>
+            <button class="control-button" onclick="networkMesh.generateRandomMesh()">🎲 Generate Random Mesh</button>
+            <button class="control-button" onclick="networkMesh.generateOrganicMesh()">🌱 Generate Organic Mesh</button>
+            <button class="control-button" onclick="networkMesh.generateHierarchicalMesh()">🏗️ Generate Hierarchical</button>
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">Node Management</div>
+            <button class="control-button" onclick="networkMesh.addNode('router')">📡 Add Router</button>
+            <button class="control-button" onclick="networkMesh.addNode('switch')">🔌 Add Switch</button>
+            <button class="control-button" onclick="networkMesh.addNode('server')">🖥️ Add Server</button>
+            <button class="control-button" onclick="networkMesh.addNode('firewall')">🛡️ Add Firewall</button>
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">Visualization</div>
+            <button class="control-button" onclick="networkMesh.toggleForceLayout()">⚡ Toggle Force Layout</button>
+            <button class="control-button" onclick="networkMesh.toggleHolographic()">👻 Toggle Holographic</button>
+            <button class="control-button" onclick="networkMesh.toggleEnergyFields()">⚡ Toggle Energy Fields</button>
+            <button class="control-button" onclick="networkMesh.toggleClustering()">🎯 Toggle Clustering</button>
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">Controls</div>
+            <div class="slider-label">Node Count: <span id="node-count-value">50</span></div>
+            <input type="range" class="control-slider" id="node-count" min="10" max="200" value="50">
+            
+            <div class="slider-label">Connection Probability: <span id="connection-prob-value">0.3</span></div>
+            <input type="range" class="control-slider" id="connection-prob" min="0.1" max="0.8" step="0.1" value="0.3">
+            
+            <div class="slider-label">Animation Speed: <span id="animation-speed-value">1.0</span></div>
+            <input type="range" class="control-slider" id="animation-speed" min="0" max="3" step="0.1" value="1.0">
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">System</div>
+            <button class="control-button secondary" onclick="networkMesh.resetCamera()">📷 Reset Camera</button>
+            <button class="control-button secondary" onclick="networkMesh.togglePerformance()">📊 Toggle Performance</button>
+            <button class="control-button secondary" onclick="networkMesh.clearMesh()">🗑️ Clear Mesh</button>
+        </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel" id="info-panel">
+        <div class="info-title">Node Information</div>
+        <div class="info-item">
+            <span class="info-label">Type:</span>
+            <span class="info-value" id="node-type">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Status:</span>
+            <span class="info-value" id="node-status">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Connections:</span>
+            <span class="info-value" id="node-connections">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Load:</span>
+            <span class="info-value" id="node-load">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Position:</span>
+            <span class="info-value" id="node-position">-</span>
+        </div>
+    </div>
+
+    <!-- Performance Monitor -->
+    <div class="performance-monitor" id="performance-monitor" style="display: none;">
+        <div class="performance-item">FPS: <span class="performance-value" id="fps">60</span></div>
+        <div class="performance-item">Nodes: <span class="performance-value" id="node-count-display">0</span></div>
+        <div class="performance-item">Connections: <span class="performance-value" id="connection-count-display">0</span></div>
+        <div class="performance-item">Memory: <span class="performance-value" id="memory">0</span> MB</div>
+    </div>
+
+    <script>
+        // Advanced Network Mesh Visualization
+        class AdvancedNetworkMesh {
+            constructor() {
+                this.container = document.getElementById('network-container');
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.controls = null;
+                this.stats = null;
+                
+                // Mesh data
+                this.nodes = [];
+                this.connections = [];
+                this.nodeMeshes = new Map();
+                this.connectionMeshes = new Map();
+                
+                // Configuration
+                this.config = {
+                    nodeCount: 50,
+                    connectionProbability: 0.3,
+                    animationSpeed: 1.0,
+                    forceLayout: true,
+                    holographic: false,
+                    energyFields: false,
+                    clustering: false,
+                    showPerformance: false
+                };
+                
+                // Force layout
+                this.forces = new Map();
+                this.velocities = new Map();
+                this.repulsion = 100;
+                this.attraction = 0.1;
+                this.damping = 0.9;
+                
+                // Initialize
+                this.init();
+            }
+            
+            init() {
+                this.createScene();
+                this.createCamera();
+                this.createRenderer();
+                this.createControls();
+                this.createLighting();
+                this.setupEventListeners();
+                this.generateRandomMesh();
+                this.animate();
+                
+                // Hide loading screen
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').style.display = 'none';
+                    }, 500);
+                }, 2000);
+            }
+            
+            createScene() {
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x000011);
+                this.scene.fog = new THREE.Fog(0x000011, 50, 200);
+            }
+            
+            createCamera() {
+                this.camera = new THREE.PerspectiveCamera(
+                    75,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    1000
+                );
+                this.camera.position.set(50, 50, 50);
+            }
+            
+            createRenderer() {
+                this.renderer = new THREE.WebGLRenderer({ 
+                    antialias: true,
+                    alpha: true,
+                    powerPreference: "high-performance"
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                this.renderer.toneMappingExposure = 1.2;
+                this.container.appendChild(this.renderer.domElement);
+            }
+            
+            createControls() {
+                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                this.controls.enableDamping = true;
+                this.controls.dampingFactor = 0.05;
+                this.controls.maxDistance = 200;
+                this.controls.minDistance = 10;
+            }
+            
+            createLighting() {
+                // Ambient light
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+                this.scene.add(ambientLight);
+                
+                // Directional light
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                directionalLight.position.set(50, 50, 50);
+                directionalLight.castShadow = true;
+                directionalLight.shadow.mapSize.width = 2048;
+                directionalLight.shadow.mapSize.height = 2048;
+                this.scene.add(directionalLight);
+                
+                // Point lights for atmosphere
+                for (let i = 0; i < 6; i++) {
+                    const pointLight = new THREE.PointLight(0x00d4ff, 0.3, 30);
+                    pointLight.position.set(
+                        (Math.random() - 0.5) * 100,
+                        (Math.random() - 0.5) * 100,
+                        (Math.random() - 0.5) * 100
+                    );
+                    this.scene.add(pointLight);
+                }
+            }
+            
+            setupEventListeners() {
+                // Window resize
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = window.innerWidth / window.innerHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+                
+                // Control sliders
+                document.getElementById('node-count').addEventListener('input', (e) => {
+                    this.config.nodeCount = parseInt(e.target.value);
+                    document.getElementById('node-count-value').textContent = this.config.nodeCount;
+                });
+                
+                document.getElementById('connection-prob').addEventListener('input', (e) => {
+                    this.config.connectionProbability = parseFloat(e.target.value);
+                    document.getElementById('connection-prob-value').textContent = this.config.connectionProbability;
+                });
+                
+                document.getElementById('animation-speed').addEventListener('input', (e) => {
+                    this.config.animationSpeed = parseFloat(e.target.value);
+                    document.getElementById('animation-speed-value').textContent = this.config.animationSpeed;
+                });
+                
+                // Mouse interaction
+                this.renderer.domElement.addEventListener('click', (event) => {
+                    this.onMouseClick(event);
+                });
+            }
+            
+            // Mesh Generation Methods
+            generateRandomMesh() {
+                this.clearMesh();
+                
+                // Generate nodes
+                for (let i = 0; i < this.config.nodeCount; i++) {
+                    const node = this.createRandomNode(i);
+                    this.nodes.push(node);
+                    this.addNodeToScene(node);
+                }
+                
+                // Generate connections
+                this.generateConnections();
+                
+                this.updatePerformanceDisplay();
+            }
+            
+            generateOrganicMesh() {
+                this.clearMesh();
+                
+                // Generate nodes in organic pattern
+                for (let i = 0; i < this.config.nodeCount; i++) {
+                    const angle = (i / this.config.nodeCount) * Math.PI * 2;
+                    const radius = 20 + Math.sin(i * 0.5) * 10;
+                    const height = Math.cos(i * 0.3) * 15;
+                    
+                    const node = this.createNode({
+                        id: i,
+                        position: new THREE.Vector3(
+                            Math.cos(angle) * radius,
+                            height,
+                            Math.sin(angle) * radius
+                        ),
+                        type: this.getRandomNodeType()
+                    });
+                    
+                    this.nodes.push(node);
+                    this.addNodeToScene(node);
+                }
+                
+                this.generateConnections();
+                this.updatePerformanceDisplay();
+            }
+            
+            generateHierarchicalMesh() {
+                this.clearMesh();
+                
+                const levels = 3;
+                const nodesPerLevel = Math.ceil(this.config.nodeCount / levels);
+                
+                for (let level = 0; level < levels; level++) {
+                    const levelRadius = 15 + level * 20;
+                    const levelHeight = level * 15;
+                    
+                    for (let i = 0; i < nodesPerLevel && this.nodes.length < this.config.nodeCount; i++) {
+                        const angle = (i / nodesPerLevel) * Math.PI * 2;
+                        
+                        const node = this.createNode({
+                            id: this.nodes.length,
+                            position: new THREE.Vector3(
+                                Math.cos(angle) * levelRadius,
+                                levelHeight,
+                                Math.sin(angle) * levelRadius
+                            ),
+                            type: this.getRandomNodeType()
+                        });
+                        
+                        this.nodes.push(node);
+                        this.addNodeToScene(node);
+                    }
+                }
+                
+                this.generateConnections();
+                this.updatePerformanceDisplay();
+            }
+            
+            createRandomNode(id) {
+                return this.createNode({
+                    id: id,
+                    position: new THREE.Vector3(
+                        (Math.random() - 0.5) * 60,
+                        (Math.random() - 0.5) * 60,
+                        (Math.random() - 0.5) * 60
+                    ),
+                    type: this.getRandomNodeType()
+                });
+            }
+            
+            createNode(config) {
+                const nodeTypes = {
+                    router: { geometry: 'icosahedron', color: 0x00d4ff, size: 1.2 },
+                    switch: { geometry: 'octahedron', color: 0x00ff88, size: 1.0 },
+                    server: { geometry: 'cube', color: 0x8b5cf6, size: 1.5 },
+                    firewall: { geometry: 'dodecahedron', color: 0xff6b35, size: 1.1 },
+                    client: { geometry: 'sphere', color: 0x666666, size: 0.8 }
+                };
+                
+                const typeConfig = nodeTypes[config.type];
+                let geometry;
+                
+                switch (typeConfig.geometry) {
+                    case 'icosahedron':
+                        geometry = new THREE.IcosahedronGeometry(typeConfig.size, 0);
+                        break;
+                    case 'octahedron':
+                        geometry = new THREE.OctahedronGeometry(typeConfig.size, 0);
+                        break;
+                    case 'cube':
+                        geometry = new THREE.BoxGeometry(typeConfig.size, typeConfig.size, typeConfig.size);
+                        break;
+                    case 'dodecahedron':
+                        geometry = new THREE.DodecahedronGeometry(typeConfig.size, 0);
+                        break;
+                    case 'sphere':
+                        geometry = new THREE.SphereGeometry(typeConfig.size, 16, 16);
+                        break;
+                }
+                
+                const material = new THREE.MeshPhongMaterial({
+                    color: typeConfig.color,
+                    shininess: 30,
+                    specular: 0x444444
+                });
+                
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.copy(config.position);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                
+                // Store node data
+                mesh.userData = {
+                    id: config.id,
+                    type: config.type,
+                    status: 'online',
+                    connections: 0,
+                    load: Math.random() * 100
+                };
+                
+                return mesh;
+            }
+            
+            getRandomNodeType() {
+                const types = ['router', 'switch', 'server', 'firewall', 'client'];
+                return types[Math.floor(Math.random() * types.length)];
+            }
+            
+            addNodeToScene(node) {
+                this.scene.add(node);
+                this.nodeMeshes.set(node.userData.id, node);
+                
+                // Add holographic effect if enabled
+                if (this.config.holographic) {
+                    this.addHolographicEffect(node);
+                }
+                
+                // Add energy field if enabled
+                if (this.config.energyFields) {
+                    this.addEnergyField(node);
+                }
+            }
+            
+            generateConnections() {
+                this.connections = [];
+                
+                for (let i = 0; i < this.nodes.length; i++) {
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        const distance = this.nodes[i].position.distanceTo(this.nodes[j].position);
+                        const probability = this.config.connectionProbability * (1 - distance / 50);
+                        
+                        if (Math.random() < probability) {
+                            const connection = this.createConnection(this.nodes[i], this.nodes[j]);
+                            this.connections.push(connection);
+                            this.scene.add(connection);
+                            this.connectionMeshes.set(`${i}-${j}`, connection);
+                            
+                            // Update connection counts
+                            this.nodes[i].userData.connections++;
+                            this.nodes[j].userData.connections++;
+                        }
+                    }
+                }
+            }
+            
+            createConnection(node1, node2) {
+                const points = [node1.position, node2.position];
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                const material = new THREE.LineBasicMaterial({ 
+                    color: 0x00d4ff,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                
+                const line = new THREE.Line(geometry, material);
+                line.userData = {
+                    from: node1.userData.id,
+                    to: node2.userData.id,
+                    type: 'ethernet'
+                };
+                
+                return line;
+            }
+            
+            // Visual Effects
+            addHolographicEffect(node) {
+                const radius = node.geometry.parameters.radius || 1;
+                const layers = 3;
+                
+                for (let i = 0; i < layers; i++) {
+                    const layerRadius = radius * (1.2 + i * 0.2);
+                    const geometry = new THREE.IcosahedronGeometry(layerRadius, 0);
+                    const material = new THREE.MeshBasicMaterial({
+                        color: node.material.color,
+                        transparent: true,
+                        opacity: 0.3 - i * 0.1,
+                        wireframe: true
+                    });
+                    
+                    const layer = new THREE.Mesh(geometry, material);
+                    node.add(layer);
+                    
+                    if (!node.userData.hologramLayers) {
+                        node.userData.hologramLayers = [];
+                    }
+                    node.userData.hologramLayers.push(layer);
+                }
+            }
+            
+            addEnergyField(node) {
+                const particleCount = 50;
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const radius = 3;
+                    
+                    positions[i * 3] = Math.cos(angle) * radius;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * radius * 0.5;
+                    positions[i * 3 + 2] = Math.sin(angle) * radius;
+                    
+                    colors[i * 3] = 0.5;
+                    colors[i * 3 + 1] = 1.0;
+                    colors[i * 3 + 2] = 1.0;
+                }
+                
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                
+                const material = new THREE.PointsMaterial({
+                    size: 0.3,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const field = new THREE.Points(geometry, material);
+                node.add(field);
+                node.userData.energyField = field;
+            }
+            
+            // Force Layout
+            calculateForces() {
+                if (!this.config.forceLayout) return;
+                
+                // Clear forces
+                this.forces.clear();
+                
+                // Repulsion between all nodes
+                for (let i = 0; i < this.nodes.length; i++) {
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        const force = this.calculateRepulsion(this.nodes[i], this.nodes[j]);
+                        this.applyForce(this.nodes[i], force);
+                        this.applyForce(this.nodes[j], force.clone().negate());
+                    }
+                }
+                
+                // Attraction between connected nodes
+                this.connections.forEach(connection => {
+                    const node1 = this.nodeMeshes.get(connection.userData.from);
+                    const node2 = this.nodeMeshes.get(connection.userData.to);
+                    
+                    if (node1 && node2) {
+                        const force = this.calculateAttraction(node1, node2);
+                        this.applyForce(node1, force);
+                        this.applyForce(node2, force.clone().negate());
+                    }
+                });
+            }
+            
+            calculateRepulsion(node1, node2) {
+                const distance = node1.position.distanceTo(node2.position);
+                if (distance < 0.1) return new THREE.Vector3();
+                
+                const force = node1.position.clone().sub(node2.position).normalize();
+                force.multiplyScalar(this.repulsion / (distance * distance));
+                return force;
+            }
+            
+            calculateAttraction(node1, node2) {
+                const distance = node1.position.distanceTo(node2.position);
+                const force = node2.position.clone().sub(node1.position).normalize();
+                force.multiplyScalar(this.attraction * distance);
+                return force;
+            }
+            
+            applyForce(node, force) {
+                const currentForce = this.forces.get(node) || new THREE.Vector3();
+                currentForce.add(force);
+                this.forces.set(node, currentForce);
+            }
+            
+            updatePositions(deltaTime) {
+                if (!this.config.forceLayout) return;
+                
+                this.nodes.forEach(node => {
+                    const velocity = this.velocities.get(node) || new THREE.Vector3();
+                    const force = this.forces.get(node) || new THREE.Vector3();
+                    
+                    // Apply force to velocity
+                    velocity.add(force.clone().multiplyScalar(deltaTime));
+                    velocity.multiplyScalar(this.damping);
+                    
+                    // Limit velocity
+                    if (velocity.length() > 10) {
+                        velocity.normalize().multiplyScalar(10);
+                    }
+                    
+                    // Update position
+                    node.position.add(velocity.clone().multiplyScalar(deltaTime));
+                    
+                    // Store updated velocity
+                    this.velocities.set(node, velocity);
+                });
+            }
+            
+            // Interaction Methods
+            onMouseClick(event) {
+                const mouse = new THREE.Vector2();
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(mouse, this.camera);
+                
+                const intersects = raycaster.intersectObjects(this.nodes);
+                
+                if (intersects.length > 0) {
+                    const node = intersects[0].object;
+                    this.showNodeInfo(node);
+                } else {
+                    this.hideNodeInfo();
+                }
+            }
+            
+            showNodeInfo(node) {
+                const infoPanel = document.getElementById('info-panel');
+                document.getElementById('node-type').textContent = node.userData.type;
+                document.getElementById('node-status').textContent = node.userData.status;
+                document.getElementById('node-connections').textContent = node.userData.connections;
+                document.getElementById('node-load').textContent = Math.round(node.userData.load) + '%';
+                document.getElementById('node-position').textContent = 
+                    `(${Math.round(node.position.x)}, ${Math.round(node.position.y)}, ${Math.round(node.position.z)})`;
+                
+                infoPanel.style.display = 'block';
+            }
+            
+            hideNodeInfo() {
+                document.getElementById('info-panel').style.display = 'none';
+            }
+            
+            // Control Methods
+            addNode(type) {
+                const node = this.createNode({
+                    id: this.nodes.length,
+                    position: new THREE.Vector3(
+                        (Math.random() - 0.5) * 40,
+                        (Math.random() - 0.5) * 40,
+                        (Math.random() - 0.5) * 40
+                    ),
+                    type: type
+                });
+                
+                this.nodes.push(node);
+                this.addNodeToScene(node);
+                this.generateConnections();
+                this.updatePerformanceDisplay();
+            }
+            
+            toggleForceLayout() {
+                this.config.forceLayout = !this.config.forceLayout;
+                if (!this.config.forceLayout) {
+                    this.forces.clear();
+                    this.velocities.clear();
+                }
+            }
+            
+            toggleHolographic() {
+                this.config.holographic = !this.config.holographic;
+                
+                this.nodes.forEach(node => {
+                    if (this.config.holographic) {
+                        this.addHolographicEffect(node);
+                    } else {
+                        if (node.userData.hologramLayers) {
+                            node.userData.hologramLayers.forEach(layer => {
+                                node.remove(layer);
+                            });
+                            node.userData.hologramLayers = [];
+                        }
+                    }
+                });
+            }
+            
+            toggleEnergyFields() {
+                this.config.energyFields = !this.config.energyFields;
+                
+                this.nodes.forEach(node => {
+                    if (this.config.energyFields) {
+                        this.addEnergyField(node);
+                    } else {
+                        if (node.userData.energyField) {
+                            node.remove(node.userData.energyField);
+                            node.userData.energyField = null;
+                        }
+                    }
+                });
+            }
+            
+            toggleClustering() {
+                this.config.clustering = !this.config.clustering;
+                // Implement clustering visualization
+            }
+            
+            resetCamera() {
+                this.camera.position.set(50, 50, 50);
+                this.controls.reset();
+            }
+            
+            togglePerformance() {
+                this.config.showPerformance = !this.config.showPerformance;
+                const monitor = document.getElementById('performance-monitor');
+                monitor.style.display = this.config.showPerformance ? 'block' : 'none';
+                
+                if (this.config.showPerformance && !this.stats) {
+                    this.stats = new Stats();
+                    this.stats.dom.style.position = 'fixed';
+                    this.stats.dom.style.top = '10px';
+                    this.stats.dom.style.right = '10px';
+                    this.stats.dom.style.left = 'auto';
+                    document.body.appendChild(this.stats.dom);
+                } else if (!this.config.showPerformance && this.stats) {
+                    document.body.removeChild(this.stats.dom);
+                    this.stats = null;
+                }
+            }
+            
+            clearMesh() {
+                // Remove all nodes and connections
+                this.nodes.forEach(node => this.scene.remove(node));
+                this.connections.forEach(connection => this.scene.remove(connection));
+                
+                this.nodes = [];
+                this.connections = [];
+                this.nodeMeshes.clear();
+                this.connectionMeshes.clear();
+                this.forces.clear();
+                this.velocities.clear();
+            }
+            
+            updatePerformanceDisplay() {
+                document.getElementById('node-count-display').textContent = this.nodes.length;
+                document.getElementById('connection-count-display').textContent = this.connections.length;
+            }
+            
+            // Animation
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                const time = Date.now() * 0.001 * this.config.animationSpeed;
+                
+                // Calculate forces and update positions
+                this.calculateForces();
+                this.updatePositions(0.016); // 60 FPS
+                
+                // Animate nodes
+                this.nodes.forEach((node, index) => {
+                    // Rotate nodes
+                    node.rotation.y = time + index * 0.1;
+                    
+                    // Animate holographic layers
+                    if (node.userData.hologramLayers) {
+                        node.userData.hologramLayers.forEach((layer, i) => {
+                            layer.rotation.y = time * (0.5 + i * 0.2);
+                            layer.rotation.x = time * (0.3 + i * 0.1);
+                            layer.material.opacity = 0.3 - i * 0.1 + Math.sin(time + i) * 0.1;
+                        });
+                    }
+                    
+                    // Animate energy fields
+                    if (node.userData.energyField) {
+                        const positions = node.userData.energyField.geometry.attributes.position.array;
+                        for (let i = 0; i < positions.length; i += 3) {
+                            positions[i + 1] += Math.sin(time + i * 0.1) * 0.01;
+                        }
+                        node.userData.energyField.geometry.attributes.position.needsUpdate = true;
+                        node.userData.energyField.rotation.y = time * 0.1;
+                    }
+                });
+                
+                // Animate connections
+                this.connections.forEach((connection, index) => {
+                    const material = connection.material;
+                    material.opacity = 0.6 + Math.sin(time * 2 + index) * 0.2;
+                });
+                
+                // Update controls
+                this.controls.update();
+                
+                // Update performance stats
+                if (this.stats) {
+                    this.stats.update();
+                    document.getElementById('fps').textContent = Math.round(this.stats.getFPS());
+                    document.getElementById('memory').textContent = Math.round(this.stats.getMemory() / 1024 / 1024);
+                }
+                
+                // Render
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+        
+        // Initialize network mesh
+        let networkMesh;
+        
+        window.addEventListener('load', () => {
+            networkMesh = new AdvancedNetworkMesh();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Interface Fix</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            margin: 20px;
+            text-align: center;
+        }
+        .fix-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+        }
+        .status-item {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: rgba(0, 255, 136, 0.1);
+        }
+        .success { background: rgba(0, 255, 0, 0.1); border-left: 4px solid #00ff00; }
+        .error { background: rgba(255, 0, 0, 0.1); border-left: 4px solid #ff0000; }
+        .warning { background: rgba(255, 255, 0, 0.1); border-left: 4px solid #ffff00; }
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #00cc66;
+        }
+    </style>
+</head>
+<body>
+    <div class="fix-container">
+        <h1>🔧 WebGL Interface Fix</h1>
+        <p>Resolving initialization issues...</p>
+        
+        <div id="status-list"></div>
+        
+        <button onclick="testFixedInterface()">🧪 Test Fixed Interface</button>
+        <button onclick="openMainInterface()">🚀 Open Main Interface</button>
+        <button onclick="clearCache()">🗑️ Clear Cache & Reload</button>
+    </div>
+
+    <!-- Three.js for Advanced 3D Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- SLMS WebGL Interface -->
+    <script src="webgl_interface.js"></script>
+    
+    <script>
+        function addStatus(message, type = 'info') {
+            const statusList = document.getElementById('status-list');
+            const div = document.createElement('div');
+            div.className = `status-item ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            statusList.appendChild(div);
+        }
+        
+        function clearCache() {
+            addStatus('Clearing browser cache...', 'warning');
+            
+            // Clear localStorage and sessionStorage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Force reload with cache busting
+            const timestamp = new Date().getTime();
+            window.location.href = `webgl_demo_integrated.php?t=${timestamp}`;
+        }
+        
+        function testFixedInterface() {
+            addStatus('Testing fixed interface...', 'warning');
+            
+            // Test if Three.js is loaded once
+            if (typeof THREE !== 'undefined') {
+                addStatus('✅ Three.js loaded successfully', 'success');
+            } else {
+                addStatus('❌ Three.js not loaded', 'error');
+            }
+            
+            // Test if SLMSWebGLInterface is available
+            if (typeof SLMSWebGLInterface !== 'undefined') {
+                addStatus('✅ SLMSWebGLInterface class available', 'success');
+                
+                try {
+                    const interface = new SLMSWebGLInterface();
+                    addStatus('✅ Interface instance created successfully', 'success');
+                    
+                    // Test domLoopingMethods
+                    if (interface.domLoopingMethods) {
+                        addStatus('✅ DOM looping methods initialized', 'success');
+                    } else {
+                        addStatus('⚠️ DOM looping methods not initialized', 'warning');
+                    }
+                    
+                } catch (error) {
+                    addStatus(`❌ Interface creation failed: ${error.message}`, 'error');
+                }
+            } else {
+                addStatus('❌ SLMSWebGLInterface class not found', 'error');
+            }
+            
+            // Test API connection
+            fetch('webgl_module_integration.php?action=list&module=clients')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addStatus('✅ API connection working', 'success');
+                    } else {
+                        addStatus(`⚠️ API returned: ${data.message}`, 'warning');
+                    }
+                })
+                .catch(error => {
+                    addStatus(`❌ API connection failed: ${error.message}`, 'error');
+                });
+        }
+        
+        function openMainInterface() {
+            window.location.href = 'webgl_demo_integrated.php';
+        }
+        
+        // Auto-run test on page load
+        window.addEventListener('load', () => {
+            addStatus('Page loaded, running diagnostics...', 'warning');
+            setTimeout(testFixedInterface, 1000);
+        });
+    </script>
+</body>
+</html> 

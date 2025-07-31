@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant Integration Debug</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .ai-assistant {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 AI Assistant Integration Debug</h1>
+        <p>This page helps you test and debug the AI assistant integration step by step.</p>
+
+        <div class="test-section">
+            <h3>1. Basic API Tests</h3>
+            <button onclick="testBasicAPI()">Test Basic AI API</button>
+            <button onclick="testAdaptiveAPI()">Test Adaptive AI API</button>
+            <button onclick="testDatabase()">Test Database Connection</button>
+            <div id="basic-api-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. JavaScript Integration Tests</h3>
+            <button onclick="testJavaScriptFiles()">Test JavaScript Files</button>
+            <button onclick="testAIEmbed()">Test AI Assistant Embed</button>
+            <button onclick="testAdaptiveAI()">Test Adaptive AI Assistant</button>
+            <div id="js-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Chat Integration Tests</h3>
+            <button onclick="testChat()">Test Chat Functionality</button>
+            <button onclick="testConversation()">Test Conversation History</button>
+            <button onclick="testSuggestions()">Test Suggestions</button>
+            <div id="chat-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. GUI Modification Tests</h3>
+            <button onclick="testGUIModification()">Test GUI Modification</button>
+            <button onclick="testBehaviorTracking()">Test Behavior Tracking</button>
+            <button onclick="testPatternAnalysis()">Test Pattern Analysis</button>
+            <div id="gui-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Live AI Assistant Test</h3>
+            <button onclick="loadAIAssistant()">Load AI Assistant</button>
+            <button onclick="testAIAssistant()">Test AI Assistant</button>
+            <div id="live-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>6. Debug Log</h3>
+            <button onclick="clearLog()">Clear Log</button>
+            <div id="debug-log" class="log"></div>
+        </div>
+    </div>
+
+    <!-- AI Assistant will be loaded here -->
+    <div id="ai-assistant-container" class="ai-assistant"></div>
+
+    <script>
+        // Debug logging
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function clearLog() {
+            document.getElementById('debug-log').innerHTML = '';
+        }
+
+        // Test Basic API
+        async function testBasicAPI() {
+            log('Testing Basic AI API...', 'info');
+            const resultsDiv = document.getElementById('basic-api-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const response = await fetch('/ai_assistant_api.php?action=model_status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Basic AI API: Working<br>
+                            📊 Model Type: ${data.data.model_type}<br>
+                            🗄️ Database: ${data.data.database_connected ? 'Connected' : 'Disconnected'}<br>
+                            🕒 Timestamp: ${data.data.timestamp}
+                        </div>
+                    `;
+                    log('Basic AI API test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ Basic AI API: ${data.error}</div>`;
+                    log('Basic AI API test failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Basic AI API: ${error.message}</div>`;
+                log('Basic AI API test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Test Adaptive API
+        async function testAdaptiveAPI() {
+            log('Testing Adaptive AI API...', 'info');
+            const resultsDiv = document.getElementById('basic-api-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const response = await fetch('/adaptive_ai_api.php?action=suggest_improvements');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Adaptive AI API: Working<br>
+                            💡 Suggestions: ${data.data.suggestions.length} available
+                        </div>
+                    `;
+                    log('Adaptive AI API test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ Adaptive AI API: ${data.error}</div>`;
+                    log('Adaptive AI API test failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Adaptive AI API: ${error.message}</div>`;
+                log('Adaptive AI API test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Test Database
+        async function testDatabase() {
+            log('Testing Database Connection...', 'info');
+            const resultsDiv = document.getElementById('basic-api-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const response = await fetch('/adaptive_ai_api.php?action=analyze_patterns');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Database: Connected<br>
+                            📊 Patterns: ${data.data.patterns ? data.data.patterns.length : 0} found
+                        </div>
+                    `;
+                    log('Database test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ Database: ${data.error}</div>`;
+                    log('Database test failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Database: ${error.message}</div>`;
+                log('Database test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Test JavaScript Files
+        async function testJavaScriptFiles() {
+            log('Testing JavaScript Files...', 'info');
+            const resultsDiv = document.getElementById('js-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            const files = [
+                { name: 'AI Assistant Embed', path: '/ai_assistant_embed.js' },
+                { name: 'Adaptive AI Assistant', path: '/adaptive_ai_assistant.js' }
+            ];
+
+            let results = '';
+            let allPassed = true;
+
+            for (const file of files) {
+                try {
+                    const response = await fetch(file.path);
+                    if (response.ok) {
+                        const content = await response.text();
+                        if (content.includes('class')) {
+                            results += `<div class="test-result success">✅ ${file.name}: Loaded successfully</div>`;
+                            log(`${file.name} loaded successfully`, 'success');
+                        } else {
+                            results += `<div class="test-result warning">⚠️ ${file.name}: No class found</div>`;
+                            log(`${file.name} loaded but no class found`, 'warning');
+                            allPassed = false;
+                        }
+                    } else {
+                        results += `<div class="test-result error">❌ ${file.name}: Failed to load</div>`;
+                        log(`${file.name} failed to load`, 'error');
+                        allPassed = false;
+                    }
+                } catch (error) {
+                    results += `<div class="test-result error">❌ ${file.name}: ${error.message}</div>`;
+                    log(`${file.name} error: ${error.message}`, 'error');
+                    allPassed = false;
+                }
+            }
+
+            resultsDiv.innerHTML = results;
+            if (allPassed) {
+                log('All JavaScript files loaded successfully', 'success');
+            }
+        }
+
+        // Test AI Embed
+        async function testAIEmbed() {
+            log('Testing AI Assistant Embed...', 'info');
+            const resultsDiv = document.getElementById('js-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                // Check if already loaded
+                if (window.AIAssistantEmbed) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ AI Assistant Embed: Already loaded<br>
+                            🚀 Class: AIAssistantEmbed available
+                        </div>
+                    `;
+                    log('AI Assistant Embed already loaded', 'success');
+                    return;
+                }
+
+                // Load the AI assistant embed script
+                const script = document.createElement('script');
+                script.src = '/ai_assistant_embed.js';
+                script.onload = () => {
+                    if (window.AIAssistantEmbed) {
+                        resultsDiv.innerHTML = `
+                            <div class="test-result success">
+                                ✅ AI Assistant Embed: Loaded successfully<br>
+                                🚀 Class: AIAssistantEmbed available
+                            </div>
+                        `;
+                        log('AI Assistant Embed loaded successfully', 'success');
+                    } else {
+                        resultsDiv.innerHTML = `<div class="test-result error">❌ AI Assistant Embed: Class not found</div>`;
+                        log('AI Assistant Embed class not found', 'error');
+                    }
+                };
+                script.onerror = () => {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ AI Assistant Embed: Failed to load</div>`;
+                    log('AI Assistant Embed failed to load', 'error');
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ AI Assistant Embed: ${error.message}</div>`;
+                log('AI Assistant Embed error: ' + error.message, 'error');
+            }
+        }
+
+        // Test Adaptive AI
+        async function testAdaptiveAI() {
+            log('Testing Adaptive AI Assistant...', 'info');
+            const resultsDiv = document.getElementById('js-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                // Check if already loaded
+                if (window.AdaptiveAIAssistant) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Adaptive AI Assistant: Already loaded<br>
+                            🚀 Class: AdaptiveAIAssistant available
+                        </div>
+                    `;
+                    log('Adaptive AI Assistant already loaded', 'success');
+                    return;
+                }
+
+                // Load the adaptive AI assistant script
+                const script = document.createElement('script');
+                script.src = '/adaptive_ai_assistant.js';
+                script.onload = () => {
+                    if (window.AdaptiveAIAssistant) {
+                        resultsDiv.innerHTML = `
+                            <div class="test-result success">
+                                ✅ Adaptive AI Assistant: Loaded successfully<br>
+                                🚀 Class: AdaptiveAIAssistant available
+                            </div>
+                        `;
+                        log('Adaptive AI Assistant loaded successfully', 'success');
+                    } else {
+                        resultsDiv.innerHTML = `<div class="test-result error">❌ Adaptive AI Assistant: Class not found</div>`;
+                        log('Adaptive AI Assistant class not found', 'error');
+                    }
+                };
+                script.onerror = () => {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ Adaptive AI Assistant: Failed to load</div>`;
+                    log('Adaptive AI Assistant failed to load', 'error');
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Adaptive AI Assistant: ${error.message}</div>`;
+                log('Adaptive AI Assistant error: ' + error.message, 'error');
+            }
+        }
+
+        // Test Chat
+        async function testChat() {
+            log('Testing Chat Functionality...', 'info');
+            const resultsDiv = document.getElementById('chat-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const response = await fetch('/ai_assistant_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'chat',
+                        message: 'Hello, this is a test message',
+                        context: JSON.stringify({ url: window.location.href })
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Chat: Working<br>
+                            💬 Response: ${data.data.response.substring(0, 100)}...
+                        </div>
+                    `;
+                    log('Chat test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ Chat: ${data.error}</div>`;
+                    log('Chat test failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Chat: ${error.message}</div>`;
+                log('Chat test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Test Conversation
+        async function testConversation() {
+            log('Testing Conversation History...', 'info');
+            const resultsDiv = document.getElementById('chat-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const response = await fetch('/ai_assistant_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'get_conversation_history',
+                        conversation_id: 1
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Conversation History: Working<br>
+                            📝 Messages: ${data.data.messages ? data.data.messages.length : 0} found
+                        </div>
+                    `;
+                    log('Conversation history test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result warning">⚠️ Conversation History: ${data.error}</div>`;
+                    log('Conversation history test warning: ' + data.error, 'warning');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Conversation History: ${error.message}</div>`;
+                log('Conversation history test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Test Suggestions
+        async function testSuggestions() {
+            log('Testing Suggestions...', 'info');
+            const resultsDiv = document.getElementById('chat-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const response = await fetch('/ai_assistant_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'get_suggestions',
+                        context: JSON.stringify({ url: window.location.href })
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Suggestions: Working<br>
+                            💡 Available: ${data.data.suggestions ? data.data.suggestions.length : 0} suggestions
+                        </div>
+                    `;
+                    log('Suggestions test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ Suggestions: ${data.error}</div>`;
+                    log('Suggestions test failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Suggestions: ${error.message}</div>`;
+                log('Suggestions test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Test GUI Modification
+        async function testGUIModification() {
+            log('Testing GUI Modification...', 'info');
+            const resultsDiv = document.getElementById('gui-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const response = await fetch('/adaptive_ai_api.php?action=analyze_patterns');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ GUI Modification: Working<br>
+                            📊 Patterns: ${data.data.patterns ? data.data.patterns.length : 0} analyzed
+                        </div>
+                    `;
+                    log('GUI modification test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ GUI Modification: ${data.error}</div>`;
+                    log('GUI modification test failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ GUI Modification: ${error.message}</div>`;
+                log('GUI modification test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Test Behavior Tracking
+        async function testBehaviorTracking() {
+            log('Testing Behavior Tracking...', 'info');
+            const resultsDiv = document.getElementById('gui-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const testBehavior = [
+                    { action_type: 'click', element_id: 'test-button', timestamp: Date.now() }
+                ];
+
+                const response = await fetch('/adaptive_ai_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'track_behavior',
+                        action_type: 'click',
+                        element_id: 'test-button',
+                        element_type: 'button',
+                        coordinates: { x: 100, y: 100 }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Behavior Tracking: Working<br>
+                            📊 Action tracked successfully
+                        </div>
+                    `;
+                    log('Behavior tracking test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ Behavior Tracking: ${data.error}</div>`;
+                    log('Behavior tracking test failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Behavior Tracking: ${error.message}</div>`;
+                log('Behavior tracking test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Test Pattern Analysis
+        async function testPatternAnalysis() {
+            log('Testing Pattern Analysis...', 'info');
+            const resultsDiv = document.getElementById('gui-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            try {
+                const response = await fetch('/adaptive_ai_api.php?action=analyze_patterns');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Pattern Analysis: Working<br>
+                            🧠 Patterns: ${data.data.patterns ? data.data.patterns.length : 0} found<br>
+                            🚨 Frustration: ${data.data.frustration_patterns ? data.data.frustration_patterns.length : 0} detected
+                        </div>
+                    `;
+                    log('Pattern analysis test passed', 'success');
+                } else {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ Pattern Analysis: ${data.error}</div>`;
+                    log('Pattern analysis test failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ Pattern Analysis: ${error.message}</div>`;
+                log('Pattern analysis test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Load AI Assistant
+        function loadAIAssistant() {
+            log('Loading AI Assistant...', 'info');
+            const resultsDiv = document.getElementById('live-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Loading...</div>';
+
+            try {
+                // Load AI assistant embed
+                const script = document.createElement('script');
+                script.src = '/ai_assistant_embed.js';
+                script.onload = () => {
+                    if (window.AIAssistantEmbed) {
+                        // Initialize AI assistant
+                        window.AIAssistantEmbed.init({
+                            apiUrl: '/ai_assistant_api.php',
+                            position: 'bottom-right',
+                            theme: 'modern'
+                        });
+                        
+                        resultsDiv.innerHTML = `
+                            <div class="test-result success">
+                                ✅ AI Assistant: Loaded and initialized<br>
+                                🤖 Ready for interaction
+                            </div>
+                        `;
+                        log('AI Assistant loaded and initialized', 'success');
+                    } else {
+                        resultsDiv.innerHTML = `<div class="test-result error">❌ AI Assistant: Failed to load</div>`;
+                        log('AI Assistant failed to load', 'error');
+                    }
+                };
+                script.onerror = () => {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ AI Assistant: Script failed to load</div>`;
+                    log('AI Assistant script failed to load', 'error');
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ AI Assistant: ${error.message}</div>`;
+                log('AI Assistant error: ' + error.message, 'error');
+            }
+        }
+
+        // Test AI Assistant
+        function testAIAssistant() {
+            log('Testing AI Assistant functionality...', 'info');
+            const resultsDiv = document.getElementById('live-results');
+            resultsDiv.innerHTML = '<div class="test-result info">Testing...</div>';
+
+            if (window.AIAssistantEmbed) {
+                // Test if AI assistant is responsive
+                try {
+                    // Simulate a click on the AI assistant
+                    const assistantElement = document.querySelector('.ai-assistant-toggle');
+                    if (assistantElement) {
+                        assistantElement.click();
+                        resultsDiv.innerHTML = `
+                            <div class="test-result success">
+                                ✅ AI Assistant: Interactive<br>
+                                🎯 Click to test the assistant
+                            </div>
+                        `;
+                        log('AI Assistant is interactive', 'success');
+                    } else {
+                        resultsDiv.innerHTML = `<div class="test-result warning">⚠️ AI Assistant: Not visible</div>`;
+                        log('AI Assistant not visible', 'warning');
+                    }
+                } catch (error) {
+                    resultsDiv.innerHTML = `<div class="test-result error">❌ AI Assistant: ${error.message}</div>`;
+                    log('AI Assistant test error: ' + error.message, 'error');
+                }
+            } else {
+                resultsDiv.innerHTML = `<div class="test-result error">❌ AI Assistant: Not loaded</div>`;
+                log('AI Assistant not loaded', 'error');
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            log('AI Assistant Integration Debug page loaded', 'info');
+            log('Ready to test AI assistant components', 'info');
+        });
+    </script>
+</body>
+</html> 

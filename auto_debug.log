@@ -1,0 +1,60 @@
+[0;36m[INFO][0m Starting Auto Debug & Optimization Script
+[0;36m[INFO][0m Algorithm: SCAN -> RESEARCH -> TEST -> DEBUG -> REPEAT
+[0;36m[INFO][0m Checking prerequisites...
+[0;32m[SUCCESS][0m Apache is running
+[0;32m[SUCCESS][0m MySQL is running
+[0;36m[INFO][0m === ITERATION 1/10 ===
+[0;36m[INFO][0m === STEP 1: SCANNING SOURCE CODE ===
+[0;36m[INFO][0m Found 2432 PHP files, 730 JS files, 93 HTML files, 354 CSS files
+[0;36m[INFO][0m Checking PHP syntax errors...
+[0;31m[ERROR][0m PHP syntax error in: ./modules/auto_fix_sessions.php
+[0;36m[INFO][0m Starting Auto Debug & Optimization Script
+[0;36m[INFO][0m Algorithm: SCAN -> RESEARCH -> TEST -> DEBUG -> REPEAT
+[0;36m[INFO][0m Checking prerequisites...
+[0;32m[SUCCESS][0m Apache is running
+[0;32m[SUCCESS][0m MySQL is running
+[0;36m[INFO][0m === ITERATION 1/10 ===
+[0;36m[INFO][0m === STEP 1: SCANNING SOURCE CODE ===
+[0;36m[INFO][0m Found 2432 PHP files, 730 JS files, 93 HTML files, 354 CSS files
+[0;36m[INFO][0m Checking PHP syntax errors...
+[0;31m[ERROR][0m PHP syntax error in: ./backup_2025-07-30_14-26-38/modules/auto_fix_sessions.php
+[0;36m[INFO][0m Starting Auto Debug & Optimization Script
+[0;36m[INFO][0m Algorithm: SCAN -> RESEARCH -> TEST -> DEBUG -> REPEAT
+[0;36m[INFO][0m Checking prerequisites...
+[0;32m[SUCCESS][0m Apache is running
+[0;32m[SUCCESS][0m MySQL is running
+[0;36m[INFO][0m === ITERATION 1/10 ===
+[0;36m[INFO][0m === STEP 1: SCANNING SOURCE CODE ===
+[0;36m[INFO][0m Found 2432 PHP files, 730 JS files, 93 HTML files, 354 CSS files
+[0;36m[INFO][0m Checking PHP syntax errors...
+[0;31m[ERROR][0m PHP syntax error in: ./mtwww/mt/tests/PseudoServer.php
+[0;36m[INFO][0m Starting Auto Debug & Optimization Script
+[0;36m[INFO][0m Algorithm: SCAN -> RESEARCH -> TEST -> DEBUG -> REPEAT
+[0;36m[INFO][0m Checking prerequisites...
+[0;32m[SUCCESS][0m Apache is running
+[0;32m[SUCCESS][0m MySQL is running
+[0;36m[INFO][0m === ITERATION 1/10 ===
+[0;36m[INFO][0m === STEP 1: SCANNING SOURCE CODE ===
+[0;36m[INFO][0m Found 2432 PHP files, 730 JS files, 93 HTML files, 354 CSS files
+[0;36m[INFO][0m Checking PHP syntax errors...
+[0;31m[ERROR][0m PHP syntax error in: ./mtwww/mt.php
+[0;36m[INFO][0m Starting Auto Debug & Optimization Script
+[0;36m[INFO][0m Algorithm: SCAN -> RESEARCH -> TEST -> DEBUG -> REPEAT
+[0;36m[INFO][0m Checking prerequisites...
+[0;32m[SUCCESS][0m Apache is running
+[0;32m[SUCCESS][0m MySQL is running
+[0;36m[INFO][0m === ITERATION 1/10 ===
+[0;36m[INFO][0m === STEP 1: SCANNING SOURCE CODE ===
+[0;36m[INFO][0m Found 2432 PHP files, 730 JS files, 93 HTML files, 354 CSS files
+[0;36m[INFO][0m Checking PHP syntax errors...
+[0;31m[ERROR][0m PHP syntax error in: ./home/mtwww/mt/tests/PseudoServer.php
+[0;36m[INFO][0m Starting Auto Debug & Optimization Script
+[0;36m[INFO][0m Algorithm: SCAN -> RESEARCH -> TEST -> DEBUG -> REPEAT
+[0;36m[INFO][0m Checking prerequisites...
+[0;32m[SUCCESS][0m Apache is running
+[0;32m[SUCCESS][0m MySQL is running
+[0;36m[INFO][0m === ITERATION 1/10 ===
+[0;36m[INFO][0m === STEP 1: SCANNING SOURCE CODE ===
+[0;36m[INFO][0m Found 2432 PHP files, 730 JS files, 93 HTML files, 354 CSS files
+[0;36m[INFO][0m Checking PHP syntax errors...
+[0;31m[ERROR][0m PHP syntax error in: ./home/mtwww/mt.php

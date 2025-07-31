@@ -1,9 +1,10 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Add Payment';
 $pdo = get_pdo();
 $invoices = $pdo->query('SELECT id FROM invoices')->fetchAll(PDO::FETCH_ASSOC);
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare('INSERT INTO payments (invoice_id, amount, payment_date, method) VALUES (?, ?, ?, ?)');
     $stmt->execute([
         $_POST['invoice_id'],

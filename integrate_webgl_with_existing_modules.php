@@ -6,7 +6,7 @@
  * and creates a unified system with enhanced 3D visualization capabilities.
  */
 
-require_once 'config.php';
+require_once 'modules/config.php';
 
 class WebGLIntegration {
     private $pdo;
@@ -84,7 +84,7 @@ class WebGLIntegration {
     private function mergeExistingModules() {
         $this->log("Step 2: Merging existing modules from slmsold...");
         
-        $sourceDir = '../slmsold/SLMS/html/slms/modules';
+        $sourceDir = '/home/sarna/Pobrane/slmsold/SLMS/html/slms/modules';
         $targetDir = 'modules';
         
         if (!is_dir($sourceDir)) {
@@ -102,7 +102,7 @@ class WebGLIntegration {
         
         // Ensure WebGL module is present
         if (!file_exists($targetDir . '/webgl_network_viewer.php')) {
-            copy('modules/webgl_network_viewer.php', $targetDir . '/webgl_network_viewer.php');
+            copy('html/modules/webgl_network_viewer.php', $targetDir . '/webgl_network_viewer.php');
         }
         
         $this->log("Modules merged successfully");

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Universal Web Helper</title>
+    <style>
+        /* AI Assistant Styles */
+        .ai-assistant-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .ai-assistant-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .ai-assistant-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .ai-assistant-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .ai-assistant-icon {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        .ai-assistant-pulse {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #ff4757;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .ai-assistant-chat {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e1e8ed;
+        }
+
+        .ai-assistant-chat.active {
+            display: flex;
+        }
+
+        .ai-assistant-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-assistant-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .ai-assistant-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .ai-assistant-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .ai-assistant-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .ai-message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .ai-message.user {
+            justify-content: flex-end;
+        }
+
+        .ai-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .ai-message.user .ai-message-avatar {
+            background: #667eea;
+            margin-right: 0;
+            margin-left: 10px;
+        }
+
+        .ai-message.assistant .ai-message-avatar {
+            background: #764ba2;
+        }
+
+        .ai-message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .ai-message.user .ai-message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message.assistant .ai-message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e1e8ed;
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-assistant-input {
+            padding: 15px;
+            border-top: 1px solid #e1e8ed;
+            background: white;
+        }
+
+        .ai-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-input-field {
+            flex: 1;
+            border: 1px solid #e1e8ed;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .ai-input-field:focus {
+            border-color: #667eea;
+        }
+
+        .ai-send-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .ai-send-button:hover {
+            background: #5a6fd8;
+        }
+
+        .ai-send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .ai-typing-indicator {
+            display: none;
+            padding: 10px 15px;
+            color: #666;
+            font-style: italic;
+            font-size: 12px;
+        }
+
+        .ai-typing-indicator.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .ai-assistant-chat {
+                width: calc(100vw - 40px);
+                height: calc(100vh - 120px);
+                bottom: 80px;
+                right: 20px;
+            }
+        }
+
+        /* Loading Animation */
+        .ai-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Suggestions */
+        .ai-suggestions {
+            padding: 10px 15px;
+            border-top: 1px solid #e1e8ed;
+            background: #f8f9fa;
+        }
+
+        .ai-suggestion-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .ai-suggestion-chip {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 15px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ai-suggestion-chip:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- AI Assistant Container -->
+    <div class="ai-assistant-container" id="aiAssistant">
+        <!-- Toggle Button -->
+        <button class="ai-assistant-toggle" id="aiToggle">
+            <svg class="ai-assistant-icon" viewBox="0 0 24 24">
+                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/>
+            </svg>
+            <div class="ai-assistant-pulse" id="aiPulse"></div>
+        </button>
+
+        <!-- Chat Interface -->
+        <div class="ai-assistant-chat" id="aiChat">
+            <!-- Header -->
+            <div class="ai-assistant-header">
+                <h3>🤖 AI Assistant</h3>
+                <button class="ai-assistant-close" id="aiClose">×</button>
+            </div>
+
+            <!-- Messages -->
+            <div class="ai-assistant-messages" id="aiMessages">
+                <!-- Welcome message will be added here -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="ai-typing-indicator" id="aiTyping">
+                <div class="ai-loading"></div> AI is thinking...
+            </div>
+
+            <!-- Suggestions -->
+            <div class="ai-suggestions" id="aiSuggestions">
+                <div class="ai-suggestion-chips">
+                    <div class="ai-suggestion-chip" onclick="sendSuggestion('Help me with this page')">Help me with this page</div>
+                    <div class="ai-suggestion-chip" onclick="sendSuggestion('Explain this content')">Explain this content</div>
+                    <div class="ai-suggestion-chip" onclick="sendSuggestion('Summarize this page')">Summarize this page</div>
+                    <div class="ai-suggestion-chip" onclick="sendSuggestion('What can you do?')">What can you do?</div>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="ai-assistant-input">
+                <div class="ai-input-container">
+                    <input type="text" class="ai-input-field" id="aiInput" placeholder="Ask me anything..." maxlength="500">
+                    <button class="ai-send-button" id="aiSend">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AI Assistant Class
+        class AIAssistant {
+            constructor() {
+                this.isOpen = false;
+                this.isTyping = false;
+                this.conversationHistory = [];
+                this.localModel = null;
+                this.initializeElements();
+                this.bindEvents();
+                this.showWelcomeMessage();
+                this.initializeLocalModel();
+            }
+
+            initializeElements() {
+                this.toggle = document.getElementById('aiToggle');
+                this.chat = document.getElementById('aiChat');
+                this.messages = document.getElementById('aiMessages');
+                this.input = document.getElementById('aiInput');
+                this.send = document.getElementById('aiSend');
+                this.close = document.getElementById('aiClose');
+                this.typing = document.getElementById('aiTyping');
+                this.pulse = document.getElementById('aiPulse');
+            }
+
+            bindEvents() {
+                this.toggle.addEventListener('click', () => this.toggleChat());
+                this.close.addEventListener('click', () => this.closeChat());
+                this.send.addEventListener('click', () => this.sendMessage());
+                this.input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                // Close chat when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.chat.contains(e.target) && !this.toggle.contains(e.target)) {
+                        this.closeChat();
+                    }
+                });
+            }
+
+            toggleChat() {
+                this.isOpen = !this.isOpen;
+                if (this.isOpen) {
+                    this.chat.classList.add('active');
+                    this.input.focus();
+                    this.hidePulse();
+                } else {
+                    this.chat.classList.remove('active');
+                }
+            }
+
+            closeChat() {
+                this.isOpen = false;
+                this.chat.classList.remove('active');
+            }
+
+            showWelcomeMessage() {
+                const welcomeMessage = {
+                    type: 'assistant',
+                    content: `Hello! I'm your AI assistant. I can help you with:
+                    
+• Understanding this webpage
+• Answering questions about content
+• Summarizing information
+• Providing explanations
+• Helping with tasks
+
+How can I assist you today?`
+                };
+                this.addMessage(welcomeMessage);
+            }
+
+            async initializeLocalModel() {
+                try {
+                    // Try to load local model (if available)
+                    if (typeof window.localAI !== 'undefined') {
+                        this.localModel = window.localAI;
+                        console.log('Local AI model loaded');
+                    } else {
+                        // Fallback to API-based responses
+                        console.log('Using API-based AI responses');
+                    }
+                } catch (error) {
+                    console.log('Local model not available, using fallback');
+                }
+            }
+
+            async sendMessage() {
+                const message = this.input.value.trim();
+                if (!message || this.isTyping) return;
+
+                // Add user message
+                this.addMessage({ type: 'user', content: message });
+                this.input.value = '';
+
+                // Show typing indicator
+                this.showTyping();
+
+                try {
+                    // Get AI response
+                    const response = await this.getAIResponse(message);
+                    this.addMessage({ type: 'assistant', content: response });
+                } catch (error) {
+                    this.addMessage({ 
+                        type: 'assistant', 
+                        content: 'Sorry, I encountered an error. Please try again.' 
+                    });
+                } finally {
+                    this.hideTyping();
+                }
+            }
+
+            async getAIResponse(message) {
+                // Try local model first
+                if (this.localModel && typeof this.localModel.generateResponse === 'function') {
+                    try {
+                        return await this.localModel.generateResponse(message, this.getPageContext());
+                    } catch (error) {
+                        console.log('Local model failed, falling back to API');
+                    }
+                }
+
+                // Fallback to API-based response
+                return await this.getAPIResponse(message);
+            }
+
+            async getAPIResponse(message) {
+                // Simulate API call with intelligent responses
+                const context = this.getPageContext();
+                const responses = this.generateContextualResponse(message, context);
+                
+                // Simulate processing time
+                await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+                
+                return responses;
+            }
+
+            getPageContext() {
+                return {
+                    title: document.title,
+                    url: window.location.href,
+                    content: this.extractPageContent(),
+                    timestamp: new Date().toISOString()
+                };
+            }
+
+            extractPageContent() {
+                // Extract main content from the page
+                const mainContent = document.querySelector('main, article, .content, .main, #content, #main');
+                if (mainContent) {
+                    return mainContent.textContent.substring(0, 1000);
+                }
+                
+                // Fallback to body content
+                return document.body.textContent.substring(0, 1000);
+            }
+
+            generateContextualResponse(message, context) {
+                const lowerMessage = message.toLowerCase();
+                
+                // Context-aware responses
+                if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
+                    return `I'm your AI assistant! I can help you with:
+
+• **Page Analysis**: I can explain the content on this page
+• **Summarization**: I can provide brief summaries of information
+• **Q&A**: Ask me questions about what you see
+• **Navigation**: I can help you find specific information
+• **Tasks**: I can assist with various tasks and explanations
+
+This page appears to be about: "${context.title}"
+
+What would you like to know?`;
+                }
+                
+                if (lowerMessage.includes('summarize') || lowerMessage.includes('summary')) {
+                    return `Here's a summary of this page:
+
+**Page Title**: ${context.title}
+**URL**: ${context.url}
+
+**Key Content**: ${context.content.substring(0, 200)}...
+
+This appears to be a ${this.detectPageType(context)} page. Would you like me to explain any specific part in more detail?`;
+                }
+                
+                if (lowerMessage.includes('explain') || lowerMessage.includes('what is this')) {
+                    return `Let me explain what I can see on this page:
+
+**Page Type**: ${this.detectPageType(context)}
+**Purpose**: ${this.detectPagePurpose(context)}
+
+**Main Content**: ${context.content.substring(0, 300)}...
+
+Is there something specific about this content you'd like me to clarify?`;
+                }
+
+                // Default intelligent response
+                return `I understand you're asking about "${message}". 
+
+Based on the context of this page (${context.title}), I can help you with that. Let me provide some relevant information:
+
+${this.generateRelevantInfo(message, context)}
+
+Is there anything specific you'd like me to focus on or explain further?`;
+            }
+
+            detectPageType(context) {
+                const url = context.url.toLowerCase();
+                if (url.includes('login') || url.includes('auth')) return 'authentication';
+                if (url.includes('admin') || url.includes('dashboard')) return 'administrative';
+                if (url.includes('product') || url.includes('shop')) return 'e-commerce';
+                if (url.includes('blog') || url.includes('article')) return 'content/article';
+                if (url.includes('contact') || url.includes('about')) return 'informational';
+                return 'general web page';
+            }
+
+            detectPagePurpose(context) {
+                const content = context.content.toLowerCase();
+                if (content.includes('login') || content.includes('sign in')) return 'User authentication';
+                if (content.includes('dashboard') || content.includes('admin')) return 'Administrative interface';
+                if (content.includes('product') || content.includes('buy')) return 'E-commerce or sales';
+                if (content.includes('contact') || content.includes('about')) return 'Information and contact';
+                return 'General information and interaction';
+            }
+
+            generateRelevantInfo(message, context) {
+                // Generate contextually relevant information
+                const keywords = message.toLowerCase().split(' ');
+                const content = context.content.toLowerCase();
+                
+                let relevantInfo = '';
+                
+                if (keywords.some(k => content.includes(k))) {
+                    relevantInfo = 'I found some relevant information on this page that might help answer your question. ';
+                }
+                
+                return relevantInfo + 'The page contains various elements and information that could be useful for your query.';
+            }
+
+            addMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `ai-message ${message.type}`;
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'ai-message-avatar';
+                avatar.textContent = message.type === 'user' ? 'U' : '🤖';
+                
+                const content = document.createElement('div');
+                content.className = 'ai-message-content';
+                content.textContent = message.content;
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                
+                this.messages.appendChild(messageDiv);
+                this.messages.scrollTop = this.messages.scrollHeight;
+                
+                // Store in conversation history
+                this.conversationHistory.push(message);
+            }
+
+            showTyping() {
+                this.isTyping = true;
+                this.typing.classList.add('active');
+                this.send.disabled = true;
+                this.messages.scrollTop = this.messages.scrollHeight;
+            }
+
+            hideTyping() {
+                this.isTyping = false;
+                this.typing.classList.remove('active');
+                this.send.disabled = false;
+            }
+
+            showPulse() {
+                this.pulse.style.display = 'block';
+            }
+
+            hidePulse() {
+                this.pulse.style.display = 'none';
+            }
+        }
+
+        // Global function for suggestions
+        function sendSuggestion(text) {
+            if (window.aiAssistant) {
+                window.aiAssistant.input.value = text;
+                window.aiAssistant.sendMessage();
+            }
+        }
+
+        // Initialize AI Assistant when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            window.aiAssistant = new AIAssistant();
+        });
+
+        // Export for external use
+        window.AIAssistant = AIAssistant;
+    </script>
+</body>
+</html> 

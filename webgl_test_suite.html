@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Interface Test Suite</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .test-pass {
+            background: #1a3a1a;
+            border-left: 4px solid #00ff00;
+        }
+        .test-fail {
+            background: #3a1a1a;
+            border-left: 4px solid #ff0000;
+        }
+        .test-warning {
+            background: #3a3a1a;
+            border-left: 4px solid #ffff00;
+        }
+        .test-info {
+            background: #1a1a3a;
+            border-left: 4px solid #0080ff;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+            transition: width 0.3s ease;
+        }
+        .test-button {
+            background: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .test-button:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        .test-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .log-output {
+            background: #000;
+            border: 1px solid #333;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        .api-test {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            margin: 5px 0;
+            padding: 10px;
+        }
+        .webgl-canvas {
+            border: 1px solid #333;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 WebGL Interface Test Suite</h1>
+        <p>Comprehensive testing of all WebGL interface functions</p>
+        
+        <div class="test-section">
+            <h2>📊 Test Progress</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="progress-text">0% Complete</div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎮 Test Controls</h2>
+            <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+            <button class="test-button" onclick="runAPITests()">Test APIs Only</button>
+            <button class="test-button" onclick="runWebGLTests()">Test WebGL Only</button>
+            <button class="test-button" onclick="runUITests()">Test UI Only</button>
+            <button class="test-button" onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 Test Log</h2>
+            <div class="log-output" id="test-log"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🌐 API Tests</h2>
+            <div id="api-tests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 WebGL Tests</h2>
+            <canvas id="webgl-test-canvas" width="400" height="300" class="webgl-canvas"></canvas>
+            <div id="webgl-tests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🖥️ UI Tests</h2>
+            <div id="ui-tests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📈 Performance Tests</h2>
+            <div id="performance-tests"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="webgl_interface.js"></script>
+    <script>
+        // Test Suite Configuration
+        const TEST_CONFIG = {
+            totalTests: 0,
+            passedTests: 0,
+            failedTests: 0,
+            warnings: 0,
+            startTime: null
+        };
+
+        // Test Results Storage
+        const testResults = {
+            api: {},
+            webgl: {},
+            ui: {},
+            performance: {}
+        };
+
+        // Utility Functions
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `test-result test-${type}`;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateProgress() {
+            const progress = (TEST_CONFIG.passedTests / TEST_CONFIG.totalTests) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = 
+                `${Math.round(progress)}% Complete (${TEST_CONFIG.passedTests}/${TEST_CONFIG.totalTests})`;
+        }
+
+        function addTestResult(category, testName, result, details = '') {
+            const container = document.getElementById(`${category}-tests`);
+            const testElement = document.createElement('div');
+            testElement.className = `test-result test-${result}`;
+            testElement.innerHTML = `
+                <strong>${testName}:</strong> ${result.toUpperCase()}
+                ${details ? `<br><small>${details}</small>` : ''}
+            `;
+            container.appendChild(testElement);
+            
+            testResults[category][testName] = { result, details };
+            
+            if (result === 'pass') TEST_CONFIG.passedTests++;
+            else if (result === 'fail') TEST_CONFIG.failedTests++;
+            else if (result === 'warning') TEST_CONFIG.warnings++;
+            
+            updateProgress();
+        }
+
+        // API Tests
+        async function testAPIEndpoints() {
+            log('Starting API endpoint tests...', 'info');
+            
+            const apiTests = [
+                { name: 'System Status', url: 'webgl_api.php?action=system_status' },
+                { name: 'Get Stats', url: 'webgl_api.php?action=get_stats' },
+                { name: 'Get Clients', url: 'webgl_api.php?action=get_clients' },
+                { name: 'Get Devices', url: 'webgl_api.php?action=get_devices' },
+                { name: 'Get Networks', url: 'webgl_api.php?action=get_networks' },
+                { name: 'Get Invoices', url: 'webgl_api.php?action=get_invoices' },
+                { name: 'Get Users', url: 'webgl_api.php?action=get_users' },
+                { name: 'Get Services', url: 'webgl_api.php?action=get_services' },
+                { name: 'Get Alerts', url: 'webgl_api.php?action=get_alerts' },
+                { name: 'Module Integration', url: 'webgl_module_integration.php?action=load_module&module=clients' }
+            ];
+
+            for (const test of apiTests) {
+                try {
+                    const response = await fetch(test.url);
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success !== false) {
+                        addTestResult('api', test.name, 'pass', `Response time: ${Date.now() - TEST_CONFIG.startTime}ms`);
+                        log(`✅ ${test.name}: OK`, 'pass');
+                    } else {
+                        addTestResult('api', test.name, 'fail', `Error: ${data.message || 'Unknown error'}`);
+                        log(`❌ ${test.name}: FAILED - ${data.message || 'Unknown error'}`, 'fail');
+                    }
+                } catch (error) {
+                    addTestResult('api', test.name, 'fail', `Exception: ${error.message}`);
+                    log(`❌ ${test.name}: EXCEPTION - ${error.message}`, 'fail');
+                }
+                
+                TEST_CONFIG.totalTests++;
+            }
+        }
+
+        // WebGL Tests
+        function testWebGLSupport() {
+            log('Testing WebGL support...', 'info');
+            
+            const canvas = document.getElementById('webgl-test-canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            if (!gl) {
+                addTestResult('webgl', 'WebGL Support', 'fail', 'WebGL not supported');
+                log('❌ WebGL not supported', 'fail');
+                return false;
+            }
+            
+            addTestResult('webgl', 'WebGL Support', 'pass', 'WebGL is supported');
+            log('✅ WebGL is supported', 'pass');
+            
+            // Test Three.js
+            try {
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas: canvas });
+                
+                addTestResult('webgl', 'Three.js Support', 'pass', 'Three.js working correctly');
+                log('✅ Three.js is working', 'pass');
+                
+                // Test basic rendering
+                const geometry = new THREE.BoxGeometry();
+                const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                const cube = new THREE.Mesh(geometry, material);
+                scene.add(cube);
+                camera.position.z = 5;
+                renderer.render(scene, camera);
+                
+                addTestResult('webgl', 'Basic Rendering', 'pass', 'Basic 3D rendering successful');
+                log('✅ Basic 3D rendering successful', 'pass');
+                
+            } catch (error) {
+                addTestResult('webgl', 'Three.js Support', 'fail', `Error: ${error.message}`);
+                log(`❌ Three.js error: ${error.message}`, 'fail');
+            }
+            
+            TEST_CONFIG.totalTests += 3;
+        }
+
+        // UI Tests
+        function testUIElements() {
+            log('Testing UI elements...', 'info');
+            
+            // Test if required elements exist
+            const requiredElements = [
+                'webgl-canvas',
+                'system-stats',
+                'module-selector',
+                'quick-actions'
+            ];
+            
+            for (const elementId of requiredElements) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    addTestResult('ui', `Element: ${elementId}`, 'pass', 'Element found');
+                    log(`✅ Element ${elementId} found`, 'pass');
+                } else {
+                    addTestResult('ui', `Element: ${elementId}`, 'warning', 'Element not found (may be in main interface)');
+                    log(`⚠️ Element ${elementId} not found in test page`, 'warning');
+                }
+                TEST_CONFIG.totalTests++;
+            }
+            
+            // Test CSS styles
+            const testStyles = getComputedStyle(document.body);
+            if (testStyles.fontFamily.includes('Courier')) {
+                addTestResult('ui', 'CSS Styling', 'pass', 'Test styles applied correctly');
+                log('✅ CSS styling applied', 'pass');
+            } else {
+                addTestResult('ui', 'CSS Styling', 'warning', 'Some styles may not be applied');
+                log('⚠️ CSS styling may be incomplete', 'warning');
+            }
+            TEST_CONFIG.totalTests++;
+        }
+
+        // Performance Tests
+        function testPerformance() {
+            log('Testing performance...', 'info');
+            
+            // Test API response times
+            const startTime = performance.now();
+            fetch('webgl_api.php?action=system_status')
+                .then(response => response.json())
+                .then(data => {
+                    const responseTime = performance.now() - startTime;
+                    
+                    if (responseTime < 1000) {
+                        addTestResult('performance', 'API Response Time', 'pass', `${responseTime.toFixed(2)}ms`);
+                        log(`✅ API response time: ${responseTime.toFixed(2)}ms`, 'pass');
+                    } else {
+                        addTestResult('performance', 'API Response Time', 'warning', `${responseTime.toFixed(2)}ms (slow)`);
+                        log(`⚠️ API response time: ${responseTime.toFixed(2)}ms (slow)`, 'warning');
+                    }
+                    TEST_CONFIG.totalTests++;
+                })
+                .catch(error => {
+                    addTestResult('performance', 'API Response Time', 'fail', `Error: ${error.message}`);
+                    log(`❌ API performance test failed: ${error.message}`, 'fail');
+                    TEST_CONFIG.totalTests++;
+                });
+            
+            // Test WebGL performance
+            const canvas = document.getElementById('webgl-test-canvas');
+            const gl = canvas.getContext('webgl');
+            
+            if (gl) {
+                const startTime = performance.now();
+                
+                // Create a simple scene
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas: canvas });
+                
+                const geometry = new THREE.BoxGeometry();
+                const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                const cube = new THREE.Mesh(geometry, material);
+                scene.add(cube);
+                camera.position.z = 5;
+                
+                // Render multiple frames
+                for (let i = 0; i < 60; i++) {
+                    cube.rotation.x += 0.01;
+                    cube.rotation.y += 0.01;
+                    renderer.render(scene, camera);
+                }
+                
+                const renderTime = performance.now() - startTime;
+                const fps = 60 / (renderTime / 1000);
+                
+                if (fps > 30) {
+                    addTestResult('performance', 'WebGL Performance', 'pass', `${fps.toFixed(1)} FPS`);
+                    log(`✅ WebGL performance: ${fps.toFixed(1)} FPS`, 'pass');
+                } else {
+                    addTestResult('performance', 'WebGL Performance', 'warning', `${fps.toFixed(1)} FPS (low)`);
+                    log(`⚠️ WebGL performance: ${fps.toFixed(1)} FPS (low)`, 'warning');
+                }
+                TEST_CONFIG.totalTests++;
+            }
+        }
+
+        // Main Test Functions
+        async function runAllTests() {
+            log('🚀 Starting comprehensive WebGL interface test suite...', 'info');
+            TEST_CONFIG.startTime = Date.now();
+            TEST_CONFIG.totalTests = 0;
+            TEST_CONFIG.passedTests = 0;
+            TEST_CONFIG.failedTests = 0;
+            TEST_CONFIG.warnings = 0;
+            
+            // Clear previous results
+            document.getElementById('api-tests').innerHTML = '';
+            document.getElementById('webgl-tests').innerHTML = '';
+            document.getElementById('ui-tests').innerHTML = '';
+            document.getElementById('performance-tests').innerHTML = '';
+            
+            // Run all test categories
+            await testAPIEndpoints();
+            testWebGLSupport();
+            testUIElements();
+            testPerformance();
+            
+            // Final summary
+            const totalTime = Date.now() - TEST_CONFIG.startTime;
+            log(`🏁 Test suite completed in ${totalTime}ms`, 'info');
+            log(`📊 Results: ${TEST_CONFIG.passedTests} passed, ${TEST_CONFIG.failedTests} failed, ${TEST_CONFIG.warnings} warnings`, 'info');
+            
+            if (TEST_CONFIG.failedTests === 0) {
+                log('🎉 All critical tests passed!', 'pass');
+            } else {
+                log(`⚠️ ${TEST_CONFIG.failedTests} tests failed - review required`, 'fail');
+            }
+        }
+
+        async function runAPITests() {
+            log('🔌 Running API tests only...', 'info');
+            TEST_CONFIG.startTime = Date.now();
+            await testAPIEndpoints();
+        }
+
+        function runWebGLTests() {
+            log('🎨 Running WebGL tests only...', 'info');
+            TEST_CONFIG.startTime = Date.now();
+            testWebGLSupport();
+        }
+
+        function runUITests() {
+            log('🖥️ Running UI tests only...', 'info');
+            TEST_CONFIG.startTime = Date.now();
+            testUIElements();
+        }
+
+        function clearLog() {
+            document.getElementById('test-log').innerHTML = '';
+        }
+
+        // Initialize test suite
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🧪 WebGL Interface Test Suite loaded', 'info');
+            log('Click "Run All Tests" to start comprehensive testing', 'info');
+        });
+    </script>
+</body>
+</html> 

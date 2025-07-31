@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Interface Debug Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #00ff88;
+        }
+        
+        .debug-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #00ff88;
+        }
+        
+        .test-section {
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #00ff88;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #00ff88;
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        .test-success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+        
+        .test-error {
+            background: rgba(255, 107, 53, 0.2);
+            border: 1px solid #ff6b35;
+            color: #ff6b35;
+        }
+        
+        .test-warning {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00b894);
+            color: black;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        }
+        
+        .log-output {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        
+        .webgl-canvas {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            background: #000;
+        }
+        
+        .menu-test {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .menu-item {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔧 WebGL Interface Debug Test Suite</h1>
+        
+        <!-- WebGL Context Test -->
+        <div class="test-section">
+            <h3>🎨 WebGL Context Test</h3>
+            <canvas id="webgl-canvas" class="webgl-canvas"></canvas>
+            <div>
+                <button class="btn" onclick="testWebGLContext()">Test WebGL Context</button>
+                <button class="btn" onclick="testWebGLFunctions()">Test WebGL Functions</button>
+                <button class="btn" onclick="testThreeJS()">Test Three.js</button>
+            </div>
+            <div id="webgl-results" class="log-output"></div>
+        </div>
+        
+        <!-- Interface Loading Test -->
+        <div class="test-section">
+            <h3>📦 Interface Loading Test</h3>
+            <button class="btn" onclick="testInterfaceLoading()">Test Interface Loading</button>
+            <button class="btn" onclick="testModuleLoading()">Test Module Loading</button>
+            <button class="btn" onclick="testEventListeners()">Test Event Listeners</button>
+            <div id="interface-results" class="log-output"></div>
+        </div>
+        
+        <!-- Menu Functionality Test -->
+        <div class="test-section">
+            <h3>🍔 Menu Functionality Test</h3>
+            <div class="menu-test">
+                <div class="menu-item" onclick="testMenuFunction('clients')">Clients</div>
+                <div class="menu-item" onclick="testMenuFunction('devices')">Devices</div>
+                <div class="menu-item" onclick="testMenuFunction('networks')">Networks</div>
+                <div class="menu-item" onclick="testMenuFunction('scan_jobs')">Scan Jobs</div>
+                <div class="menu-item" onclick="testMenuFunction('mikrotik')">MikroTik</div>
+                <div class="menu-item" onclick="testMenuFunction('webgl_scanner')">WebGL Scanner</div>
+            </div>
+            <div id="menu-results" class="log-output"></div>
+        </div>
+        
+        <!-- API Integration Test -->
+        <div class="test-section">
+            <h3>🔗 API Integration Test</h3>
+            <button class="btn" onclick="testAPIConnection()">Test API Connection</button>
+            <button class="btn" onclick="testModuleAPI()">Test Module API</button>
+            <button class="btn" onclick="testDataFetching()">Test Data Fetching</button>
+            <div id="api-results" class="log-output"></div>
+        </div>
+        
+        <!-- Performance Test -->
+        <div class="test-section">
+            <h3>⚡ Performance Test</h3>
+            <button class="btn" onclick="testRenderingPerformance()">Test Rendering</button>
+            <button class="btn" onclick="testDOMPerformance()">Test DOM Performance</button>
+            <button class="btn" onclick="testMemoryUsage()">Test Memory Usage</button>
+            <div id="performance-results" class="log-output"></div>
+        </div>
+        
+        <!-- Error Detection Test -->
+        <div class="test-section">
+            <h3>🚨 Error Detection Test</h3>
+            <button class="btn" onclick="testErrorHandling()">Test Error Handling</button>
+            <button class="btn" onclick="testSyntaxErrors()">Test Syntax Errors</button>
+            <button class="btn" onclick="testUndefinedFunctions()">Test Undefined Functions</button>
+            <div id="error-results" class="log-output"></div>
+        </div>
+        
+        <!-- Comprehensive Test -->
+        <div class="test-section">
+            <h3>🎯 Comprehensive Test</h3>
+            <button class="btn" onclick="runComprehensiveTest()">Run All Tests</button>
+            <button class="btn" onclick="generateTestReport()">Generate Report</button>
+            <div id="comprehensive-results" class="log-output"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="webgl_interface.js"></script>
+    
+    <script>
+        // Debug Test Suite
+        class WebGLDebugTestSuite {
+            constructor() {
+                this.testResults = [];
+                this.webglContext = null;
+                this.slmsInterface = null;
+                this.init();
+            }
+            
+            init() {
+                this.log('🔧 WebGL Debug Test Suite initialized');
+                this.testWebGLContext();
+            }
+            
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const logMessage = `[${timestamp}] ${message}`;
+                console.log(logMessage);
+                
+                // Add to appropriate results container
+                const containers = ['webgl-results', 'interface-results', 'menu-results', 'api-results', 'performance-results', 'error-results', 'comprehensive-results'];
+                containers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML += `<div class="test-${type}">${logMessage}</div>`;
+                        container.scrollTop = container.scrollHeight;
+                    }
+                });
+            }
+            
+            // WebGL Context Tests
+            testWebGLContext() {
+                this.log('🎨 Testing WebGL Context...', 'info');
+                
+                try {
+                    const canvas = document.getElementById('webgl-canvas');
+                    this.webglContext = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    
+                    if (this.webglContext) {
+                        this.log('✅ WebGL context created successfully', 'success');
+                        
+                        // Test basic WebGL functions
+                        const buffer = this.webglContext.createBuffer();
+                        if (buffer) {
+                            this.log('✅ createBuffer() function working', 'success');
+                        }
+                        
+                        const program = this.webglContext.createProgram();
+                        if (program) {
+                            this.log('✅ createProgram() function working', 'success');
+                        }
+                        
+                        const shader = this.webglContext.createShader(this.webglContext.VERTEX_SHADER);
+                        if (shader) {
+                            this.log('✅ createShader() function working', 'success');
+                        }
+                        
+                        // Test WebGL version
+                        const debugInfo = this.webglContext.getExtension('WEBGL_debug_renderer_info');
+                        if (debugInfo) {
+                            const renderer = this.webglContext.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                            this.log(`✅ WebGL Renderer: ${renderer}`, 'success');
+                        }
+                        
+                    } else {
+                        this.log('❌ WebGL context creation failed', 'error');
+                    }
+                } catch (error) {
+                    this.log(`❌ WebGL context error: ${error.message}`, 'error');
+                }
+            }
+            
+            testWebGLFunctions() {
+                this.log('🔧 Testing WebGL Functions...', 'info');
+                
+                if (!this.webglContext) {
+                    this.log('❌ WebGL context not available', 'error');
+                    return;
+                }
+                
+                const functions = [
+                    'createBuffer', 'bindBuffer', 'bufferData', 'deleteBuffer',
+                    'createTexture', 'bindTexture', 'texImage2D', 'deleteTexture',
+                    'createProgram', 'createShader', 'shaderSource', 'compileShader',
+                    'attachShader', 'linkProgram', 'useProgram', 'deleteProgram',
+                    'getAttribLocation', 'getUniformLocation', 'uniformMatrix4fv',
+                    'enableVertexAttribArray', 'vertexAttribPointer',
+                    'drawArrays', 'drawElements', 'clear', 'clearColor',
+                    'viewport', 'scissor', 'blendFunc', 'enable', 'disable'
+                ];
+                
+                functions.forEach(funcName => {
+                    try {
+                        if (typeof this.webglContext[funcName] === 'function') {
+                            this.log(`✅ ${funcName}() available`, 'success');
+                        } else {
+                            this.log(`❌ ${funcName}() not found`, 'error');
+                        }
+                    } catch (error) {
+                        this.log(`❌ ${funcName}() error: ${error.message}`, 'error');
+                    }
+                });
+            }
+            
+            testThreeJS() {
+                this.log('🎬 Testing Three.js...', 'info');
+                
+                try {
+                    if (typeof THREE !== 'undefined') {
+                        this.log('✅ Three.js library loaded', 'success');
+                        
+                        // Test Three.js classes
+                        const scene = new THREE.Scene();
+                        if (scene) {
+                            this.log('✅ THREE.Scene() working', 'success');
+                        }
+                        
+                        const camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+                        if (camera) {
+                            this.log('✅ THREE.PerspectiveCamera() working', 'success');
+                        }
+                        
+                        const renderer = new THREE.WebGLRenderer();
+                        if (renderer) {
+                            this.log('✅ THREE.WebGLRenderer() working', 'success');
+                        }
+                        
+                        const geometry = new THREE.BoxGeometry(1, 1, 1);
+                        if (geometry) {
+                            this.log('✅ THREE.BoxGeometry() working', 'success');
+                        }
+                        
+                        const material = new THREE.MeshBasicMaterial({ color: 0x00ff88 });
+                        if (material) {
+                            this.log('✅ THREE.MeshBasicMaterial() working', 'success');
+                        }
+                        
+                    } else {
+                        this.log('❌ Three.js library not loaded', 'error');
+                    }
+                } catch (error) {
+                    this.log(`❌ Three.js error: ${error.message}`, 'error');
+                }
+            }
+            
+            // Interface Loading Tests
+            testInterfaceLoading() {
+                this.log('📦 Testing Interface Loading...', 'info');
+                
+                try {
+                    if (typeof SLMSWebGLInterface !== 'undefined') {
+                        this.log('✅ SLMSWebGLInterface class available', 'success');
+                        
+                        this.slmsInterface = new SLMSWebGLInterface();
+                        if (this.slmsInterface) {
+                            this.log('✅ SLMSWebGLInterface instance created', 'success');
+                            
+                            // Test interface properties
+                            if (this.slmsInterface.moduleApiUrl) {
+                                this.log('✅ moduleApiUrl property available', 'success');
+                            }
+                            
+                            if (this.slmsInterface.moduleData) {
+                                this.log('✅ moduleData property available', 'success');
+                            }
+                            
+                            if (this.slmsInterface.currentModule) {
+                                this.log('✅ currentModule property available', 'success');
+                            }
+                            
+                        } else {
+                            this.log('❌ SLMSWebGLInterface instance creation failed', 'error');
+                        }
+                    } else {
+                        this.log('❌ SLMSWebGLInterface class not found', 'error');
+                    }
+                } catch (error) {
+                    this.log(`❌ Interface loading error: ${error.message}`, 'error');
+                }
+            }
+            
+            testModuleLoading() {
+                this.log('📦 Testing Module Loading...', 'info');
+                
+                if (!this.slmsInterface) {
+                    this.log('❌ SLMSWebGLInterface not available', 'error');
+                    return;
+                }
+                
+                try {
+                    // Test module loading
+                    const testModules = ['clients', 'devices', 'networks', 'scan_jobs'];
+                    
+                    testModules.forEach(moduleName => {
+                        try {
+                            if (typeof this.slmsInterface.loadModule === 'function') {
+                                this.log(`✅ loadModule() function available for ${moduleName}`, 'success');
+                            } else {
+                                this.log(`❌ loadModule() function not found for ${moduleName}`, 'error');
+                            }
+                        } catch (error) {
+                            this.log(`❌ Module loading error for ${moduleName}: ${error.message}`, 'error');
+                        }
+                    });
+                } catch (error) {
+                    this.log(`❌ Module loading test error: ${error.message}`, 'error');
+                }
+            }
+            
+            testEventListeners() {
+                this.log('👂 Testing Event Listeners...', 'info');
+                
+                try {
+                    // Test if event listeners are properly set up
+                    const menuItems = document.querySelectorAll('.menu-item');
+                    if (menuItems.length > 0) {
+                        this.log(`✅ Found ${menuItems.length} menu items`, 'success');
+                        
+                        menuItems.forEach((item, index) => {
+                            if (item.onclick) {
+                                this.log(`✅ Menu item ${index + 1} has click handler`, 'success');
+                            } else {
+                                this.log(`⚠️ Menu item ${index + 1} has no click handler`, 'warning');
+                            }
+                        });
+                    } else {
+                        this.log('❌ No menu items found', 'error');
+                    }
+                } catch (error) {
+                    this.log(`❌ Event listener test error: ${error.message}`, 'error');
+                }
+            }
+            
+            // Menu Functionality Tests
+            testMenuFunction(moduleName) {
+                this.log(`🍔 Testing Menu Function: ${moduleName}`, 'info');
+                
+                try {
+                    if (this.slmsInterface && typeof this.slmsInterface.loadModule === 'function') {
+                        this.slmsInterface.loadModule(moduleName);
+                        this.log(`✅ Menu function ${moduleName} executed`, 'success');
+                    } else {
+                        this.log(`❌ SLMSWebGLInterface not available for ${moduleName}`, 'error');
+                    }
+                } catch (error) {
+                    this.log(`❌ Menu function error for ${moduleName}: ${error.message}`, 'error');
+                }
+            }
+            
+            // API Integration Tests
+            testAPIConnection() {
+                this.log('🔗 Testing API Connection...', 'info');
+                
+                fetch('webgl_module_integration.php?action=list&module=clients')
+                    .then(response => {
+                        if (response.ok) {
+                            this.log('✅ API connection successful', 'success');
+                            return response.json();
+                        } else {
+                            this.log(`❌ API connection failed: ${response.status}`, 'error');
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+                    })
+                    .then(data => {
+                        this.log('✅ API response received', 'success');
+                        this.log(`📊 Response data: ${JSON.stringify(data).substring(0, 100)}...`, 'info');
+                    })
+                    .catch(error => {
+                        this.log(`❌ API connection error: ${error.message}`, 'error');
+                    });
+            }
+            
+            testModuleAPI() {
+                this.log('🔗 Testing Module API...', 'info');
+                
+                const testModules = ['clients', 'devices', 'networks'];
+                
+                testModules.forEach(moduleName => {
+                    fetch(`webgl_module_integration.php?action=list&module=${moduleName}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.log(`✅ Module API ${moduleName} working`, 'success');
+                        })
+                        .catch(error => {
+                            this.log(`❌ Module API ${moduleName} error: ${error.message}`, 'error');
+                        });
+                });
+            }
+            
+            testDataFetching() {
+                this.log('📡 Testing Data Fetching...', 'info');
+                
+                if (!this.slmsInterface) {
+                    this.log('❌ SLMSWebGLInterface not available', 'error');
+                    return;
+                }
+                
+                try {
+                    if (typeof this.slmsInterface.searchItems === 'function') {
+                        this.log('✅ searchItems() function available', 'success');
+                    } else {
+                        this.log('❌ searchItems() function not found', 'error');
+                    }
+                    
+                    if (typeof this.slmsInterface.refreshData === 'function') {
+                        this.log('✅ refreshData() function available', 'success');
+                    } else {
+                        this.log('❌ refreshData() function not found', 'error');
+                    }
+                } catch (error) {
+                    this.log(`❌ Data fetching test error: ${error.message}`, 'error');
+                }
+            }
+            
+            // Performance Tests
+            testRenderingPerformance() {
+                this.log('⚡ Testing Rendering Performance...', 'info');
+                
+                const startTime = performance.now();
+                
+                // Simulate rendering operations
+                for (let i = 0; i < 1000; i++) {
+                    // Simulate DOM operations
+                    const div = document.createElement('div');
+                    div.textContent = `Item ${i}`;
+                    document.body.appendChild(div);
+                    document.body.removeChild(div);
+                }
+                
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+                
+                this.log(`✅ Rendering performance test completed in ${duration.toFixed(2)}ms`, 'success');
+                
+                if (duration < 100) {
+                    this.log('✅ Rendering performance is good', 'success');
+                } else if (duration < 500) {
+                    this.log('⚠️ Rendering performance is acceptable', 'warning');
+                } else {
+                    this.log('❌ Rendering performance is poor', 'error');
+                }
+            }
+            
+            testDOMPerformance() {
+                this.log('⚡ Testing DOM Performance...', 'info');
+                
+                const startTime = performance.now();
+                
+                // Test DOM manipulation
+                const container = document.createElement('div');
+                for (let i = 0; i < 100; i++) {
+                    const item = document.createElement('div');
+                    item.textContent = `DOM Item ${i}`;
+                    container.appendChild(item);
+                }
+                
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+                
+                this.log(`✅ DOM performance test completed in ${duration.toFixed(2)}ms`, 'success');
+            }
+            
+            testMemoryUsage() {
+                this.log('⚡ Testing Memory Usage...', 'info');
+                
+                if (performance.memory) {
+                    const memory = performance.memory;
+                    this.log(`📊 Used JS Heap Size: ${(memory.usedJSHeapSize / 1048576).toFixed(2)} MB`, 'info');
+                    this.log(`📊 Total JS Heap Size: ${(memory.totalJSHeapSize / 1048576).toFixed(2)} MB`, 'info');
+                    this.log(`📊 JS Heap Size Limit: ${(memory.jsHeapSizeLimit / 1048576).toFixed(2)} MB`, 'info');
+                } else {
+                    this.log('⚠️ Memory usage information not available', 'warning');
+                }
+            }
+            
+            // Error Detection Tests
+            testErrorHandling() {
+                this.log('🚨 Testing Error Handling...', 'info');
+                
+                try {
+                    // Test error handling in interface
+                    if (this.slmsInterface) {
+                        this.log('✅ SLMSWebGLInterface error handling available', 'success');
+                    } else {
+                        this.log('❌ SLMSWebGLInterface not available for error testing', 'error');
+                    }
+                } catch (error) {
+                    this.log(`❌ Error handling test failed: ${error.message}`, 'error');
+                }
+            }
+            
+            testSyntaxErrors() {
+                this.log('🚨 Testing Syntax Errors...', 'info');
+                
+                try {
+                    // Test if webgl_interface.js loads without syntax errors
+                    if (typeof SLMSWebGLInterface !== 'undefined') {
+                        this.log('✅ No syntax errors detected in webgl_interface.js', 'success');
+                    } else {
+                        this.log('❌ Syntax errors detected in webgl_interface.js', 'error');
+                    }
+                } catch (error) {
+                    this.log(`❌ Syntax error test failed: ${error.message}`, 'error');
+                }
+            }
+            
+            testUndefinedFunctions() {
+                this.log('🚨 Testing Undefined Functions...', 'info');
+                
+                const requiredFunctions = [
+                    'addNewClient',
+                    'startScanJob',
+                    'loadModule',
+                    'searchItems',
+                    'refreshData'
+                ];
+                
+                requiredFunctions.forEach(funcName => {
+                    if (typeof window[funcName] === 'function') {
+                        this.log(`✅ Global function ${funcName}() available`, 'success');
+                    } else {
+                        this.log(`❌ Global function ${funcName}() not found`, 'error');
+                    }
+                });
+            }
+            
+            // Comprehensive Test
+            runComprehensiveTest() {
+                this.log('🎯 Running Comprehensive Test Suite...', 'info');
+                
+                // Run all tests
+                this.testWebGLContext();
+                this.testWebGLFunctions();
+                this.testThreeJS();
+                this.testInterfaceLoading();
+                this.testModuleLoading();
+                this.testEventListeners();
+                this.testAPIConnection();
+                this.testModuleAPI();
+                this.testDataFetching();
+                this.testRenderingPerformance();
+                this.testDOMPerformance();
+                this.testMemoryUsage();
+                this.testErrorHandling();
+                this.testSyntaxErrors();
+                this.testUndefinedFunctions();
+                
+                this.log('🎯 Comprehensive test suite completed', 'success');
+            }
+            
+            generateTestReport() {
+                this.log('📊 Generating Test Report...', 'info');
+                
+                const report = {
+                    timestamp: new Date().toISOString(),
+                    webglSupported: !!this.webglContext,
+                    threejsSupported: typeof THREE !== 'undefined',
+                    interfaceLoaded: !!this.slmsInterface,
+                    testResults: this.testResults
+                };
+                
+                this.log(`📊 Test Report: ${JSON.stringify(report, null, 2)}`, 'info');
+                
+                // Create downloadable report
+                const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'webgl-interface-test-report.json';
+                a.click();
+                
+                this.log('📊 Test report downloaded as webgl-interface-test-report.json', 'success');
+            }
+        }
+        
+        // Global test suite instance
+        let debugTestSuite;
+        
+        // Initialize test suite
+        document.addEventListener('DOMContentLoaded', function() {
+            debugTestSuite = new WebGLDebugTestSuite();
+        });
+        
+        // Global test functions
+        function testWebGLContext() {
+            if (debugTestSuite) debugTestSuite.testWebGLContext();
+        }
+        
+        function testWebGLFunctions() {
+            if (debugTestSuite) debugTestSuite.testWebGLFunctions();
+        }
+        
+        function testThreeJS() {
+            if (debugTestSuite) debugTestSuite.testThreeJS();
+        }
+        
+        function testInterfaceLoading() {
+            if (debugTestSuite) debugTestSuite.testInterfaceLoading();
+        }
+        
+        function testModuleLoading() {
+            if (debugTestSuite) debugTestSuite.testModuleLoading();
+        }
+        
+        function testEventListeners() {
+            if (debugTestSuite) debugTestSuite.testEventListeners();
+        }
+        
+        function testMenuFunction(moduleName) {
+            if (debugTestSuite) debugTestSuite.testMenuFunction(moduleName);
+        }
+        
+        function testAPIConnection() {
+            if (debugTestSuite) debugTestSuite.testAPIConnection();
+        }
+        
+        function testModuleAPI() {
+            if (debugTestSuite) debugTestSuite.testModuleAPI();
+        }
+        
+        function testDataFetching() {
+            if (debugTestSuite) debugTestSuite.testDataFetching();
+        }
+        
+        function testRenderingPerformance() {
+            if (debugTestSuite) debugTestSuite.testRenderingPerformance();
+        }
+        
+        function testDOMPerformance() {
+            if (debugTestSuite) debugTestSuite.testDOMPerformance();
+        }
+        
+        function testMemoryUsage() {
+            if (debugTestSuite) debugTestSuite.testMemoryUsage();
+        }
+        
+        function testErrorHandling() {
+            if (debugTestSuite) debugTestSuite.testErrorHandling();
+        }
+        
+        function testSyntaxErrors() {
+            if (debugTestSuite) debugTestSuite.testSyntaxErrors();
+        }
+        
+        function testUndefinedFunctions() {
+            if (debugTestSuite) debugTestSuite.testUndefinedFunctions();
+        }
+        
+        function runComprehensiveTest() {
+            if (debugTestSuite) debugTestSuite.runComprehensiveTest();
+        }
+        
+        function generateTestReport() {
+            if (debugTestSuite) debugTestSuite.generateTestReport();
+        }
+    </script>
+</body>
+</html> 

@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/mikrotik_rest_api_v7.php';
 
 if (session_status() === PHP_SESSION_NONE) {

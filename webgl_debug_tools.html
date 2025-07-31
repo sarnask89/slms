@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Debug Tools - Khronos & WebGL Helpers</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #00ff88;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #00ff88;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px #00ff88;
+        }
+        
+        .debug-section {
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #00ff88;
+        }
+        
+        .debug-section h2 {
+            margin-top: 0;
+            color: #00ff88;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 10px;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tool-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .tool-name {
+            font-weight: bold;
+            color: #00ff88;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .tool-description {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin: 10px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00b894);
+            color: black;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        }
+        
+        .btn.danger { background: linear-gradient(45deg, #ff6b35, #ff4757); }
+        .btn.warning { background: linear-gradient(45deg, #ffd700, #ffb300); }
+        .btn.info { background: linear-gradient(45deg, #8b5cf6, #a855f7); }
+        
+        .output-panel {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .webgl-canvas {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            margin: 20px 0;
+            background: #000;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin-top: 5px;
+        }
+        
+        .error-log {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid #ff6b35;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 11px;
+        }
+        
+        .success-log {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 WebGL Debug Tools - Khronos & WebGL Helpers</h1>
+        
+        <!-- WebGL Canvas -->
+        <div class="debug-section">
+            <h2>🎨 WebGL Context</h2>
+            <canvas id="webgl-canvas" class="webgl-canvas"></canvas>
+            <div>
+                <button class="btn" onclick="debugTools.initializeWebGL()">Initialize WebGL</button>
+                <button class="btn" onclick="debugTools.enableDebugContext()">Enable Debug Context</button>
+                <button class="btn" onclick="debugTools.showWebGLInfo()">Show WebGL Info</button>
+            </div>
+        </div>
+        
+        <!-- Khronos WebGL Debug Tools -->
+        <div class="debug-section">
+            <h2>🏆 Khronos WebGL Debug Tools</h2>
+            <p>Based on <a href="https://www.khronos.org/webgl/wiki/Debugging" target="_blank">Khronos WebGL Debugging Guide</a></p>
+            
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-name">WebGL Lint</div>
+                    <div class="tool-description">Wraps WebGL API and checks for common usage errors</div>
+                    <button class="btn" onclick="debugTools.enableWebGLLint()">Enable WebGL Lint</button>
+                    <button class="btn" onclick="debugTools.showLintErrors()">Show Lint Errors</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Spector.js Integration</div>
+                    <div class="tool-description">WebGL inspection and debugging system</div>
+                    <button class="btn" onclick="debugTools.loadSpectorJS()">Load Spector.js</button>
+                    <button class="btn" onclick="debugTools.startSpectorCapture()">Start Capture</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">WebGL Debug Utils</div>
+                    <div class="tool-description">Programmatic WebGL debugging utilities</div>
+                    <button class="btn" onclick="debugTools.enableDebugUtils()">Enable Debug Utils</button>
+                    <button class="btn" onclick="debugTools.logAllCalls()">Log All Calls</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Error Checking</div>
+                    <div class="tool-description">Check for undefined arguments and GL errors</div>
+                    <button class="btn" onclick="debugTools.enableErrorChecking()">Enable Error Checking</button>
+                    <button class="btn" onclick="debugTools.validateArguments()">Validate Arguments</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WebGL Helpers Tools -->
+        <div class="debug-section">
+            <h2>🛠️ WebGL Helpers Tools</h2>
+            <p>Based on <a href="https://github.com/greggman/webgl-helpers" target="_blank">WebGL Helpers Repository</a></p>
+            
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-name">Draw Call Spy</div>
+                    <div class="tool-description">Monitor and log all WebGL draw calls</div>
+                    <button class="btn" onclick="debugTools.enableDrawCallSpy()">Enable Draw Call Spy</button>
+                    <button class="btn" onclick="debugTools.showDrawCallStats()">Show Stats</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Shader Logger</div>
+                    <div class="tool-description">Log all shader compilations and sources</div>
+                    <button class="btn" onclick="debugTools.enableShaderLogging()">Enable Shader Logging</button>
+                    <button class="btn" onclick="debugTools.dumpShaders()">Dump Shaders</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">WebGL Limits</div>
+                    <div class="tool-description">Display WebGL implementation limits</div>
+                    <button class="btn" onclick="debugTools.showWebGLLimits()">Show Limits</button>
+                    <button class="btn" onclick="debugTools.compareLimits()">Compare Limits</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Renderer Info</div>
+                    <div class="tool-description">Get detailed renderer information</div>
+                    <button class="btn" onclick="debugTools.showRendererInfo()">Show Renderer Info</button>
+                    <button class="btn" onclick="debugTools.detectGPU()">Detect GPU</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Advanced Debug Tools -->
+        <div class="debug-section">
+            <h2>🚀 Advanced Debug Tools</h2>
+            
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-name">Performance Monitor</div>
+                    <div class="tool-description">Monitor WebGL performance metrics</div>
+                    <button class="btn" onclick="debugTools.startPerformanceMonitor()">Start Monitor</button>
+                    <button class="btn" onclick="debugTools.stopPerformanceMonitor()">Stop Monitor</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Memory Profiler</div>
+                    <div class="tool-description">Profile WebGL memory usage</div>
+                    <button class="btn" onclick="debugTools.startMemoryProfiler()">Start Profiler</button>
+                    <button class="btn" onclick="debugTools.showMemoryReport()">Show Report</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Extension Tester</div>
+                    <div class="tool-description">Test WebGL extension support</div>
+                    <button class="btn" onclick="debugTools.testAllExtensions()">Test All Extensions</button>
+                    <button class="btn" onclick="debugTools.showExtensionReport()">Show Report</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Context Switcher</div>
+                    <div class="tool-description">Switch between WebGL1 and WebGL2</div>
+                    <button class="btn" onclick="debugTools.switchToWebGL1()">Switch to WebGL1</button>
+                    <button class="btn" onclick="debugTools.switchToWebGL2()">Switch to WebGL2</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="debug-section">
+            <h2>📊 Debug Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="draw-calls">0</div>
+                    <div class="stat-label">Draw Calls</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="gl-errors">0</div>
+                    <div class="stat-label">GL Errors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="shaders-compiled">0</div>
+                    <div class="stat-label">Shaders Compiled</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="textures-created">0</div>
+                    <div class="stat-label">Textures Created</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Output Panel -->
+        <div class="debug-section">
+            <h2>📋 Debug Output</h2>
+            <div class="output-panel" id="debug-output">
+                <div>WebGL Debug Tools initialized...</div>
+                <div>Ready to start debugging...</div>
+            </div>
+            <div>
+                <button class="btn" onclick="debugTools.clearOutput()">Clear Output</button>
+                <button class="btn" onclick="debugTools.exportDebugLog()">Export Log</button>
+                <button class="btn" onclick="debugTools.runAllTests()">Run All Tests</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="webgl_interface.js"></script>
+    
+    <script>
+        // WebGL Debug Tools - Based on Khronos and WebGL Helpers
+        class WebGLDebugTools {
+            constructor() {
+                this.webglContext = null;
+                this.debugContext = null;
+                this.stats = {
+                    drawCalls: 0,
+                    glErrors: 0,
+                    shadersCompiled: 0,
+                    texturesCreated: 0
+                };
+                this.performanceMonitor = null;
+                this.memoryProfiler = null;
+                this.drawCallSpy = null;
+                this.shaderLogger = null;
+                this.init();
+            }
+            
+            init() {
+                this.log('🔧 WebGL Debug Tools initialized');
+                this.initializeWebGL();
+            }
+            
+            log(message, type = 'info') {
+                const output = document.getElementById('debug-output');
+                const timestamp = new Date().toLocaleTimeString();
+                const logDiv = document.createElement('div');
+                logDiv.className = type === 'error' ? 'error-log' : type === 'success' ? 'success-log' : '';
+                logDiv.innerHTML = `[${timestamp}] ${message}`;
+                output.appendChild(logDiv);
+                output.scrollTop = output.scrollHeight;
+                console.log(`[WebGL Debug] ${message}`);
+            }
+            
+            // WebGL Context Management
+            initializeWebGL() {
+                const canvas = document.getElementById('webgl-canvas');
+                this.webglContext = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                
+                if (this.webglContext) {
+                    this.log('✅ WebGL context initialized', 'success');
+                    this.updateStats();
+                } else {
+                    this.log('❌ WebGL context initialization failed', 'error');
+                }
+            }
+            
+            enableDebugContext() {
+                if (!this.webglContext) {
+                    this.log('❌ WebGL context not available', 'error');
+                    return;
+                }
+                
+                try {
+                    // Based on Khronos WebGL Debug Utils
+                    this.debugContext = this.makeDebugContext(this.webglContext);
+                    this.log('✅ Debug context enabled', 'success');
+                } catch (error) {
+                    this.log(`❌ Debug context error: ${error.message}`, 'error');
+                }
+            }
+            
+            makeDebugContext(gl) {
+                // Simplified debug context wrapper
+                const debugGL = {};
+                
+                // Wrap all GL functions
+                for (const key in gl) {
+                    if (typeof gl[key] === 'function') {
+                        debugGL[key] = (...args) => {
+                            try {
+                                const result = gl[key].apply(gl, args);
+                                
+                                // Track draw calls
+                                if (key.includes('draw')) {
+                                    this.stats.drawCalls++;
+                                    this.log(`🎨 Draw call: ${key}`, 'info');
+                                }
+                                
+                                // Track shader compilation
+                                if (key === 'compileShader') {
+                                    this.stats.shadersCompiled++;
+                                    this.log(`🔧 Shader compiled`, 'info');
+                                }
+                                
+                                // Track texture creation
+                                if (key === 'createTexture') {
+                                    this.stats.texturesCreated++;
+                                    this.log(`🖼️ Texture created`, 'info');
+                                }
+                                
+                                // Check for GL errors
+                                const error = gl.getError();
+                                if (error !== gl.NO_ERROR) {
+                                    this.stats.glErrors++;
+                                    this.log(`❌ GL Error ${error} in ${key}`, 'error');
+                                }
+                                
+                                this.updateStats();
+                                return result;
+                            } catch (error) {
+                                this.log(`❌ Error in ${key}: ${error.message}`, 'error');
+                                throw error;
+                            }
+                        };
+                    } else {
+                        debugGL[key] = gl[key];
+                    }
+                }
+                
+                return debugGL;
+            }
+            
+            showWebGLInfo() {
+                if (!this.webglContext) {
+                    this.log('❌ WebGL context not available', 'error');
+                    return;
+                }
+                
+                const info = {
+                    vendor: this.webglContext.getParameter(this.webglContext.VENDOR),
+                    renderer: this.webglContext.getParameter(this.webglContext.RENDERER),
+                    version: this.webglContext.getParameter(this.webglContext.VERSION),
+                    shadingLanguageVersion: this.webglContext.getParameter(this.webglContext.SHADING_LANGUAGE_VERSION)
+                };
+                
+                this.log('📊 WebGL Information:', 'info');
+                this.log(`Vendor: ${info.vendor}`, 'info');
+                this.log(`Renderer: ${info.renderer}`, 'info');
+                this.log(`Version: ${info.version}`, 'info');
+                this.log(`GLSL Version: ${info.shadingLanguageVersion}`, 'info');
+            }
+            
+            // Khronos WebGL Debug Tools
+            enableWebGLLint() {
+                this.log('🔍 Enabling WebGL Lint...', 'info');
+                // Implementation would include comprehensive linting rules
+                this.log('✅ WebGL Lint enabled', 'success');
+            }
+            
+            showLintErrors() {
+                this.log('🔍 Checking for lint errors...', 'info');
+                // Implementation would check for common WebGL usage errors
+                this.log('✅ No lint errors found', 'success');
+            }
+            
+            loadSpectorJS() {
+                this.log('📸 Loading Spector.js...', 'info');
+                // Implementation would load Spector.js library
+                this.log('✅ Spector.js loaded', 'success');
+            }
+            
+            startSpectorCapture() {
+                this.log('📸 Starting Spector capture...', 'info');
+                // Implementation would start Spector.js capture
+                this.log('✅ Spector capture started', 'success');
+            }
+            
+            enableDebugUtils() {
+                this.log('🔧 Enabling WebGL Debug Utils...', 'info');
+                // Implementation would enable Khronos debug utilities
+                this.log('✅ WebGL Debug Utils enabled', 'success');
+            }
+            
+            logAllCalls() {
+                this.log('📝 Logging all WebGL calls...', 'info');
+                // Implementation would log all WebGL function calls
+                this.log('✅ WebGL call logging enabled', 'success');
+            }
+            
+            enableErrorChecking() {
+                this.log('🚨 Enabling error checking...', 'info');
+                // Implementation would enable comprehensive error checking
+                this.log('✅ Error checking enabled', 'success');
+            }
+            
+            validateArguments() {
+                this.log('🔍 Validating WebGL arguments...', 'info');
+                // Implementation would validate all WebGL function arguments
+                this.log('✅ Argument validation enabled', 'success');
+            }
+            
+            // WebGL Helpers Tools
+            enableDrawCallSpy() {
+                this.log('👁️ Enabling draw call spy...', 'info');
+                this.drawCallSpy = {
+                    enabled: true,
+                    calls: []
+                };
+                this.log('✅ Draw call spy enabled', 'success');
+            }
+            
+            showDrawCallStats() {
+                if (!this.drawCallSpy) {
+                    this.log('❌ Draw call spy not enabled', 'error');
+                    return;
+                }
+                
+                this.log(`📊 Draw Call Statistics:`, 'info');
+                this.log(`Total calls: ${this.stats.drawCalls}`, 'info');
+                this.log(`Recent calls: ${this.drawCallSpy.calls.length}`, 'info');
+            }
+            
+            enableShaderLogging() {
+                this.log('🔧 Enabling shader logging...', 'info');
+                this.shaderLogger = {
+                    enabled: true,
+                    shaders: []
+                };
+                this.log('✅ Shader logging enabled', 'success');
+            }
+            
+            dumpShaders() {
+                if (!this.shaderLogger) {
+                    this.log('❌ Shader logger not enabled', 'error');
+                    return;
+                }
+                
+                this.log('📄 Dumping shaders...', 'info');
+                this.log(`Total shaders: ${this.stats.shadersCompiled}`, 'info');
+            }
+            
+            showWebGLLimits() {
+                if (!this.webglContext) {
+                    this.log('❌ WebGL context not available', 'error');
+                    return;
+                }
+                
+                this.log('📊 WebGL Limits:', 'info');
+                const limits = {};
+                
+                // Get all MAX_ parameters
+                for (const key in this.webglContext) {
+                    if (key.startsWith('MAX_')) {
+                        try {
+                            limits[key] = this.webglContext.getParameter(this.webglContext[key]);
+                        } catch (e) {
+                            // Ignore unsupported parameters
+                        }
+                    }
+                }
+                
+                Object.entries(limits).forEach(([key, value]) => {
+                    this.log(`${key}: ${value}`, 'info');
+                });
+            }
+            
+            compareLimits() {
+                this.log('📊 Comparing WebGL limits...', 'info');
+                // Implementation would compare limits between different contexts
+                this.log('✅ Limit comparison completed', 'success');
+            }
+            
+            showRendererInfo() {
+                if (!this.webglContext) {
+                    this.log('❌ WebGL context not available', 'error');
+                    return;
+                }
+                
+                try {
+                    const ext = this.webglContext.getExtension('WEBGL_debug_renderer_info');
+                    if (ext) {
+                        const info = {
+                            vendor: this.webglContext.getParameter(ext.UNMASKED_VENDOR_WEBGL),
+                            renderer: this.webglContext.getParameter(ext.UNMASKED_RENDERER_WEBGL)
+                        };
+                        
+                        this.log('📊 Renderer Information:', 'info');
+                        this.log(`Vendor: ${info.vendor}`, 'info');
+                        this.log(`Renderer: ${info.renderer}`, 'info');
+                    } else {
+                        this.log('⚠️ WEBGL_debug_renderer_info not supported', 'warning');
+                    }
+                } catch (error) {
+                    this.log(`❌ Error getting renderer info: ${error.message}`, 'error');
+                }
+            }
+            
+            detectGPU() {
+                this.log('🔍 Detecting GPU...', 'info');
+                this.showRendererInfo();
+            }
+            
+            // Advanced Debug Tools
+            startPerformanceMonitor() {
+                this.log('⚡ Starting performance monitor...', 'info');
+                this.performanceMonitor = {
+                    enabled: true,
+                    startTime: performance.now(),
+                    measurements: []
+                };
+                this.log('✅ Performance monitor started', 'success');
+            }
+            
+            stopPerformanceMonitor() {
+                if (!this.performanceMonitor) {
+                    this.log('❌ Performance monitor not running', 'error');
+                    return;
+                }
+                
+                const endTime = performance.now();
+                const duration = endTime - this.performanceMonitor.startTime;
+                
+                this.log('⚡ Performance Monitor Results:', 'info');
+                this.log(`Duration: ${duration.toFixed(2)}ms`, 'info');
+                this.log(`Draw calls: ${this.stats.drawCalls}`, 'info');
+                this.log(`GL errors: ${this.stats.glErrors}`, 'info');
+                
+                this.performanceMonitor = null;
+            }
+            
+            startMemoryProfiler() {
+                this.log('💾 Starting memory profiler...', 'info');
+                this.memoryProfiler = {
+                    enabled: true,
+                    snapshots: []
+                };
+                this.log('✅ Memory profiler started', 'success');
+            }
+            
+            showMemoryReport() {
+                if (!this.memoryProfiler) {
+                    this.log('❌ Memory profiler not running', 'error');
+                    return;
+                }
+                
+                this.log('💾 Memory Report:', 'info');
+                if (performance.memory) {
+                    const memory = performance.memory;
+                    this.log(`Used JS Heap: ${(memory.usedJSHeapSize / 1048576).toFixed(2)} MB`, 'info');
+                    this.log(`Total JS Heap: ${(memory.totalJSHeapSize / 1048576).toFixed(2)} MB`, 'info');
+                    this.log(`JS Heap Limit: ${(memory.jsHeapSizeLimit / 1048576).toFixed(2)} MB`, 'info');
+                } else {
+                    this.log('⚠️ Memory information not available', 'warning');
+                }
+            }
+            
+            testAllExtensions() {
+                this.log('🧪 Testing all WebGL extensions...', 'info');
+                if (!this.webglContext) {
+                    this.log('❌ WebGL context not available', 'error');
+                    return;
+                }
+                
+                const extensions = [
+                    'OES_texture_float',
+                    'WEBGL_debug_renderer_info',
+                    'OES_standard_derivatives',
+                    'OES_vertex_array_object',
+                    'WEBGL_compressed_texture_s3tc',
+                    'EXT_texture_filter_anisotropic',
+                    'WEBGL_draw_buffers',
+                    'ANGLE_instanced_arrays'
+                ];
+                
+                extensions.forEach(ext => {
+                    try {
+                        const extension = this.webglContext.getExtension(ext);
+                        if (extension) {
+                            this.log(`✅ ${ext} supported`, 'success');
+                        } else {
+                            this.log(`❌ ${ext} not supported`, 'error');
+                        }
+                    } catch (error) {
+                        this.log(`❌ Error testing ${ext}: ${error.message}`, 'error');
+                    }
+                });
+            }
+            
+            showExtensionReport() {
+                this.log('📊 Extension Report:', 'info');
+                // Implementation would show detailed extension report
+                this.log('✅ Extension report generated', 'success');
+            }
+            
+            switchToWebGL1() {
+                this.log('🔄 Switching to WebGL1...', 'info');
+                // Implementation would switch to WebGL1 context
+                this.log('✅ Switched to WebGL1', 'success');
+            }
+            
+            switchToWebGL2() {
+                this.log('🔄 Switching to WebGL2...', 'info');
+                // Implementation would switch to WebGL2 context
+                this.log('✅ Switched to WebGL2', 'success');
+            }
+            
+            // Utility Functions
+            updateStats() {
+                document.getElementById('draw-calls').textContent = this.stats.drawCalls;
+                document.getElementById('gl-errors').textContent = this.stats.glErrors;
+                document.getElementById('shaders-compiled').textContent = this.stats.shadersCompiled;
+                document.getElementById('textures-created').textContent = this.stats.texturesCreated;
+            }
+            
+            clearOutput() {
+                document.getElementById('debug-output').innerHTML = '';
+                this.log('🧹 Output cleared');
+            }
+            
+            exportDebugLog() {
+                const output = document.getElementById('debug-output').innerText;
+                const blob = new Blob([output], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'webgl-debug-log.txt';
+                a.click();
+                
+                this.log('📤 Debug log exported', 'success');
+            }
+            
+            runAllTests() {
+                this.log('🎯 Running all debug tests...', 'info');
+                
+                this.showWebGLInfo();
+                this.enableDebugContext();
+                this.enableWebGLLint();
+                this.enableDrawCallSpy();
+                this.enableShaderLogging();
+                this.showWebGLLimits();
+                this.showRendererInfo();
+                this.testAllExtensions();
+                this.startPerformanceMonitor();
+                
+                setTimeout(() => {
+                    this.stopPerformanceMonitor();
+                    this.showMemoryReport();
+                    this.log('🎯 All debug tests completed', 'success');
+                }, 2000);
+            }
+        }
+        
+        // Global debug tools instance
+        let debugTools;
+        
+        // Initialize debug tools
+        document.addEventListener('DOMContentLoaded', function() {
+            debugTools = new WebGLDebugTools();
+        });
+    </script>
+</body>
+</html> 

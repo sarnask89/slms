@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/helpers/layout_helper.php';
 
 $pdo = get_pdo();
@@ -75,7 +76,7 @@ $dynamic_css = generate_layout_css($layout_settings);
 <body>
     <div class="top-navbar">
         <div class="d-flex justify-content-between align-items-center w-100">
-                                <div class="fw-bold">AI SERVICE NETWORK MANAGEMENT SYSTEM</div>
+            <div class="fw-bold">sLMS System</div>
             <div class="d-flex align-items-center">
                 <?php if ($layout_settings['show_search']): ?>
                     <form class="d-flex me-3" action="<?= base_url('modules/search.php') ?>" method="get" role="search">

@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Edytuj Pakiet Internet';
 $pdo = get_pdo();
 
@@ -22,7 +23,7 @@ if (!$package) {
     exit;
 }
 
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $internet_package = trim($_POST['internet_package'] ?? '');
     $price = (float)($_POST['price'] ?? 0);

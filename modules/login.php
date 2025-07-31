@@ -1,33 +1,57 @@
 <?php
-// Temporary Authentication Disabled
-// This file temporarily disables password authentication for maintenance
+// Auto-Login System - Full Access Mode
+// This file provides automatic access to the system without requiring login
 
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if user is already logged in
-if (isset($_SESSION['user_id']) && isset($_SESSION['username'])) {
-    // User is already logged in, redirect to main page
-    header('Location: ../index.php');
-    exit;
+require_once 'module_loader.php';
+
+
+// Auto-login functionality - automatically log in as admin
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
+    try {
+$pdo = get_pdo();
+
+        // Get the admin user
+        $stmt = $pdo->prepare("SELECT id, username, role FROM users WHERE username = 'admin' AND is_active = 1");
+        $stmt->execute();
+            $user = $stmt->fetch();
+            
+        if ($user) {
+            // Auto-login as admin
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['login_time'] = time();
+            $_SESSION['auto_login'] = true; // Flag to indicate auto-login
+                
+            // Log the auto-login activity
+                $logStmt = $pdo->prepare("INSERT INTO user_activity_log (user_id, action, details, ip_address) VALUES (?, ?, ?, ?)");
+            $logStmt->execute([$user['id'], 'auto_login', 'Automatic login - full access mode', $_SERVER['REMOTE_ADDR'] ?? 'unknown']);
+        }
+    } catch (Exception $e) {
+        // If database fails, create a basic session
+        $_SESSION['user_id'] = 1;
+        $_SESSION['username'] = 'admin';
+        $_SESSION['role'] = 'admin';
+        $_SESSION['login_time'] = time();
+        $_SESSION['auto_login'] = true;
+            }
 }
 
-// Handle any existing logout requests
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header('Location: login.php');
-    exit;
-}
-
+// Redirect to main page
+header('Location: ../index.php');
+exit;
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI SERVICE NETWORK MANAGEMENT SYSTEM - Authentication Temporarily Disabled</title>
+    <title>sLMS - Authentication Temporarily Disabled</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -104,22 +128,22 @@ if (isset($_GET['logout'])) {
         
         <div class="status">
             <strong>Status:</strong> Password authentication is currently disabled for maintenance
-        </div>
-        
+                    </div>
+                    
         <div class="message">
             <p>We are currently performing system maintenance and have temporarily disabled password authentication for security purposes.</p>
             <p>This is a precautionary measure to ensure system security during maintenance operations.</p>
-        </div>
-        
+                            </div>
+                            
         <div class="admin-info">
             <strong>For Administrators:</strong><br>
             To re-enable authentication, edit the file:<br>
             <code>/var/www/html/slms/modules/login.php</code><br>
             And restore the original login functionality.
-        </div>
-        
+                            </div>
+                            
         <a href="../index.php" class="back-link">Return to Main Page</a>
-        
+                        
         <div class="timestamp">
             Disabled on: <?php echo date('Y-m-d H:i:s'); ?><br>
             Server: <?php echo $_SERVER['SERVER_NAME'] ?? 'sLMS'; ?>

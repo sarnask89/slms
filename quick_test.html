@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick WebGL Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            margin: 20px;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .status-item {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            border-left: 3px solid #00ff88;
+        }
+        .success { background: rgba(0, 255, 0, 0.1); border-left-color: #00ff00; }
+        .error { background: rgba(255, 0, 0, 0.1); border-left-color: #ff0000; }
+        .warning { background: rgba(255, 255, 0, 0.1); border-left-color: #ffff00; }
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Quick WebGL Fix Test</h1>
+        <div id="test-results"></div>
+        <button onclick="runTest()">🧪 Run Test</button>
+        <button onclick="openMain()">🚀 Open Main Interface</button>
+    </div>
+
+    <!-- Three.js for Advanced 3D Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- SLMS WebGL Interface -->
+    <script src="webgl_interface.js"></script>
+    
+    <script>
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `status-item ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            results.appendChild(div);
+        }
+        
+        function runTest() {
+            addResult('Starting quick test...', 'warning');
+            
+            // Test Three.js
+            if (typeof THREE !== 'undefined') {
+                addResult('✅ Three.js loaded', 'success');
+            } else {
+                addResult('❌ Three.js not loaded', 'error');
+            }
+            
+            // Test SLMSWebGLInterface
+            if (typeof SLMSWebGLInterface !== 'undefined') {
+                addResult('✅ SLMSWebGLInterface class available', 'success');
+                
+                try {
+                    const interface = new SLMSWebGLInterface();
+                    addResult('✅ Interface instance created', 'success');
+                    
+                    // Test domLoopingMethods
+                    if (interface.domLoopingMethods) {
+                        addResult('✅ DOM looping methods available', 'success');
+                    } else {
+                        addResult('❌ DOM looping methods missing', 'error');
+                    }
+                    
+                    // Test module loading
+                    try {
+                        interface.loadModule('clients');
+                        addResult('✅ Module loading working', 'success');
+                    } catch (error) {
+                        addResult(`❌ Module loading failed: ${error.message}`, 'error');
+                    }
+                    
+                } catch (error) {
+                    addResult(`❌ Interface creation failed: ${error.message}`, 'error');
+                }
+            } else {
+                addResult('❌ SLMSWebGLInterface class not found', 'error');
+            }
+            
+            addResult('Test completed!', 'warning');
+        }
+        
+        function openMain() {
+            window.location.href = 'webgl_demo_integrated.php';
+        }
+        
+        // Auto-run test
+        window.addEventListener('load', () => {
+            setTimeout(runTest, 1000);
+        });
+    </script>
+</body>
+</html> 

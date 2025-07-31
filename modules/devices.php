@@ -1,7 +1,9 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Urządzenia Klienckie';
 $pdo = get_pdo();
+
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $stmt = $pdo->prepare('DELETE FROM devices WHERE id = ?');
@@ -9,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     header('Location: devices.php');
     exit;
 }
+
 ob_start();
 $devices = $pdo->query('
     SELECT d.*, CONCAT(c.first_name, " ", c.last_name) as client_name 

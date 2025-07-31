@@ -24,12 +24,7 @@ foreach ($rii as $file) {
             foreach ($matches[0] as $match) {
                 $pos = $match[1] + $offset;
                 // Insert protection before session_start()
-                $protect = "if (session_status() === PHP_SESSION_NONE) {\n   if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}\n}";
-                // Remove the originalif (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+                $protect = "if (session_status() === PHP_SESSION_NONE) {\n    session_start();\n}";
                 $code = substr_replace($code, $protect, $pos, strlen($match[0]));
                 $offset += strlen($protect) - strlen($match[0]);
             }

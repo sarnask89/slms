@@ -1,0 +1,719 @@
+# Polish translations for SLMS
+# Copyright (C) 2025 SLMS Development Team
+# This file is distributed under the same license as the SLMS package.
+msgid ""
+msgstr ""
+"Project-Id-Version: SLMS 1.0.0\n"
+"Report-Msgid-Bugs-To: support@slms.local\n"
+"POT-Creation-Date: 2025-07-30 19:00+0200\n"
+"PO-Revision-Date: 2025-07-30 19:00+0200\n"
+"Last-Translator: SLMS Development Team <support@slms.local>\n"
+"Language-Team: Polish <support@slms.local>\n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+
+# Main Navigation
+msgid "Dashboard"
+msgstr "Panel główny"
+
+msgid "Clients"
+msgstr "Klienci"
+
+msgid "Devices"
+msgstr "Urządzenia"
+
+msgid "Networks"
+msgstr "Sieci"
+
+msgid "Services"
+msgstr "Usługi"
+
+msgid "Invoices"
+msgstr "Faktury"
+
+msgid "Payments"
+msgstr "Płatności"
+
+msgid "Reports"
+msgstr "Raporty"
+
+msgid "Settings"
+msgstr "Ustawienia"
+
+msgid "Users"
+msgstr "Użytkownicy"
+
+# Client Management
+msgid "Add Client"
+msgstr "Dodaj Klienta"
+
+msgid "Edit Client"
+msgstr "Edytuj Klienta"
+
+msgid "Client Details"
+msgstr "Szczegóły Klienta"
+
+msgid "Client Name"
+msgstr "Nazwa Klienta"
+
+msgid "Alternative Name"
+msgstr "Nazwa Alternatywna"
+
+msgid "Address"
+msgstr "Adres"
+
+msgid "Postal Name"
+msgstr "Nazwa Korespondencyjna"
+
+msgid "Postal Address"
+msgstr "Adres Korespondencyjny"
+
+msgid "Location Name"
+msgstr "Nazwa Lokalizacji"
+
+msgid "Location Address"
+msgstr "Adres Lokalizacji"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Bank Account"
+msgstr "Rachunek Bankowy"
+
+msgid "Tax ID"
+msgstr "NIP"
+
+msgid "PESEL"
+msgstr "PESEL"
+
+msgid "Additional Information"
+msgstr "Informacje Dodatkowe"
+
+msgid "Notes"
+msgstr "Notatki"
+
+msgid "Document Memo"
+msgstr "Notatka na Dokumentach"
+
+msgid "Contact Information"
+msgstr "Informacje Kontaktowe"
+
+# Device Management
+msgid "Add Device"
+msgstr "Dodaj Urządzenie"
+
+msgid "Edit Device"
+msgstr "Edytuj Urządzenie"
+
+msgid "Device Details"
+msgstr "Szczegóły Urządzenia"
+
+msgid "Device Name"
+msgstr "Nazwa Urządzenia"
+
+msgid "Device Type"
+msgstr "Typ Urządzenia"
+
+msgid "IP Address"
+msgstr "Adres IP"
+
+msgid "MAC Address"
+msgstr "Adres MAC"
+
+msgid "Serial Number"
+msgstr "Numer Seryjny"
+
+msgid "Model"
+msgstr "Model"
+
+msgid "Manufacturer"
+msgstr "Producent"
+
+msgid "Location"
+msgstr "Lokalizacja"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Active"
+msgstr "Aktywne"
+
+msgid "Inactive"
+msgstr "Nieaktywne"
+
+msgid "Maintenance"
+msgstr "Konserwacja"
+
+# Network Management
+msgid "Add Network"
+msgstr "Dodaj Sieć"
+
+msgid "Edit Network"
+msgstr "Edytuj Sieć"
+
+msgid "Network Name"
+msgstr "Nazwa Sieci"
+
+msgid "Network Address"
+msgstr "Adres Sieci"
+
+msgid "Subnet Mask"
+msgstr "Maska Podsieci"
+
+msgid "Gateway"
+msgstr "Brama"
+
+msgid "DNS Servers"
+msgstr "Serwery DNS"
+
+msgid "DHCP Range"
+msgstr "Zakres DHCP"
+
+# Service Management
+msgid "Add Service"
+msgstr "Dodaj Usługę"
+
+msgid "Edit Service"
+msgstr "Edytuj Usługę"
+
+msgid "Service Name"
+msgstr "Nazwa Usługi"
+
+msgid "Service Type"
+msgstr "Typ Usługi"
+
+msgid "Internet Package"
+msgstr "Pakiet Internetowy"
+
+msgid "TV Package"
+msgstr "Pakiet Telewizyjny"
+
+msgid "Phone Service"
+msgstr "Usługa Telefoniczna"
+
+msgid "Price"
+msgstr "Cena"
+
+msgid "Currency"
+msgstr "Waluta"
+
+msgid "PLN"
+msgstr "PLN"
+
+msgid "EUR"
+msgstr "EUR"
+
+msgid "USD"
+msgstr "USD"
+
+# Invoice Management
+msgid "Add Invoice"
+msgstr "Dodaj Fakturę"
+
+msgid "Edit Invoice"
+msgstr "Edytuj Fakturę"
+
+msgid "Invoice Number"
+msgstr "Numer Faktury"
+
+msgid "Invoice Date"
+msgstr "Data Faktury"
+
+msgid "Due Date"
+msgstr "Termin Płatności"
+
+msgid "Amount"
+msgstr "Kwota"
+
+msgid "Tax Rate"
+msgstr "Stawka Podatku"
+
+msgid "Total Amount"
+msgstr "Kwota Całkowita"
+
+msgid "Paid"
+msgstr "Opłacone"
+
+msgid "Unpaid"
+msgstr "Nieopłacone"
+
+msgid "Overdue"
+msgstr "Przeterminowane"
+
+# Payment Management
+msgid "Add Payment"
+msgstr "Dodaj Płatność"
+
+msgid "Edit Payment"
+msgstr "Edytuj Płatność"
+
+msgid "Payment Date"
+msgstr "Data Płatności"
+
+msgid "Payment Method"
+msgstr "Metoda Płatności"
+
+msgid "Cash"
+msgstr "Gotówka"
+
+msgid "Bank Transfer"
+msgstr "Przelew Bankowy"
+
+msgid "Credit Card"
+msgstr "Karta Kredytowa"
+
+msgid "Online Payment"
+msgstr "Płatność Online"
+
+# User Management
+msgid "Add User"
+msgstr "Dodaj Użytkownika"
+
+msgid "Edit User"
+msgstr "Edytuj Użytkownika"
+
+msgid "Username"
+msgstr "Nazwa Użytkownika"
+
+msgid "Password"
+msgstr "Hasło"
+
+msgid "Confirm Password"
+msgstr "Potwierdź Hasło"
+
+msgid "First Name"
+msgstr "Imię"
+
+msgid "Last Name"
+msgstr "Nazwisko"
+
+msgid "Full Name"
+msgstr "Imię i Nazwisko"
+
+msgid "Role"
+msgstr "Rola"
+
+msgid "Administrator"
+msgstr "Administrator"
+
+msgid "Manager"
+msgstr "Kierownik"
+
+msgid "Operator"
+msgstr "Operator"
+
+msgid "Viewer"
+msgstr "Przeglądający"
+
+# Common Actions
+msgid "Save"
+msgstr "Zapisz"
+
+msgid "Cancel"
+msgstr "Anuluj"
+
+msgid "Delete"
+msgstr "Usuń"
+
+msgid "Edit"
+msgstr "Edytuj"
+
+msgid "View"
+msgstr "Wyświetl"
+
+msgid "Add"
+msgstr "Dodaj"
+
+msgid "Search"
+msgstr "Szukaj"
+
+msgid "Filter"
+msgstr "Filtruj"
+
+msgid "Export"
+msgstr "Eksportuj"
+
+msgid "Import"
+msgstr "Importuj"
+
+msgid "Refresh"
+msgstr "Odśwież"
+
+msgid "Back"
+msgstr "Wstecz"
+
+msgid "Next"
+msgstr "Dalej"
+
+msgid "Previous"
+msgstr "Poprzedni"
+
+# Messages
+msgid "Success"
+msgstr "Sukces"
+
+msgid "Error"
+msgstr "Błąd"
+
+msgid "Warning"
+msgstr "Ostrzeżenie"
+
+msgid "Information"
+msgstr "Informacja"
+
+msgid "Record saved successfully"
+msgstr "Rekord został pomyślnie zapisany"
+
+msgid "Record deleted successfully"
+msgstr "Rekord został pomyślnie usunięty"
+
+msgid "An error occurred"
+msgstr "Wystąpił błąd"
+
+msgid "Are you sure you want to delete this record?"
+msgstr "Czy na pewno chcesz usunąć ten rekord?"
+
+msgid "No records found"
+msgstr "Nie znaleziono rekordów"
+
+msgid "Loading..."
+msgstr "Ładowanie..."
+
+# Form Validation
+msgid "This field is required"
+msgstr "To pole jest wymagane"
+
+msgid "Invalid email address"
+msgstr "Nieprawidłowy adres e-mail"
+
+msgid "Passwords do not match"
+msgstr "Hasła nie pasują do siebie"
+
+msgid "Password must be at least 8 characters long"
+msgstr "Hasło musi mieć co najmniej 8 znaków"
+
+msgid "Invalid IP address"
+msgstr "Nieprawidłowy adres IP"
+
+msgid "Invalid MAC address"
+msgstr "Nieprawidłowy adres MAC"
+
+# Date and Time
+msgid "January"
+msgstr "Styczeń"
+
+msgid "February"
+msgstr "Luty"
+
+msgid "March"
+msgstr "Marzec"
+
+msgid "April"
+msgstr "Kwiecień"
+
+msgid "May"
+msgstr "Maj"
+
+msgid "June"
+msgstr "Czerwiec"
+
+msgid "July"
+msgstr "Lipiec"
+
+msgid "August"
+msgstr "Sierpień"
+
+msgid "September"
+msgstr "Wrzesień"
+
+msgid "October"
+msgstr "Październik"
+
+msgid "November"
+msgstr "Listopad"
+
+msgid "December"
+msgstr "Grudzień"
+
+msgid "Monday"
+msgstr "Poniedziałek"
+
+msgid "Tuesday"
+msgstr "Wtorek"
+
+msgid "Wednesday"
+msgstr "Środa"
+
+msgid "Thursday"
+msgstr "Czwartek"
+
+msgid "Friday"
+msgstr "Piątek"
+
+msgid "Saturday"
+msgstr "Sobota"
+
+msgid "Sunday"
+msgstr "Niedziela"
+
+# Status Messages
+msgid "Online"
+msgstr "Online"
+
+msgid "Offline"
+msgstr "Offline"
+
+msgid "Connected"
+msgstr "Połączone"
+
+msgid "Disconnected"
+msgstr "Rozłączone"
+
+msgid "Enabled"
+msgstr "Włączone"
+
+msgid "Disabled"
+msgstr "Wyłączone"
+
+msgid "Running"
+msgstr "Działające"
+
+msgid "Stopped"
+msgstr "Zatrzymane"
+
+# Technical Terms
+msgid "Bandwidth"
+msgstr "Przepustowość"
+
+msgid "Latency"
+msgstr "Opóźnienie"
+
+msgid "Packet Loss"
+msgstr "Utrata Pakietów"
+
+msgid "Throughput"
+msgstr "Przepustowość"
+
+msgid "CPU Usage"
+msgstr "Użycie CPU"
+
+msgid "Memory Usage"
+msgstr "Użycie Pamięci"
+
+msgid "Disk Usage"
+msgstr "Użycie Dysku"
+
+msgid "Network Interface"
+msgstr "Interfejs Sieciowy"
+
+msgid "Port"
+msgstr "Port"
+
+msgid "Protocol"
+msgstr "Protokół"
+
+msgid "TCP"
+msgstr "TCP"
+
+msgid "UDP"
+msgstr "UDP"
+
+msgid "ICMP"
+msgstr "ICMP"
+
+# Monitoring
+msgid "Monitoring"
+msgstr "Monitorowanie"
+
+msgid "System Status"
+msgstr "Status Systemu"
+
+msgid "Performance"
+msgstr "Wydajność"
+
+msgid "Alerts"
+msgstr "Alerty"
+
+msgid "Logs"
+msgstr "Logi"
+
+msgid "Statistics"
+msgstr "Statystyki"
+
+msgid "Graphs"
+msgstr "Wykresy"
+
+msgid "Reports"
+msgstr "Raporty"
+
+# Configuration
+msgid "General Settings"
+msgstr "Ustawienia Ogólne"
+
+msgid "Database Settings"
+msgstr "Ustawienia Bazy Danych"
+
+msgid "Email Settings"
+msgstr "Ustawienia E-mail"
+
+msgid "Security Settings"
+msgstr "Ustawienia Bezpieczeństwa"
+
+msgid "Backup Settings"
+msgstr "Ustawienia Kopii Zapasowej"
+
+msgid "Language"
+msgstr "Język"
+
+msgid "Time Zone"
+msgstr "Strefa Czasowa"
+
+msgid "Date Format"
+msgstr "Format Daty"
+
+msgid "Time Format"
+msgstr "Format Czasu"
+
+# Help and Documentation
+msgid "Help"
+msgstr "Pomoc"
+
+msgid "Documentation"
+msgstr "Dokumentacja"
+
+msgid "User Manual"
+msgstr "Podręcznik Użytkownika"
+
+msgid "API Documentation"
+msgstr "Dokumentacja API"
+
+msgid "Support"
+msgstr "Wsparcie"
+
+msgid "Contact Support"
+msgstr "Skontaktuj się z Wsparciem"
+
+msgid "FAQ"
+msgstr "FAQ"
+
+msgid "Troubleshooting"
+msgstr "Rozwiązywanie Problemów"
+
+# Footer
+msgid "Copyright"
+msgstr "Prawa Autorskie"
+
+msgid "All rights reserved"
+msgstr "Wszystkie prawa zastrzeżone"
+
+msgid "Version"
+msgstr "Wersja"
+
+msgid "Powered by"
+msgstr "Napędzane przez"
+
+# Background Agent
+msgid "Background Agent"
+msgstr "Agent Tła"
+
+msgid "Task Scheduler"
+msgstr "Harmonogram Zadań"
+
+msgid "System Monitor"
+msgstr "Monitor Systemu"
+
+msgid "Event Processing"
+msgstr "Przetwarzanie Zdarzeń"
+
+msgid "Data Processing"
+msgstr "Przetwarzanie Danych"
+
+msgid "WebGL Integration"
+msgstr "Integracja WebGL"
+
+msgid "SNMP Management"
+msgstr "Zarządzanie SNMP"
+
+msgid "ML Model Management"
+msgstr "Zarządzanie Modelami ML"
+
+# WebGL Terms
+msgid "3D Network View"
+msgstr "Widok 3D Sieci"
+
+msgid "Network Topology"
+msgstr "Topologia Sieci"
+
+msgid "Device Visualization"
+msgstr "Wizualizacja Urządzeń"
+
+msgid "Connection Lines"
+msgstr "Linie Połączeń"
+
+msgid "Node"
+msgstr "Węzeł"
+
+msgid "Link"
+msgstr "Łącze"
+
+msgid "Network Map"
+msgstr "Mapa Sieci"
+
+# SNMP Terms
+msgid "SNMP Community"
+msgstr "Społeczność SNMP"
+
+msgid "SNMP Version"
+msgstr "Wersja SNMP"
+
+msgid "SNMP OID"
+msgstr "OID SNMP"
+
+msgid "SNMP Walk"
+msgstr "SNMP Walk"
+
+msgid "Device Discovery"
+msgstr "Wykrywanie Urządzeń"
+
+msgid "Network Scan"
+msgstr "Skanowanie Sieci"
+
+msgid "Community String"
+msgstr "Ciąg Społeczności"
+
+# Machine Learning
+msgid "Machine Learning"
+msgstr "Uczenie Maszynowe"
+
+msgid "Neural Network"
+msgstr "Sieć Neuronowa"
+
+msgid "Random Forest"
+msgstr "Las Losowy"
+
+msgid "Linear Regression"
+msgstr "Regresja Liniowa"
+
+msgid "Support Vector Machine"
+msgstr "Maszyna Wektorów Nośnych"
+
+msgid "Decision Tree"
+msgstr "Drzewo Decyzyjne"
+
+msgid "Model Training"
+msgstr "Trenowanie Modelu"
+
+msgid "Prediction"
+msgstr "Predykcja"
+
+msgid "Anomaly Detection"
+msgstr "Wykrywanie Anomalii"
+
+msgid "Performance Analysis"
+msgstr "Analiza Wydajności"
+
+msgid "Capacity Planning"
+msgstr "Planowanie Pojemności" 

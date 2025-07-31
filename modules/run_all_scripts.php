@@ -1,9 +1,10 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Run All Menu Scripts';
 $pdo = get_pdo();
 $outputs = [];
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare('SELECT label, script FROM menu_items WHERE script IS NOT NULL AND TRIM(script) != "" ORDER BY position ASC, id ASC');
     $stmt->execute();
     $items = $stmt->fetchAll(PDO::FETCH_ASSOC);

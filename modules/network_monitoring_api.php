@@ -1,17 +1,6 @@
-<?phpif (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../modules/helpers/auth_helper.php';
+<?php
+require_once 'module_loader.php';
 
-// Require login
-require_login();
-
-$pageTitle = 'Network Monitoring Api';
-ob_start();
-?>
-
-require_once __DIR__ . '/../config.php';
 $pdo = get_pdo();
 header('Content-Type: application/json');
 $device_id = isset($_GET['device_id']) ? (int)$_GET['device_id'] : 0;
@@ -31,8 +20,3 @@ echo json_encode([
     'rx_bytes' => $rx,
     'tx_bytes' => $tx
 ]); 
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../partials/layout.php';
-?>

@@ -1,0 +1,389 @@
+<?php
+require_once __DIR__ . '/../config.php';
+$pageTitle = 'Zarządzanie Układem';
+
+$pdo = get_pdo();
+
+// Handle layout updates
+$action = $_POST['action'] ?? $_GET['action'] ?? null;
+$message = '';
+
+if ($action === 'update_layout' && isset($_POST['layout_config'])) {
+    $layout_config = json_encode($_POST['layout_config']);
+    
+    try {
+        // Check if layout settings table exists
+        $stmt = $pdo->query("SHOW TABLES LIKE 'layout_settings'");
+        if ($stmt->rowCount() == 0) {
+            $message = 'Tabela layout_settings nie istnieje. Proszę najpierw utworzyć tabelę.';
+        } else {
+            // Check if layout settings exist
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM layout_settings WHERE setting_key = 'main_layout'");
+            $stmt->execute();
+            
+            if ($stmt->fetchColumn() > 0) {
+                // Update existing
+                $stmt = $pdo->prepare("UPDATE layout_settings SET setting_value = ?, updated_at = CURRENT_TIMESTAMP WHERE setting_key = 'main_layout'");
+            } else {
+                // Insert new
+                $stmt = $pdo->prepare("INSERT INTO layout_settings (setting_key, setting_value, created_at, updated_at) VALUES ('main_layout', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)");
+            }
+            
+            $stmt->execute([$layout_config]);
+            $message = 'Układ został zaktualizowany.';
+        }
+    } catch (PDOException $e) {
+        $message = 'Błąd: Tabela layout_settings nie istnieje. Proszę najpierw utworzyć tabelę.';
+    }
+}
+
+// Get current layout settings
+$current_layout = [
+    'menu_position' => 'top',
+    'menu_style' => 'horizontal',
+    'sidebar_width' => '250px',
+    'header_height' => '60px',
+    'color_scheme' => 'default',
+    'font_size' => 'medium',
+    'show_breadcrumbs' => true,
+    'show_search' => true,
+    'show_user_menu' => true,
+    'footer_text' => '© ' . date('Y') . ' sLMS System'
+];
+
+try {
+    // Check if table exists first
+    $stmt = $pdo->query("SHOW TABLES LIKE 'layout_settings'");
+    if ($stmt->rowCount() > 0) {
+        $stmt = $pdo->prepare("SELECT setting_value FROM layout_settings WHERE setting_key = 'main_layout'");
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result) {
+            $saved_layout = json_decode($result['setting_value'], true);
+            if ($saved_layout) {
+                $current_layout = array_merge($current_layout, $saved_layout);
+            }
+        }
+    }
+} catch (PDOException $e) {
+    // Table might not exist yet
+}
+
+// Available options
+$menu_positions = [
+    'top' => 'Menu górne (poziome)',
+    'left' => 'Menu boczne (pionowe)',
+    'both' => 'Menu górne i boczne'
+];
+
+$menu_styles = [
+    'horizontal' => 'Poziome',
+    'vertical' => 'Pionowe',
+    'dropdown' => 'Rozwijane',
+    'accordion' => 'Akordeon'
+];
+
+$color_schemes = [
+    'default' => 'Domyślny (niebieski)',
+    'dark' => 'Ciemny',
+    'light' => 'Jasny',
+    'green' => 'Zielony',
+    'purple' => 'Fioletowy',
+    'orange' => 'Pomarańczowy'
+];
+
+$font_sizes = [
+    'small' => 'Mały',
+    'medium' => 'Średni',
+    'large' => 'Duży'
+];
+
+ob_start();
+?>
+<div class="container">
+  <div class="lms-card p-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="lms-accent">Zarządzanie Układem</h2>
+      <a href="<?= base_url('admin_menu.php') ?>" class="btn btn-secondary">Powrót do Admin</a>
+    </div>
+    
+    <?php if ($message): ?>
+      <div class="alert alert-<?= strpos($message, 'Błąd') !== false ? 'danger' : 'success' ?>"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
+    
+    <?php 
+    // Check if layout_settings table exists
+    try {
+        $stmt = $pdo->query("SHOW TABLES LIKE 'layout_settings'");
+        if ($stmt->rowCount() == 0): ?>
+          <div class="alert alert-warning">
+            <strong>Uwaga:</strong> Tabela layout_settings nie istnieje. 
+            <a href="<?= base_url('modules/create_layout_table.php') ?>" class="btn btn-warning btn-sm ms-2">Utwórz tabelę</a>
+          </div>
+        <?php endif;
+    } catch (PDOException $e) { ?>
+      <div class="alert alert-warning">
+        <strong>Uwaga:</strong> Nie można sprawdzić istnienia tabeli layout_settings. 
+        <a href="<?= base_url('modules/create_layout_table.php') ?>" class="btn btn-warning btn-sm ms-2">Utwórz tabelę</a>
+      </div>
+    <?php } ?>
+    
+    <form method="post" id="layoutForm">
+      <input type="hidden" name="action" value="update_layout">
+      
+      <div class="row">
+        <!-- Layout Preview -->
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5>Podgląd układu</h5>
+            </div>
+            <div class="card-body">
+              <div id="layoutPreview" class="border rounded p-3" style="min-height: 400px; background: #f8f9fa;">
+                <!-- Preview will be generated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Layout Settings -->
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5>Ustawienia układu</h5>
+            </div>
+            <div class="card-body">
+              
+              <!-- Menu Position -->
+              <div class="mb-3">
+                <label class="form-label">Pozycja menu</label>
+                <select name="layout_config[menu_position]" class="form-select" id="menuPosition">
+                  <?php foreach ($menu_positions as $value => $label): ?>
+                    <option value="<?= $value ?>" <?= $current_layout['menu_position'] === $value ? 'selected' : '' ?>>
+                      <?= $label ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              
+              <!-- Menu Style -->
+              <div class="mb-3">
+                <label class="form-label">Styl menu</label>
+                <select name="layout_config[menu_style]" class="form-select" id="menuStyle">
+                  <?php foreach ($menu_styles as $value => $label): ?>
+                    <option value="<?= $value ?>" <?= $current_layout['menu_style'] === $value ? 'selected' : '' ?>>
+                      <?= $label ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              
+              <!-- Color Scheme -->
+              <div class="mb-3">
+                <label class="form-label">Schemat kolorów</label>
+                <select name="layout_config[color_scheme]" class="form-select" id="colorScheme">
+                  <?php foreach ($color_schemes as $value => $label): ?>
+                    <option value="<?= $value ?>" <?= $current_layout['color_scheme'] === $value ? 'selected' : '' ?>>
+                      <?= $label ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              
+              <!-- Font Size -->
+              <div class="mb-3">
+                <label class="form-label">Rozmiar czcionki</label>
+                <select name="layout_config[font_size]" class="form-select" id="fontSize">
+                  <?php foreach ($font_sizes as $value => $label): ?>
+                    <option value="<?= $value ?>" <?= $current_layout['font_size'] === $value ? 'selected' : '' ?>>
+                      <?= $label ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              
+              <!-- Sidebar Width -->
+              <div class="mb-3">
+                <label class="form-label">Szerokość paska bocznego</label>
+                <input type="text" name="layout_config[sidebar_width]" class="form-control" 
+                       value="<?= htmlspecialchars($current_layout['sidebar_width']) ?>" 
+                       placeholder="250px">
+              </div>
+              
+              <!-- Header Height -->
+              <div class="mb-3">
+                <label class="form-label">Wysokość nagłówka</label>
+                <input type="text" name="layout_config[header_height]" class="form-control" 
+                       value="<?= htmlspecialchars($current_layout['header_height']) ?>" 
+                       placeholder="60px">
+              </div>
+              
+              <!-- Checkboxes -->
+              <div class="mb-3">
+                <div class="form-check">
+                  <input type="checkbox" name="layout_config[show_breadcrumbs]" class="form-check-input" 
+                         id="showBreadcrumbs" <?= $current_layout['show_breadcrumbs'] ? 'checked' : '' ?>>
+                  <label class="form-check-label" for="showBreadcrumbs">Pokaż okruszki</label>
+                </div>
+                <div class="form-check">
+                  <input type="checkbox" name="layout_config[show_search]" class="form-check-input" 
+                         id="showSearch" <?= $current_layout['show_search'] ? 'checked' : '' ?>>
+                  <label class="form-check-label" for="showSearch">Pokaż wyszukiwanie</label>
+                </div>
+                <div class="form-check">
+                  <input type="checkbox" name="layout_config[show_user_menu]" class="form-check-input" 
+                         id="showUserMenu" <?= $current_layout['show_user_menu'] ? 'checked' : '' ?>>
+                  <label class="form-check-label" for="showUserMenu">Pokaż menu użytkownika</label>
+                </div>
+              </div>
+              
+              <!-- Footer Text -->
+              <div class="mb-3">
+                <label class="form-label">Tekst stopki</label>
+                <textarea name="layout_config[footer_text]" class="form-control" rows="2"><?= htmlspecialchars($current_layout['footer_text']) ?></textarea>
+              </div>
+              
+              <button type="submit" class="btn lms-btn-accent w-100">Zapisz układ</button>
+            </div>
+          </div>
+          
+          <!-- Quick Presets -->
+          <div class="card">
+            <div class="card-header">
+              <h5>Szybkie ustawienia</h5>
+            </div>
+            <div class="card-body">
+              <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100" onclick="applyPreset('top')">
+                Menu górne
+              </button>
+              <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100" onclick="applyPreset('left')">
+                Menu boczne
+              </button>
+              <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100" onclick="applyPreset('dark')">
+                Ciemny motyw
+              </button>
+              <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100" onclick="applyPreset('light')">
+                Jasny motyw
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Layout preview functionality
+function updatePreview() {
+    const menuPosition = document.getElementById('menuPosition').value;
+    const menuStyle = document.getElementById('menuStyle').value;
+    const colorScheme = document.getElementById('colorScheme').value;
+    const preview = document.getElementById('layoutPreview');
+    
+    let previewHTML = '';
+    
+    // Generate preview based on settings
+    if (menuPosition === 'top') {
+        previewHTML = `
+            <div class="preview-header" style="height: 60px; background: #2563eb; color: white; display: flex; align-items: center; padding: 0 20px; margin-bottom: 20px;">
+                <div style="font-weight: bold;">sLMS System</div>
+                <div style="margin-left: auto;">
+                    <span style="margin-right: 15px;">Menu 1</span>
+                    <span style="margin-right: 15px;">Menu 2</span>
+                    <span style="margin-right: 15px;">Menu 3</span>
+                </div>
+            </div>
+            <div class="preview-content" style="padding: 20px;">
+                <h4>Treść strony</h4>
+                <p>To jest podgląd układu z menu górnym.</p>
+            </div>
+        `;
+    } else if (menuPosition === 'left') {
+        previewHTML = `
+            <div style="display: flex; height: 400px;">
+                <div class="preview-sidebar" style="width: 250px; background: #f8f9fa; border-right: 1px solid #dee2e6; padding: 20px;">
+                    <div style="font-weight: bold; margin-bottom: 20px;">Menu</div>
+                    <div style="margin-bottom: 10px;">• Menu 1</div>
+                    <div style="margin-bottom: 10px;">• Menu 2</div>
+                    <div style="margin-bottom: 10px;">• Menu 3</div>
+                </div>
+                <div class="preview-content" style="flex: 1; padding: 20px;">
+                    <h4>Treść strony</h4>
+                    <p>To jest podgląd układu z menu bocznym.</p>
+                </div>
+            </div>
+        `;
+    } else if (menuPosition === 'both') {
+        previewHTML = `
+            <div class="preview-header" style="height: 60px; background: #2563eb; color: white; display: flex; align-items: center; padding: 0 20px; margin-bottom: 0;">
+                <div style="font-weight: bold;">sLMS System</div>
+                <div style="margin-left: auto;">
+                    <span style="margin-right: 15px;">Menu 1</span>
+                    <span style="margin-right: 15px;">Menu 2</span>
+                </div>
+            </div>
+            <div style="display: flex; height: 340px;">
+                <div class="preview-sidebar" style="width: 250px; background: #f8f9fa; border-right: 1px solid #dee2e6; padding: 20px;">
+                    <div style="font-weight: bold; margin-bottom: 20px;">Menu boczne</div>
+                    <div style="margin-bottom: 10px;">• Opcja 1</div>
+                    <div style="margin-bottom: 10px;">• Opcja 2</div>
+                </div>
+                <div class="preview-content" style="flex: 1; padding: 20px;">
+                    <h4>Treść strony</h4>
+                    <p>To jest podgląd układu z menu górnym i bocznym.</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    preview.innerHTML = previewHTML;
+}
+
+// Apply preset configurations
+function applyPreset(preset) {
+    const configs = {
+        'top': { menu_position: 'top', menu_style: 'horizontal', color_scheme: 'default' },
+        'left': { menu_position: 'left', menu_style: 'vertical', color_scheme: 'default' },
+        'dark': { color_scheme: 'dark' },
+        'light': { color_scheme: 'light' }
+    };
+    
+    const config = configs[preset];
+    if (config) {
+        Object.keys(config).forEach(key => {
+            const element = document.querySelector(`[name="layout_config[${key}]"]`);
+            if (element) {
+                element.value = config[key];
+            }
+        });
+        updatePreview();
+    }
+}
+
+// Initialize preview and event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    updatePreview();
+    
+    // Add event listeners for real-time preview updates
+    document.getElementById('menuPosition').addEventListener('change', updatePreview);
+    document.getElementById('menuStyle').addEventListener('change', updatePreview);
+    document.getElementById('colorScheme').addEventListener('change', updatePreview);
+});
+</script>
+
+<style>
+.preview-header, .preview-sidebar, .preview-content {
+    transition: all 0.3s ease;
+}
+
+#layoutPreview {
+    transition: all 0.3s ease;
+}
+</style>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../partials/layout.php';
+?> 

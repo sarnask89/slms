@@ -1,0 +1,23 @@
+{
+  "service": {
+    "url": "http://localhost:8000",
+    "models": {
+      "code_generation": "microsoft/DialoGPT-medium",
+      "text_analysis": "facebook/bart-large-mnli",
+      "embeddings": "all-MiniLM-L6-v2",
+      "network_analysis": "network_analysis_v1",
+      "gui_modification": "gui_modification_v1"
+    }
+  },
+  "capabilities": {
+    "module_modification": true,
+    "database_updates": true,
+    "network_analysis": true,
+    "gui_adaptation": true
+  },
+  "settings": {
+    "max_tokens": 500,
+    "temperature": 0.7,
+    "confidence_threshold": 0.8
+  }
+}

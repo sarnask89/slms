@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Framework Demo - Network & Cosmic Visualizations</title>
+    
+    <!-- Three.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000011;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        #webgl-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* 2D Menu Interface */
+        .menu-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-width: 300px;
+        }
+
+        .menu-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #b0b0b0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-button {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            width: 100%;
+            font-size: 0.875rem;
+        }
+
+        .menu-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .menu-button.secondary {
+            background: linear-gradient(135deg, #8b5cf6, #ff6b35);
+        }
+
+        .menu-button.secondary:hover {
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .menu-button.active {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-width: 250px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-label {
+            font-size: 0.75rem;
+            color: #b0b0b0;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .control-slider {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .control-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Performance Monitor */
+        .performance-monitor {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.75rem;
+            color: #b0b0b0;
+        }
+
+        .performance-item {
+            margin-bottom: 5px;
+        }
+
+        .performance-value {
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000011;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #ffffff;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-overlay, .control-panel {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                width: auto;
+                min-width: auto;
+            }
+            
+            .control-panel {
+                top: auto;
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+            }
+            
+            .performance-monitor {
+                bottom: 10px;
+                right: 10px;
+                left: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading WebGL Framework...</div>
+    </div>
+
+    <!-- WebGL Container -->
+    <div id="webgl-container"></div>
+
+    <!-- 2D Menu Interface -->
+    <div class="menu-overlay">
+        <div class="menu-title">🌌 WebGL Framework</div>
+        
+        <div class="menu-section">
+            <div class="section-title">Visualization Mode</div>
+            <button class="menu-button active" onclick="switchToNetwork()">🌐 Network Infrastructure</button>
+            <button class="menu-button secondary" onclick="switchToCosmic()">🌌 Cosmic Visualization</button>
+        </div>
+        
+        <div class="menu-section">
+            <div class="section-title">Network Features</div>
+            <button class="menu-button" onclick="addNetworkDevice('router')">📡 Add Router</button>
+            <button class="menu-button" onclick="addNetworkDevice('switch')">🔌 Add Switch</button>
+            <button class="menu-button" onclick="addNetworkDevice('server')">🖥️ Add Server</button>
+            <button class="menu-button" onclick="toggleConnections()">🔗 Toggle Connections</button>
+        </div>
+        
+        <div class="menu-section">
+            <div class="section-title">Cosmic Features</div>
+            <button class="menu-button" onclick="addPlanet('earth')">🌍 Add Earth</button>
+            <button class="menu-button" onclick="addPlanet('mars')">🔴 Add Mars</button>
+            <button class="menu-button" onclick="addPlanet('jupiter')">🪐 Add Jupiter</button>
+            <button class="menu-button" onclick="toggleOrbits()">🔄 Toggle Orbits</button>
+        </div>
+        
+        <div class="menu-section">
+            <div class="section-title">System</div>
+            <button class="menu-button" onclick="resetCamera()">📷 Reset Camera</button>
+            <button class="menu-button" onclick="toggleWireframe()">🔲 Toggle Wireframe</button>
+            <button class="menu-button" onclick="togglePerformance()">📊 Toggle Performance</button>
+        </div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <div class="control-group">
+            <label class="control-label">Animation Speed</label>
+            <input type="range" class="control-slider" id="animation-speed" min="0" max="2" step="0.1" value="1">
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Light Intensity</label>
+            <input type="range" class="control-slider" id="light-intensity" min="0" max="2" step="0.1" value="1">
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Camera Distance</label>
+            <input type="range" class="control-slider" id="camera-distance" min="10" max="100" step="1" value="50">
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Particle Count</label>
+            <input type="range" class="control-slider" id="particle-count" min="100" max="5000" step="100" value="1000">
+        </div>
+    </div>
+
+    <!-- Performance Monitor -->
+    <div class="performance-monitor" id="performance-monitor" style="display: none;">
+        <div class="performance-item">FPS: <span class="performance-value" id="fps">60</span></div>
+        <div class="performance-item">Memory: <span class="performance-value" id="memory">0</span> MB</div>
+        <div class="performance-item">Draw Calls: <span class="performance-value" id="draw-calls">0</span></div>
+        <div class="performance-item">Triangles: <span class="performance-value" id="triangles">0</span></div>
+    </div>
+
+    <script>
+        // WebGL Framework Class
+        class WebGLFramework {
+            constructor() {
+                this.container = document.getElementById('webgl-container');
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.controls = null;
+                this.stats = null;
+                
+                // Configuration
+                this.config = {
+                    currentMode: 'network',
+                    animationSpeed: 1,
+                    lightIntensity: 1,
+                    cameraDistance: 50,
+                    particleCount: 1000,
+                    showPerformance: false,
+                    wireframeMode: false
+                };
+                
+                // Collections
+                this.networkDevices = [];
+                this.networkConnections = [];
+                this.planets = [];
+                this.particles = [];
+                this.animations = [];
+                
+                // Initialize
+                this.init();
+            }
+            
+            init() {
+                this.createScene();
+                this.createCamera();
+                this.createRenderer();
+                this.createControls();
+                this.createLighting();
+                this.createParticles();
+                this.setupEventListeners();
+                this.animate();
+                
+                // Hide loading screen
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').style.display = 'none';
+                    }, 500);
+                }, 2000);
+            }
+            
+            createScene() {
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x000011);
+                this.scene.fog = new THREE.Fog(0x000011, 50, 200);
+            }
+            
+            createCamera() {
+                this.camera = new THREE.PerspectiveCamera(
+                    75,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    1000
+                );
+                this.camera.position.set(30, 30, 50);
+            }
+            
+            createRenderer() {
+                this.renderer = new THREE.WebGLRenderer({ 
+                    antialias: true,
+                    alpha: true,
+                    powerPreference: "high-performance"
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                this.renderer.toneMappingExposure = 1.2;
+                this.container.appendChild(this.renderer.domElement);
+            }
+            
+            createControls() {
+                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                this.controls.enableDamping = true;
+                this.controls.dampingFactor = 0.05;
+                this.controls.maxDistance = 100;
+                this.controls.minDistance = 5;
+            }
+            
+            createLighting() {
+                // Ambient light
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+                this.scene.add(ambientLight);
+                
+                // Directional light
+                this.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                this.directionalLight.position.set(50, 50, 50);
+                this.directionalLight.castShadow = true;
+                this.directionalLight.shadow.mapSize.width = 2048;
+                this.directionalLight.shadow.mapSize.height = 2048;
+                this.scene.add(this.directionalLight);
+                
+                // Point lights for network devices
+                this.pointLights = [];
+                for (let i = 0; i < 4; i++) {
+                    const pointLight = new THREE.PointLight(0x00d4ff, 0.5, 20);
+                    pointLight.position.set(
+                        (Math.random() - 0.5) * 40,
+                        (Math.random() - 0.5) * 40,
+                        (Math.random() - 0.5) * 40
+                    );
+                    this.scene.add(pointLight);
+                    this.pointLights.push(pointLight);
+                }
+            }
+            
+            createParticles() {
+                const particleCount = this.config.particleCount;
+                const particles = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                
+                for (let i = 0; i < particleCount; i++) {
+                    positions[i * 3] = (Math.random() - 0.5) * 200;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+                    
+                    colors[i * 3] = Math.random();
+                    colors[i * 3 + 1] = Math.random();
+                    colors[i * 3 + 2] = Math.random();
+                }
+                
+                particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                
+                const particleMaterial = new THREE.PointsMaterial({
+                    size: 0.5,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                this.particleSystem = new THREE.Points(particles, particleMaterial);
+                this.scene.add(this.particleSystem);
+            }
+            
+            setupEventListeners() {
+                // Window resize
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = window.innerWidth / window.innerHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+                
+                // Control sliders
+                document.getElementById('animation-speed').addEventListener('input', (e) => {
+                    this.config.animationSpeed = parseFloat(e.target.value);
+                });
+                
+                document.getElementById('light-intensity').addEventListener('input', (e) => {
+                    this.config.lightIntensity = parseFloat(e.target.value);
+                    this.directionalLight.intensity = this.config.lightIntensity;
+                });
+                
+                document.getElementById('camera-distance').addEventListener('input', (e) => {
+                    this.config.cameraDistance = parseFloat(e.target.value);
+                    this.controls.maxDistance = this.config.cameraDistance;
+                });
+                
+                document.getElementById('particle-count').addEventListener('input', (e) => {
+                    this.config.particleCount = parseInt(e.target.value);
+                    this.updateParticleCount();
+                });
+            }
+            
+            updateParticleCount() {
+                this.scene.remove(this.particleSystem);
+                this.createParticles();
+            }
+            
+            // Network Infrastructure Methods
+            addNetworkDevice(type) {
+                const deviceConfig = {
+                    router: { color: 0x00d4ff, geometry: 'cylinder', size: 1 },
+                    switch: { color: 0x00ff88, geometry: 'box', size: 1 },
+                    server: { color: 0x8b5cf6, geometry: 'box', size: 1.2 }
+                };
+                
+                const config = deviceConfig[type];
+                let geometry, material;
+                
+                switch (config.geometry) {
+                    case 'cylinder':
+                        geometry = new THREE.CylinderGeometry(config.size, config.size, config.size * 2);
+                        break;
+                    case 'box':
+                        geometry = new THREE.BoxGeometry(config.size, config.size, config.size);
+                        break;
+                }
+                
+                material = new THREE.MeshPhongMaterial({
+                    color: config.color,
+                    shininess: 30,
+                    specular: 0x444444
+                });
+                
+                const device = new THREE.Mesh(geometry, material);
+                device.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20
+                );
+                device.castShadow = true;
+                device.receiveShadow = true;
+                
+                this.scene.add(device);
+                this.networkDevices.push(device);
+                
+                // Add connection to nearest device
+                if (this.networkDevices.length > 1) {
+                    this.addConnection(device, this.networkDevices[this.networkDevices.length - 2]);
+                }
+            }
+            
+            addConnection(device1, device2) {
+                const points = [
+                    device1.position,
+                    device2.position
+                ];
+                
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                const material = new THREE.LineBasicMaterial({ color: 0x00d4ff });
+                const line = new THREE.Line(geometry, material);
+                
+                this.scene.add(line);
+                this.networkConnections.push(line);
+            }
+            
+            // Cosmic Visualization Methods
+            addPlanet(type) {
+                const planetConfig = {
+                    earth: { color: 0x4a90e2, radius: 1, distance: 10 },
+                    mars: { color: 0xe74c3c, radius: 0.8, distance: 15 },
+                    jupiter: { color: 0xf39c12, radius: 2.5, distance: 25 }
+                };
+                
+                const config = planetConfig[type];
+                const geometry = new THREE.SphereGeometry(config.radius, 32, 32);
+                const material = new THREE.MeshPhongMaterial({
+                    color: config.color,
+                    shininess: 50,
+                    specular: 0x222222
+                });
+                
+                const planet = new THREE.Mesh(geometry, material);
+                planet.position.x = config.distance;
+                planet.castShadow = true;
+                planet.receiveShadow = true;
+                
+                // Add orbit
+                const orbitGeometry = new THREE.RingGeometry(config.distance - 0.1, config.distance + 0.1, 64);
+                const orbitMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x444444,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+                orbit.rotation.x = Math.PI / 2;
+                
+                this.scene.add(planet);
+                this.scene.add(orbit);
+                this.planets.push({ planet, orbit, distance: config.distance });
+            }
+            
+            // Mode Switching
+            switchToNetwork() {
+                this.config.currentMode = 'network';
+                this.clearScene();
+                this.createParticles();
+                this.updateMenuButtons();
+            }
+            
+            switchToCosmic() {
+                this.config.currentMode = 'cosmic';
+                this.clearScene();
+                this.createParticles();
+                this.updateMenuButtons();
+            }
+            
+            clearScene() {
+                // Remove all objects except lighting and particles
+                this.networkDevices.forEach(device => this.scene.remove(device));
+                this.networkConnections.forEach(connection => this.scene.remove(connection));
+                this.planets.forEach(planet => {
+                    this.scene.remove(planet.planet);
+                    this.scene.remove(planet.orbit);
+                });
+                
+                this.networkDevices = [];
+                this.networkConnections = [];
+                this.planets = [];
+            }
+            
+            updateMenuButtons() {
+                const buttons = document.querySelectorAll('.menu-button');
+                buttons.forEach(button => button.classList.remove('active'));
+                
+                if (this.config.currentMode === 'network') {
+                    buttons[0].classList.add('active');
+                } else {
+                    buttons[1].classList.add('active');
+                }
+            }
+            
+            // Utility Methods
+            resetCamera() {
+                this.camera.position.set(30, 30, 50);
+                this.controls.reset();
+            }
+            
+            toggleWireframe() {
+                this.config.wireframeMode = !this.config.wireframeMode;
+                this.scene.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material.wireframe = this.config.wireframeMode;
+                    }
+                });
+            }
+            
+            togglePerformance() {
+                this.config.showPerformance = !this.config.showPerformance;
+                const monitor = document.getElementById('performance-monitor');
+                monitor.style.display = this.config.showPerformance ? 'block' : 'none';
+                
+                if (this.config.showPerformance && !this.stats) {
+                    this.stats = new Stats();
+                    this.stats.dom.style.position = 'fixed';
+                    this.stats.dom.style.top = '10px';
+                    this.stats.dom.style.right = '10px';
+                    this.stats.dom.style.left = 'auto';
+                    document.body.appendChild(this.stats.dom);
+                } else if (!this.config.showPerformance && this.stats) {
+                    document.body.removeChild(this.stats.dom);
+                    this.stats = null;
+                }
+            }
+            
+            toggleConnections() {
+                this.networkConnections.forEach(connection => {
+                    connection.visible = !connection.visible;
+                });
+            }
+            
+            toggleOrbits() {
+                this.planets.forEach(planet => {
+                    planet.orbit.visible = !planet.orbit.visible;
+                });
+            }
+            
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                const time = Date.now() * 0.001 * this.config.animationSpeed;
+                
+                // Animate particles
+                if (this.particleSystem) {
+                    this.particleSystem.rotation.y = time * 0.1;
+                }
+                
+                // Animate network devices
+                this.networkDevices.forEach((device, index) => {
+                    device.rotation.y = time + index * 0.5;
+                    device.position.y += Math.sin(time + index) * 0.01;
+                });
+                
+                // Animate planets
+                this.planets.forEach((planet, index) => {
+                    planet.planet.position.x = Math.cos(time * 0.5 + index) * planet.distance;
+                    planet.planet.position.z = Math.sin(time * 0.5 + index) * planet.distance;
+                    planet.planet.rotation.y = time * 0.5;
+                });
+                
+                // Animate point lights
+                this.pointLights.forEach((light, index) => {
+                    light.intensity = 0.5 + Math.sin(time + index) * 0.3;
+                });
+                
+                // Update controls
+                this.controls.update();
+                
+                // Update performance stats
+                if (this.stats) {
+                    this.stats.update();
+                    document.getElementById('fps').textContent = Math.round(this.stats.getFPS());
+                    document.getElementById('memory').textContent = Math.round(this.stats.getMemory() / 1024 / 1024);
+                    document.getElementById('draw-calls').textContent = this.renderer.info.render.calls;
+                    document.getElementById('triangles').textContent = this.renderer.info.render.triangles;
+                }
+                
+                // Render
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+        
+        // Global functions for menu buttons
+        let webglFramework;
+        
+        function switchToNetwork() {
+            webglFramework.switchToNetwork();
+        }
+        
+        function switchToCosmic() {
+            webglFramework.switchToCosmic();
+        }
+        
+        function addNetworkDevice(type) {
+            webglFramework.addNetworkDevice(type);
+        }
+        
+        function addPlanet(type) {
+            webglFramework.addPlanet(type);
+        }
+        
+        function resetCamera() {
+            webglFramework.resetCamera();
+        }
+        
+        function toggleWireframe() {
+            webglFramework.toggleWireframe();
+        }
+        
+        function togglePerformance() {
+            webglFramework.togglePerformance();
+        }
+        
+        function toggleConnections() {
+            webglFramework.toggleConnections();
+        }
+        
+        function toggleOrbits() {
+            webglFramework.toggleOrbits();
+        }
+        
+        // Initialize framework when page loads
+        window.addEventListener('load', () => {
+            webglFramework = new WebGLFramework();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Test - SLMS WebGL Interface</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            margin: 20px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success { background: rgba(0, 255, 0, 0.2); border: 1px solid #00ff00; }
+        .error { background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0000; }
+        .warning { background: rgba(255, 255, 0, 0.2); border: 1px solid #ffff00; }
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00cc66;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 Menu Loading Test</h1>
+        <p>Testing SLMS WebGL Interface menu functionality...</p>
+        
+        <div id="test-results"></div>
+        
+        <button onclick="runMenuTest()">🔍 Run Menu Test</button>
+        <button onclick="test3DVisualization()">🎨 Test 3D Visualization</button>
+        <button onclick="clearResults()">🗑️ Clear Results</button>
+    </div>
+
+    <!-- Three.js for Advanced 3D Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="webgl_interface.js"></script>
+    <script>
+        function addResult(message, type = 'success') {
+            const results = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            results.appendChild(div);
+        }
+
+        function runMenuTest() {
+            addResult('Starting menu test...', 'warning');
+            
+            try {
+                // Test if SLMSWebGLInterface is available
+                if (typeof SLMSWebGLInterface !== 'undefined') {
+                    addResult('✅ SLMSWebGLInterface class found');
+                    
+                    // Test if we can create an instance
+                    const interface = new SLMSWebGLInterface();
+                    addResult('✅ SLMSWebGLInterface instance created');
+                    
+                    // Test basic menu setup
+                    if (interface.setupBasicMenu) {
+                        addResult('✅ Basic menu setup method available');
+                        interface.setupBasicMenu();
+                        addResult('✅ Basic menu setup executed');
+                    } else {
+                        addResult('❌ Basic menu setup method not found', 'error');
+                    }
+                    
+                    // Test research-based menus
+                    if (interface.initializeResearchBasedMenus) {
+                        addResult('✅ Research-based menus method available');
+                        try {
+                            interface.initializeResearchBasedMenus();
+                            addResult('✅ Research-based menus initialized');
+                        } catch (error) {
+                            addResult(`⚠️ Research-based menus failed: ${error.message}`, 'warning');
+                        }
+                    } else {
+                        addResult('❌ Research-based menus method not found', 'error');
+                    }
+                    
+                } else {
+                    addResult('❌ SLMSWebGLInterface class not found', 'error');
+                }
+                
+            } catch (error) {
+                addResult(`❌ Menu test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function test3DVisualization() {
+            addResult('Testing 3D visualization...', 'warning');
+            
+            try {
+                if (typeof THREE !== 'undefined') {
+                    addResult('✅ Three.js library loaded');
+                    
+                    if (typeof SLMSWebGLInterface !== 'undefined') {
+                        const interface = new SLMSWebGLInterface();
+                        
+                        if (interface.initialize3DVisualization) {
+                            addResult('✅ 3D visualization method available');
+                            try {
+                                interface.initialize3DVisualization();
+                                addResult('✅ 3D visualization initialized');
+                            } catch (error) {
+                                addResult(`⚠️ 3D visualization failed: ${error.message}`, 'warning');
+                            }
+                        } else {
+                            addResult('❌ 3D visualization method not found', 'error');
+                        }
+                    } else {
+                        addResult('❌ SLMSWebGLInterface not available for 3D test', 'error');
+                    }
+                } else {
+                    addResult('❌ Three.js library not loaded', 'error');
+                }
+                
+            } catch (error) {
+                addResult(`❌ 3D test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '';
+        }
+
+        // Auto-run test on page load
+        window.addEventListener('load', () => {
+            addResult('Page loaded, ready for testing...', 'warning');
+        });
+    </script>
+</body>
+</html> 

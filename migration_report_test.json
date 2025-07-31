@@ -1,0 +1,650 @@
+{
+    "migration_summary": {
+        "total_modules": 90,
+        "successful_migrations": 0,
+        "failed_migrations": 0,
+        "skipped_modules": 90
+    },
+    "analysis_summary": {
+        "total_analyzed": 90,
+        "total_features_detected": 0,
+        "total_functions": 0,
+        "total_classes": 0,
+        "average_complexity": 0
+    },
+    "migration_details": {
+        "mikrotik_api": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "snmp_oid_helper": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "network_monitoring_enhanced": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "bridge_nat_controller": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "dynamic_network_controller": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "enhanced_queue_manager": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "ml_model_manager": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "ml_performance_monitor": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "ml_prediction_engine": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "ml_training_engine": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "ml_ajax": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "ml_database_manager": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "system_status": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "user_management": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "vlan_captive_portal": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "captive_portal": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "cacti_integration": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "capacity_planning": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "network_alerts": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "network_dashboard": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "network_monitoring": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "check_device": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "client_devices": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "dhcp_clients": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "discover_snmp_mndp": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "interface_monitoring": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "mndp_monitor": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "mndp_enhanced": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "snmp_graph": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "snmp_graph_poll": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "queue_monitoring": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "theme_compositor": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "layout_manager": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "dashboard_editor": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "menu_editor": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "search": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "tooltip_data": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "access_level_permissions": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "profile": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "simple_check": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "skeleton_devices": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "table_example": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "test_cacti_integration": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "test_mikrotik_api": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "theme_preview": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "user_profile": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "example_with_access_control": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "frame_layout": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "frame_navbar": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "frame_top_navbar": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "import_dhcp_clients_improved": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "import_dhcp_networks_improved": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "invoices": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "manual": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "menu_preview": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "run_all_scripts": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "save_reload": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "test_all_php_files": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "auto_fix_sessions": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "cms_migrator": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "update_client_structure": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "create_column_config_table": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "create_layout_table": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "dashboard_preview": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "edit_client": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "edit_device": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "edit_internet_package": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "edit_network": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "edit_service": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "error_403": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "error_404": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "error_500": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "login": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "logout": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "check_auth": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "config": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "config_script": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "content_wrapper": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "devices": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "dhcp_clients_v7": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "internet_packages": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "payments": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "services": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "setup_auth_tables": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "tariffs": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "tv_packages": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "users": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "clients": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "column_config": {
+            "status": "skipped",
+            "reason": "File not found"
+        },
+        "networks": {
+            "status": "skipped",
+            "reason": "File not found"
+        }
+    },
+    "analysis_details": {
+        "mikrotik_api": {
+            "status": "not_found"
+        },
+        "snmp_oid_helper": {
+            "status": "not_found"
+        },
+        "network_monitoring_enhanced": {
+            "status": "not_found"
+        },
+        "bridge_nat_controller": {
+            "status": "not_found"
+        },
+        "dynamic_network_controller": {
+            "status": "not_found"
+        },
+        "enhanced_queue_manager": {
+            "status": "not_found"
+        },
+        "ml_model_manager": {
+            "status": "not_found"
+        },
+        "ml_performance_monitor": {
+            "status": "not_found"
+        },
+        "ml_prediction_engine": {
+            "status": "not_found"
+        },
+        "ml_training_engine": {
+            "status": "not_found"
+        },
+        "ml_ajax": {
+            "status": "not_found"
+        },
+        "ml_database_manager": {
+            "status": "not_found"
+        },
+        "system_status": {
+            "status": "not_found"
+        },
+        "user_management": {
+            "status": "not_found"
+        },
+        "vlan_captive_portal": {
+            "status": "not_found"
+        },
+        "captive_portal": {
+            "status": "not_found"
+        },
+        "cacti_integration": {
+            "status": "not_found"
+        },
+        "capacity_planning": {
+            "status": "not_found"
+        },
+        "network_alerts": {
+            "status": "not_found"
+        },
+        "network_dashboard": {
+            "status": "not_found"
+        },
+        "network_monitoring": {
+            "status": "not_found"
+        },
+        "check_device": {
+            "status": "not_found"
+        },
+        "client_devices": {
+            "status": "not_found"
+        },
+        "dhcp_clients": {
+            "status": "not_found"
+        },
+        "discover_snmp_mndp": {
+            "status": "not_found"
+        },
+        "interface_monitoring": {
+            "status": "not_found"
+        },
+        "mndp_monitor": {
+            "status": "not_found"
+        },
+        "mndp_enhanced": {
+            "status": "not_found"
+        },
+        "snmp_graph": {
+            "status": "not_found"
+        },
+        "snmp_graph_poll": {
+            "status": "not_found"
+        },
+        "queue_monitoring": {
+            "status": "not_found"
+        },
+        "theme_compositor": {
+            "status": "not_found"
+        },
+        "layout_manager": {
+            "status": "not_found"
+        },
+        "dashboard_editor": {
+            "status": "not_found"
+        },
+        "menu_editor": {
+            "status": "not_found"
+        },
+        "search": {
+            "status": "not_found"
+        },
+        "tooltip_data": {
+            "status": "not_found"
+        },
+        "access_level_permissions": {
+            "status": "not_found"
+        },
+        "profile": {
+            "status": "not_found"
+        },
+        "simple_check": {
+            "status": "not_found"
+        },
+        "skeleton_devices": {
+            "status": "not_found"
+        },
+        "table_example": {
+            "status": "not_found"
+        },
+        "test_cacti_integration": {
+            "status": "not_found"
+        },
+        "test_mikrotik_api": {
+            "status": "not_found"
+        },
+        "theme_preview": {
+            "status": "not_found"
+        },
+        "user_profile": {
+            "status": "not_found"
+        },
+        "example_with_access_control": {
+            "status": "not_found"
+        },
+        "frame_layout": {
+            "status": "not_found"
+        },
+        "frame_navbar": {
+            "status": "not_found"
+        },
+        "frame_top_navbar": {
+            "status": "not_found"
+        },
+        "import_dhcp_clients_improved": {
+            "status": "not_found"
+        },
+        "import_dhcp_networks_improved": {
+            "status": "not_found"
+        },
+        "invoices": {
+            "status": "not_found"
+        },
+        "manual": {
+            "status": "not_found"
+        },
+        "menu_preview": {
+            "status": "not_found"
+        },
+        "run_all_scripts": {
+            "status": "not_found"
+        },
+        "save_reload": {
+            "status": "not_found"
+        },
+        "test_all_php_files": {
+            "status": "not_found"
+        },
+        "auto_fix_sessions": {
+            "status": "not_found"
+        },
+        "cms_migrator": {
+            "status": "not_found"
+        },
+        "update_client_structure": {
+            "status": "not_found"
+        },
+        "create_column_config_table": {
+            "status": "not_found"
+        },
+        "create_layout_table": {
+            "status": "not_found"
+        },
+        "dashboard_preview": {
+            "status": "not_found"
+        },
+        "edit_client": {
+            "status": "not_found"
+        },
+        "edit_device": {
+            "status": "not_found"
+        },
+        "edit_internet_package": {
+            "status": "not_found"
+        },
+        "edit_network": {
+            "status": "not_found"
+        },
+        "edit_service": {
+            "status": "not_found"
+        },
+        "error_403": {
+            "status": "not_found"
+        },
+        "error_404": {
+            "status": "not_found"
+        },
+        "error_500": {
+            "status": "not_found"
+        },
+        "login": {
+            "status": "not_found"
+        },
+        "logout": {
+            "status": "not_found"
+        },
+        "check_auth": {
+            "status": "not_found"
+        },
+        "config": {
+            "status": "not_found"
+        },
+        "config_script": {
+            "status": "not_found"
+        },
+        "content_wrapper": {
+            "status": "not_found"
+        },
+        "devices": {
+            "status": "not_found"
+        },
+        "dhcp_clients_v7": {
+            "status": "not_found"
+        },
+        "internet_packages": {
+            "status": "not_found"
+        },
+        "payments": {
+            "status": "not_found"
+        },
+        "services": {
+            "status": "not_found"
+        },
+        "setup_auth_tables": {
+            "status": "not_found"
+        },
+        "tariffs": {
+            "status": "not_found"
+        },
+        "tv_packages": {
+            "status": "not_found"
+        },
+        "users": {
+            "status": "not_found"
+        },
+        "clients": {
+            "status": "not_found"
+        },
+        "column_config": {
+            "status": "not_found"
+        },
+        "networks": {
+            "status": "not_found"
+        }
+    },
+    "timestamp": "2025-07-27 15:47:55"
+}

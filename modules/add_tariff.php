@@ -1,12 +1,13 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 $pageTitle = 'Dodaj Taryfę';
 $pdo = get_pdo();
 
 $error = '';
 $success = '';
 
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $upload_speed = (int)($_POST['upload_speed'] ?? 0);
     $download_speed = (int)($_POST['download_speed'] ?? 0);

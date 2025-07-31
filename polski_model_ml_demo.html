@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Polski Model ML - Demo Czatu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        
+        .model-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .model-btn {
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            color: #2c3e50;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .model-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .model-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .model-btn .status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e74c3c;
+        }
+        
+        .model-btn .status.online {
+            background: #27ae60;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+        
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            background: #f8f9fa;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .chat-header h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .chat-header p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        .message.user .message-avatar {
+            background: #667eea;
+        }
+        
+        .message.assistant .message-avatar {
+            background: #27ae60;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+        }
+        
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.assistant .message-content {
+            background: #f8f9fa;
+            color: #2c3e50;
+            border: 1px solid #ecf0f1;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 0.8em;
+            color: #95a5a6;
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .message.user .message-time {
+            text-align: left;
+        }
+        
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .chat-input input:focus {
+            border-color: #667eea;
+        }
+        
+        .send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .send-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+        
+        .send-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .sidebar-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .model-info {
+            margin-bottom: 20px;
+        }
+        
+        .model-info h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .model-info p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .model-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: #ecf0f1;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 1px solid #ecf0f1;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            max-width: 70%;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #95a5a6;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .model-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .chat-container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Polski Model ML - Demo Czatu</h1>
+            <p>Poznaj różne polskie modele AI i ich unikalne możliwości</p>
+            
+            <div class="model-selector">
+                <button class="model-btn active" data-model="polski-regulowy">
+                    <span class="status online"></span>
+                    🧠 Polski Model Regułowy
+                </button>
+                <button class="model-btn" data-model="polski-localai">
+                    <span class="status"></span>
+                    🚀 Polski LocalAI
+                </button>
+                <button class="model-btn" data-model="polski-hybrydowy">
+                    <span class="status online"></span>
+                    🔄 Model Hybrydowy
+                </button>
+                <button class="model-btn" data-model="polski-adaptacyjny">
+                    <span class="status online"></span>
+                    🎯 Polski AI Adaptacyjny
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3 id="current-model">Polski Model Regułowy</h3>
+                    <p id="model-description">Szybkie i niezawodne odpowiedzi w języku polskim</p>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message assistant">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            Cześć! Jestem Twoim polskim asystentem AI. Mogę pomóc Ci w różnych zadaniach:
+                            <br><br>
+                            • Odpowiadanie na pytania o strony internetowe i treści
+                            • Dostarczanie informacji o systemie i statusie
+                            • Generowanie podsumowań i analiz
+                            • Pomoc w języku polskim
+                            <br><br>
+                            Z którym modelem AI chciałbyś porozmawiać? Możesz przełączać się między różnymi modelami używając przycisków powyżej!
+                            <div class="message-time">Właśnie teraz</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                    <span>AI myśli...</span>
+                </div>
+                
+                <div class="chat-input">
+                    <div class="input-group">
+                        <input type="text" id="message-input" placeholder="Wpisz swoją wiadomość tutaj..." maxlength="500">
+                        <button class="send-btn" id="send-btn">Wyślij</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="sidebar-card">
+                    <h3>📊 Informacje o Modelu</h3>
+                    <div class="model-info">
+                        <h4 id="info-title">Polski Model Regułowy</h4>
+                        <p id="info-description">Ten model używa predefiniowanych reguł i wzorców do dostarczania szybkich, niezawodnych odpowiedzi w języku polskim. Idealny do typowych zapytań i informacji systemowych.</p>
+                    </div>
+                    
+                    <div class="model-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="response-time">~50ms</div>
+                            <div class="stat-label">Czas Odpowiedzi</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="accuracy">95%</div>
+                            <div class="stat-label">Dokładność</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="messages">0</div>
+                            <div class="stat-label">Wiadomości</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="status">Online</div>
+                            <div class="stat-label">Status</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3>⚡ Szybkie Akcje</h3>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="sendQuickMessage('W czym możesz mi pomóc?')">
+                            💬 Poproś o pomoc
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('Pokaż status systemu')">
+                            📊 Status systemu
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('Przeanalizuj tę stronę')">
+                            🔍 Analiza strony
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('Wygeneruj podsumowanie')">
+                            📝 Utwórz podsumowanie
+                        </button>
+                        <button class="action-btn" onclick="clearChat()">
+                            🗑️ Wyczyść czat
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3>🔗 Przydatne Linki</h3>
+                    <div class="quick-actions">
+                        <a href="ai_assistant_demo.html" class="action-btn" style="text-decoration: none;">
+                            🤖 Demo Asystenta AI
+                        </a>
+                        <a href="adaptive_ai_demo.html" class="action-btn" style="text-decoration: none;">
+                            🎯 Demo Adaptacyjnego AI
+                        </a>
+                        <a href="api_documentation.html" class="action-btn" style="text-decoration: none;">
+                            📚 Dokumentacja API
+                        </a>
+                        <a href="automation_dashboard.html" class="action-btn" style="text-decoration: none;">
+                            ⚙️ Panel Automatyzacji
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Konfiguracje modeli polskich
+        const models = {
+            'polski-regulowy': {
+                name: 'Polski Model Regułowy',
+                description: 'Szybkie i niezawodne odpowiedzi w języku polskim używając predefiniowanych reguł',
+                responseTime: '~50ms',
+                accuracy: '95%',
+                status: 'Online',
+                color: '#667eea',
+                icon: '🧠'
+            },
+            'polski-localai': {
+                name: 'Polski LocalAI',
+                description: 'Zaawansowany model AI działający lokalnie z ulepszonym rozumieniem języka polskiego',
+                responseTime: '~200ms',
+                accuracy: '98%',
+                status: 'Sprawdzanie...',
+                color: '#27ae60',
+                icon: '🚀'
+            },
+            'polski-hybrydowy': {
+                name: 'Model Hybrydowy',
+                description: 'Łączy modele regułowe i AI dla optymalnej wydajności w języku polskim',
+                responseTime: '~100ms',
+                accuracy: '97%',
+                status: 'Online',
+                color: '#f39c12',
+                icon: '🔄'
+            },
+            'polski-adaptacyjny': {
+                name: 'Polski AI Adaptacyjny',
+                description: 'Uczy się z interakcji użytkownika i dostosowuje odpowiedzi w języku polskim',
+                responseTime: '~150ms',
+                accuracy: '96%',
+                status: 'Online',
+                color: '#9b59b6',
+                icon: '🎯'
+            }
+        };
+
+        let currentModel = 'polski-regulowy';
+        let messageCount = 0;
+        let conversationId = 'demo_polski_' + Date.now();
+
+        // Inicjalizacja
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeModelSelector();
+            checkModelStatus();
+            setupEventListeners();
+        });
+
+        function initializeModelSelector() {
+            const modelButtons = document.querySelectorAll('.model-btn');
+            
+            modelButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const model = this.dataset.model;
+                    switchModel(model);
+                    
+                    // Aktualizuj aktywny przycisk
+                    modelButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        function switchModel(model) {
+            currentModel = model;
+            const modelConfig = models[model];
+            
+            // Aktualizuj UI
+            document.getElementById('current-model').textContent = modelConfig.name;
+            document.getElementById('model-description').textContent = modelConfig.description;
+            document.getElementById('info-title').textContent = modelConfig.name;
+            document.getElementById('info-description').textContent = modelConfig.description;
+            document.getElementById('response-time').textContent = modelConfig.responseTime;
+            document.getElementById('accuracy').textContent = modelConfig.accuracy;
+            document.getElementById('status').textContent = modelConfig.status;
+            
+            // Aktualizuj wskaźnik statusu
+            const statusIndicator = document.querySelector(`[data-model="${model}"] .status`);
+            if (modelConfig.status === 'Online') {
+                statusIndicator.classList.add('online');
+            } else {
+                statusIndicator.classList.remove('online');
+            }
+            
+            // Dodaj wiadomość systemową
+            addMessage('assistant', `Przełączono na ${modelConfig.name}! ${modelConfig.description}`, true);
+        }
+
+        function setupEventListeners() {
+            const messageInput = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            
+            // Wyślij na Enter
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Klik przycisku wyślij
+            sendBtn.addEventListener('click', sendMessage);
+            
+            // Auto-fokus na input
+            messageInput.focus();
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            // Dodaj wiadomość użytkownika
+            addMessage('user', message);
+            messageInput.value = '';
+            
+            // Pokaż wskaźnik pisania
+            showTypingIndicator();
+            
+            // Wyślij do API
+            sendToAPI(message);
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('message-input').value = message;
+            sendMessage();
+        }
+
+        async function sendToAPI(message) {
+            try {
+                const startTime = Date.now();
+                
+                const response = await fetch('ai_assistant_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'chat',
+                        message: message,
+                        context: {
+                            model: currentModel,
+                            language: 'pl',
+                            page: 'polski_model_ml_demo',
+                            user_agent: navigator.userAgent
+                        },
+                        conversation_id: conversationId
+                    })
+                });
+                
+                const data = await response.json();
+                const responseTime = Date.now() - startTime;
+                
+                hideTypingIndicator();
+                
+                if (data.success) {
+                    addMessage('assistant', data.data.response);
+                    updateStats(responseTime);
+                } else {
+                    addMessage('assistant', `Przepraszam, napotkałem błąd: ${data.error}`);
+                }
+                
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage('assistant', `Przepraszam, mam problemy z połączeniem. Spróbuj ponownie.`);
+                console.error('Błąd API:', error);
+            }
+        }
+
+        function addMessage(type, content, isSystem = false) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const avatar = type === 'user' ? '👤' : models[currentModel].icon;
+            const time = new Date().toLocaleTimeString('pl-PL');
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    ${content}
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            if (!isSystem) {
+                messageCount++;
+                document.getElementById('messages').textContent = messageCount;
+            }
+        }
+
+        function showTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            indicator.style.display = 'flex';
+            indicator.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typing-indicator').style.display = 'none';
+        }
+
+        function updateStats(responseTime) {
+            document.getElementById('response-time').textContent = `~${responseTime}ms`;
+        }
+
+        function clearChat() {
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = `
+                <div class="message assistant">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        Czat wyczyszczony! W czym mogę Ci dzisiaj pomóc?
+                        <div class="message-time">Właśnie teraz</div>
+                    </div>
+                </div>
+            `;
+            messageCount = 0;
+            document.getElementById('messages').textContent = '0';
+            conversationId = 'demo_polski_' + Date.now();
+        }
+
+        async function checkModelStatus() {
+            try {
+                const response = await fetch('ai_assistant_api.php?action=model_status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Aktualizuj status LocalAI jeśli dostępny
+                    if (data.data.localai) {
+                        const localaiBtn = document.querySelector('[data-model="polski-localai"] .status');
+                        localaiBtn.classList.add('online');
+                        models['polski-localai'].status = 'Online';
+                        document.getElementById('status').textContent = 'Online';
+                    }
+                }
+            } catch (error) {
+                console.log('Sprawdzanie statusu nie powiodło się:', error);
+            }
+        }
+
+        // Dodaj przykładowe wiadomości po opóźnieniu
+        setTimeout(() => {
+            if (messageCount === 0) {
+                addMessage('assistant', 'Spróbuj zadać mi pytania na różne tematy lub przełączaj się między modelami AI, aby zobaczyć, jak różnie odpowiadają!', true);
+            }
+        }, 3000);
+    </script>
+</body>
+</html> 

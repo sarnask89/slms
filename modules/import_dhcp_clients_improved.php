@@ -1,192 +1,254 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once 'module_loader.php';
+
 require_once __DIR__ . '/mikrotik_api.php';
 
-$pageTitle = 'Import DHCP Clients (Improved, API/SSH, Preview/Import/Update)';
+$pageTitle = 'Import DHCP Clients (Improved)';
 $pdo = get_pdo();
 
 $import_results = [];
 $errors = [];
 $success_message = '';
 $debug_info = [];
-$preview_table = [];
 
-// Helper: check if IP is in subnet
+// Helper function to check if IP is in subnet
 function ip_in_subnet($ip, $subnet) {
-    if (empty($subnet) || strpos($subnet, '/') === false) return false;
+    if (empty($subnet) || strpos($subnet, '/') === false) {
+        return false;
+    }
     list($net, $mask) = explode('/', $subnet);
-    if (!is_numeric($mask) || $mask < 0 || $mask > 32) return false;
+    if (!is_numeric($mask) || $mask < 0 || $mask > 32) {
+        return false;
+    }
     $ip_long = ip2long($ip);
     $net_long = ip2long($net);
-    if ($ip_long === false || $net_long === false) return false;
+    if ($ip_long === false || $net_long === false) {
+        return false;
+    }
     $mask_long = ~((1 << (32 - $mask)) - 1);
     return ($ip_long & $mask_long) === ($net_long & $mask_long);
 }
 
-// Helper: get all clients/devices/networks in memory for fast lookup
-function get_lookup_tables($pdo) {
-    $clients = [];
-    $stmt = $pdo->query("SELECT id, first_name, last_name FROM clients");
-    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-        $clients[trim($row['first_name'] . ' ' . $row['last_name'])] = $row['id'];
-    }
-    $devices = [];
-    $stmt = $pdo->query("SELECT id, mac_address FROM devices");
-    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-        $devices[strtolower($row['mac_address'])] = $row['id'];
-    }
-    $networks = [];
-    $stmt = $pdo->query("SELECT id, subnet, device_id FROM networks");
-    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-        $networks[] = $row;
-    }
-    return [$clients, $devices, $networks];
-}
-
-// Main import logic
-$mode = $_POST['mode'] ?? 'import_update'; // preview, import, update, import_update
+// Handle import action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['import_dhcp'])) {
     try {
-        // Get skeleton devices
-        $stmt = $pdo->prepare("SELECT id, name, ip_address, api_username, api_password FROM skeleton_devices WHERE api_username IS NOT NULL AND api_password IS NOT NULL ORDER BY name");
+        // Get skeleton device info
+        $stmt = $pdo->prepare("
+            SELECT id, name, ip_address, api_username, api_password 
+            FROM skeleton_devices 
+            WHERE api_username IS NOT NULL AND api_password IS NOT NULL
+            ORDER BY name
+        ");
         $stmt->execute();
         $skeleton_devices = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
         $debug_info[] = "Found " . count($skeleton_devices) . " skeleton devices with API credentials";
-        if (empty($skeleton_devices)) throw new Exception('No skeleton devices with API credentials found');
-
-        // Lookup tables
-        list($clients, $devices, $networks) = get_lookup_tables($pdo);
-        $created_clients = $created_devices = $updated_clients = $updated_devices = $skipped = $errors_count = 0;
-        $actions = [];
-
+        
+        if (empty($skeleton_devices)) {
+            throw new Exception('No skeleton devices with API credentials found');
+        }
+        
+        $total_clients_created = 0;
+        $total_devices_created = 0;
+        $clients_updated = 0;
+        $devices_updated = 0;
+        $skipped_duplicates = 0;
+        $networks_assigned = 0;
+        
         foreach ($skeleton_devices as $device) {
             $device_debug = [];
             $device_debug[] = "Processing device: {$device['name']} ({$device['ip_address']})";
-            $leases = [];
-            // Try API first
+            
             try {
                 $api = new MikroTikAPI($device['ip_address'], $device['api_username'], $device['api_password']);
-                $api_leases = $api->getDhcpLeases();
-                if (is_array($api_leases) && !isset($api_leases['error']) && count($api_leases) > 0) {
-                    $leases = $api_leases;
-                    $device_debug[] = "Fetched " . count($leases) . " leases via API.";
-                }
-            } catch (Exception $e) {
-                $device_debug[] = "API error: " . $e->getMessage();
-            }
-            // Fallback to SSH if needed
-            if (empty($leases)) {
-                $ssh_output = $api->sshExecute('/ip dhcp-server lease print');
-                if ($ssh_output && !str_contains($ssh_output, 'error')) {
-                    $leases = $api->parseDhcpLeasesFromSsh($ssh_output);
-                    $device_debug[] = "Fetched " . count($leases) . " leases via SSH.";
-                } else {
-                    $device_debug[] = "SSH fallback failed.";
-                }
-            }
-            if (empty($leases)) {
-                $device_debug[] = "No leases found for device.";
-                $import_results[] = ['device' => $device['name'], 'status' => 'error', 'message' => 'No leases found'];
-                $errors[] = "No leases found for device {$device['name']}";
-                $errors_count++;
-                $debug_info = array_merge($debug_info, $device_debug);
-                continue;
-            }
-            foreach ($leases as $lease) {
-                $lease_debug = [];
-                $mac = strtolower($lease['mac-address'] ?? '');
-                $ip = $lease['address'] ?? '';
-                $comment = trim($lease['comment'] ?? '');
-                $status = $lease['status'] ?? '';
-                if (!$mac || !$ip) {
-                    $lease_debug[] = "Skipping lease with missing MAC or IP.";
-                    $skipped++;
-                    continue;
-                }
-                // Skip generic comments
-                $skip_names = ['unknown', 'router', 'switch', 'ap', 'access', 'point'];
-                $comment_words = explode(' ', strtolower($comment));
-                if (isset($comment_words[0]) && in_array($comment_words[0], $skip_names)) {
-                    $lease_debug[] = "Skipping generic device: $comment";
-                    $skipped++;
-                    continue;
-                }
-                // Build client name
-                $base_name = $comment_words[0] ?? 'Unknown';
-                $address_part = $comment_words[1] ?? '';
-                $client_name = trim($base_name . ' ' . $address_part);
-                if (strlen($client_name) < 2) $client_name = $mac;
-                // Find or create client
-                $client_id = $clients[$client_name] ?? null;
-                $client_action = '';
-                if (!$client_id && ($mode === 'import' || $mode === 'import_update')) {
-                    if ($mode !== 'preview') {
-                        $stmt = $pdo->prepare("INSERT INTO clients (first_name, last_name, address, notes, created_at) VALUES (?, ?, ?, ?, NOW())");
-                        $stmt->execute([$base_name, $address_part, $comment, "Imported from DHCP lease - MAC: $mac - Device: {$device['name']}"]);
-                        $client_id = $pdo->lastInsertId();
-                        $clients[$client_name] = $client_id;
-                        $created_clients++;
-                        $client_action = 'created';
-                    } else {
-                        $client_action = 'would create';
-                    }
-                } elseif ($client_id && ($mode === 'update' || $mode === 'import_update')) {
-                    // Optionally update client info here if needed
-                    $client_action = 'exists';
-                }
-                // Find or create/update device
-                $device_id = $devices[$mac] ?? null;
-                $device_action = '';
-                // Find network
-                $network_id = null;
-                foreach ($networks as $net) {
-                    if ($net['device_id'] == $device['id'] && ip_in_subnet($ip, $net['subnet'])) {
-                        $network_id = $net['id'];
-                        break;
+                
+                // Get DHCP server leases using SSH fallback
+                $leases = $api->execute('/ip/dhcp-server/lease/print');
+                
+                if (!$leases || empty($leases)) {
+                    // Try SSH fallback
+                    $ssh_output = $api->sshExecute('/ip dhcp-server lease print');
+                    if ($ssh_output && !str_contains($ssh_output, 'error')) {
+                        $leases = $api->parseDhcpLeasesFromSsh($ssh_output);
                     }
                 }
-                if (!$device_id && ($mode === 'import' || $mode === 'import_update')) {
-                    if ($mode !== 'preview') {
-                        $stmt = $pdo->prepare("INSERT INTO devices (name, type, ip_address, mac_address, location, client_id, network_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-                        $dev_name = $client_name . ' - ' . $mac;
-                        $stmt->execute([$dev_name, 'other', $ip, $mac, $comment, $client_id, $network_id]);
-                        $device_id = $pdo->lastInsertId();
-                        $devices[$mac] = $device_id;
-                        $created_devices++;
-                        $device_action = 'created';
-                    } else {
-                        $device_action = 'would create';
+                
+                $device_debug[] = "Found " . count($leases ?? []) . " DHCP leases";
+                
+                if ($leases && is_array($leases)) {
+                    foreach ($leases as $lease) {
+                        if (isset($lease['mac-address']) && isset($lease['address']) && isset($lease['comment'])) {
+                            $lease_debug = [];
+                            $lease_debug[] = "Processing lease: {$lease['address']} ({$lease['mac-address']})";
+                            
+                            // Create unique client name from lease data
+                            $comment_words = explode(' ', trim($lease['comment']));
+                            $base_name = isset($comment_words[1]) ? $comment_words[1] : 'Unknown';
+                            
+                            // Skip if base name is too short or generic
+                            if (strlen($base_name) < 2 || in_array(strtolower($base_name), ['unknown', 'router', 'switch', 'ap', 'access', 'point'])) {
+                                $lease_debug[] = "Skipping generic device: $base_name";
+                                $device_debug = array_merge($device_debug, $lease_debug);
+                                continue;
+                            }
+                            
+                            // Create unique client name using address/location info
+                            $address_part = '';
+                            if (isset($comment_words[2])) {
+                                $address_part = ' ' . $comment_words[2];
+                            }
+                            if (isset($comment_words[3])) {
+                                $address_part .= ' ' . $comment_words[3];
+                            }
+                            
+                            $client_name = $base_name . $address_part;
+                            
+                            // If still too long, truncate but keep unique
+                            if (strlen($client_name) > 50) {
+                                $client_name = substr($base_name . ' ' . $comment_words[2], 0, 50);
+                            }
+                            
+                            $lease_debug[] = "Client name: $client_name";
+                            
+                            // Check if client already exists by name (prevent duplicates)
+                            $stmt = $pdo->prepare("SELECT id FROM clients WHERE CONCAT(first_name, ' ', last_name) = ?");
+                            $stmt->execute([$client_name]);
+                            $existing_client = $stmt->fetch(PDO::FETCH_ASSOC);
+                            
+                            if ($existing_client) {
+                                $client_id = $existing_client['id'];
+                                $clients_updated++;
+                                $lease_debug[] = "Using existing client ID: $client_id";
+                            } else {
+                                // Create new client with unique name
+                                $stmt = $pdo->prepare("
+                                    INSERT INTO clients (first_name, last_name, address, notes, created_at) 
+                                    VALUES (?, ?, ?, ?, NOW())
+                                ");
+                                $first_name = $base_name;
+                                $last_name = isset($comment_words[2]) ? $comment_words[2] : '';
+                                $address = $lease['comment']; // Use full comment as address
+                                $notes = "Imported from DHCP lease - MAC: " . $lease['mac-address'] . " - Device: " . $device['name'];
+                                $stmt->execute([$first_name, $last_name, $address, $notes]);
+                                $client_id = $pdo->lastInsertId();
+                                $total_clients_created++;
+                                $lease_debug[] = "Created new client ID: $client_id";
+                            }
+                            
+                            // Check if device already exists by MAC address (prevent duplicates)
+                            $stmt = $pdo->prepare("SELECT id, client_id, network_id FROM devices WHERE mac_address = ?");
+                            $stmt->execute([$lease['mac-address']]);
+                            $existing_device = $stmt->fetch(PDO::FETCH_ASSOC);
+                            
+                            if ($existing_device) {
+                                $lease_debug[] = "Device with MAC {$lease['mac-address']} already exists";
+                                
+                                // Only update if client_id is different or network_id is null
+                                if ($existing_device['client_id'] != $client_id || $existing_device['network_id'] === null) {
+                                    // Find the network associated with this skeleton device and IP range
+                                    $network_id = null;
+                                    $stmt = $pdo->prepare('SELECT id, subnet FROM networks WHERE device_id = ?');
+                                    $stmt->execute([$device['id']]);
+                                    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $net) {
+                                        if (ip_in_subnet($lease['address'], $net['subnet'])) {
+                                            $network_id = $net['id'];
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if ($network_id) {
+                                        $networks_assigned++;
+                                        $lease_debug[] = "Assigned to network ID: $network_id";
+                                    } else {
+                                        $lease_debug[] = "No matching network found for IP {$lease['address']}";
+                                    }
+                                    
+                                    // Update existing device
+                                    $stmt = $pdo->prepare("
+                                        UPDATE devices 
+                                        SET client_id = ?, ip_address = ?, name = ?, network_id = ?
+                                        WHERE id = ?
+                                    ");
+                                    $device_name = $client_name . " - " . $lease['mac-address'];
+                                    $stmt->execute([
+                                        $client_id,
+                                        $lease['address'],
+                                        $device_name,
+                                        $network_id !== false && $network_id !== null && $network_id !== '' ? $network_id : null,
+                                        $existing_device['id']
+                                    ]);
+                                    $devices_updated++;
+                                    $lease_debug[] = "Updated existing device";
+                                } else {
+                                    $lease_debug[] = "Device already properly assigned, skipping update";
+                                    $skipped_duplicates++;
+                                }
+                            } else {
+                                // Create new device
+                                $device_name = $client_name . " - " . $lease['mac-address'];
+                                $device_type = 'other';
+                                $location = $lease['comment'];
+                                
+                                // Find the network associated with this skeleton device and IP range
+                                $network_id = null;
+                                $stmt = $pdo->prepare('SELECT id, subnet FROM networks WHERE device_id = ?');
+                                $stmt->execute([$device['id']]);
+                                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $net) {
+                                    if (ip_in_subnet($lease['address'], $net['subnet'])) {
+                                        $network_id = $net['id'];
+                                        break;
+                                    }
+                                }
+                                
+                                if ($network_id) {
+                                    $networks_assigned++;
+                                    $lease_debug[] = "Assigned to network ID: $network_id";
+                                } else {
+                                    $lease_debug[] = "No matching network found for IP {$lease['address']}";
+                                }
+                                
+                                $stmt = $pdo->prepare("
+                                    INSERT INTO devices (name, type, ip_address, mac_address, location, client_id, network_id, created_at) 
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                                ");
+                                $stmt->execute([
+                                    $device_name,
+                                    $device_type,
+                                    $lease['address'],
+                                    $lease['mac-address'],
+                                    $location,
+                                    $client_id,
+                                    $network_id !== false && $network_id !== null && $network_id !== '' ? $network_id : null
+                                ]);
+                                $total_devices_created++;
+                                $lease_debug[] = "Created new device";
+                            }
+                            
+                            $device_debug = array_merge($device_debug, $lease_debug);
+                        }
                     }
-                } elseif ($device_id && ($mode === 'update' || $mode === 'import_update')) {
-                    // Optionally update device info if needed
-                    if ($mode !== 'preview') {
-                        $stmt = $pdo->prepare("UPDATE devices SET client_id = ?, ip_address = ?, name = ?, network_id = ? WHERE id = ?");
-                        $dev_name = $client_name . ' - ' . $mac;
-                        $stmt->execute([$client_id, $ip, $dev_name, $network_id, $device_id]);
-                        $updated_devices++;
-                        $device_action = 'updated';
-                    } else {
-                        $device_action = 'would update';
-                    }
-                } else {
-                    $device_action = 'skipped';
-                    $skipped++;
                 }
-                $actions[] = [
+                
+                $import_results[] = [
                     'device' => $device['name'],
-                    'mac' => $mac,
-                    'ip' => $ip,
-                    'comment' => $comment,
-                    'client_action' => $client_action,
-                    'device_action' => $device_action,
-                    'network_id' => $network_id,
+                    'status' => 'success',
+                    'message' => 'DHCP leases processed successfully'
                 ];
+                
+            } catch (Exception $e) {
+                $import_results[] = [
+                    'device' => $device['name'],
+                    'status' => 'error',
+                    'message' => $e->getMessage()
+                ];
+                $errors[] = "Error processing {$device['name']}: " . $e->getMessage();
             }
+            
             $debug_info = array_merge($debug_info, $device_debug);
         }
-        // Build preview/summary table
-        $preview_table = $actions;
-        $success_message = "Mode: $mode. Created: $created_clients clients, $created_devices devices. Updated: $updated_clients clients, $updated_devices devices. Skipped: $skipped. Errors: $errors_count.";
+        
+        $success_message = "Import completed successfully! Created: $total_clients_created clients, $total_devices_created devices. Updated: $clients_updated clients, $devices_updated devices. Networks assigned: $networks_assigned. Skipped duplicates: $skipped_duplicates.";
+        
     } catch (Exception $e) {
         $errors[] = "Import failed: " . $e->getMessage();
     }
@@ -207,22 +269,26 @@ if (isset($_POST['clear_devices'])) {
 // Get current statistics
 $stmt = $pdo->query("SELECT COUNT(*) as total FROM clients");
 $total_clients = $stmt->fetchColumn();
+
 $stmt = $pdo->query("SELECT COUNT(*) as total FROM devices");
 $total_devices = $stmt->fetchColumn();
+
 $stmt = $pdo->query("SELECT COUNT(*) as total FROM devices WHERE client_id IS NOT NULL");
 $assigned_devices = $stmt->fetchColumn();
+
 $stmt = $pdo->query("SELECT COUNT(*) as total FROM devices WHERE network_id IS NOT NULL");
 $networked_devices = $stmt->fetchColumn();
 
 ob_start();
 ?>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
       <div class="card">
         <div class="card-header">
           <h5 class="mb-0">
-            <i class="bi bi-upload"></i> Import DHCP Clients (Improved, API/SSH, Preview/Import/Update)
+            <i class="bi bi-upload"></i> Import DHCP Clients (Improved)
           </h5>
         </div>
         <div class="card-body">
@@ -261,34 +327,50 @@ ob_start();
               </div>
             </div>
           </div>
+          
           <!-- Import Form -->
           <div class="card">
             <div class="card-header">
               <h6 class="mb-0">Import DHCP Clients from MikroTik Devices</h6>
             </div>
             <div class="card-body">
-              <form method="post" onsubmit="return confirm('Proceed with selected mode?');">
-                <div class="mb-3">
-                  <label class="form-label">Mode:</label>
-                  <div>
-                    <label class="me-3"><input type="radio" name="mode" value="preview" <?= ($mode==='preview')?'checked':'' ?>> Preview</label>
-                    <label class="me-3"><input type="radio" name="mode" value="import" <?= ($mode==='import')?'checked':'' ?>> Import Only</label>
-                    <label class="me-3"><input type="radio" name="mode" value="update" <?= ($mode==='update')?'checked':'' ?>> Update Only</label>
-                    <label class="me-3"><input type="radio" name="mode" value="import_update" <?= ($mode==='import_update')?'checked':'' ?>> Import + Update</label>
-                  </div>
-                </div>
+              <p class="text-muted">
+                This improved version provides better network assignment and duplicate prevention:
+              </p>
+              <ul class="text-muted">
+                <li><strong>Smart Network Assignment:</strong> Automatically assigns devices to correct networks based on IP ranges</li>
+                <li><strong>Duplicate Prevention:</strong> Prevents duplicate clients and devices using MAC addresses and names</li>
+                <li><strong>Enhanced Debugging:</strong> Detailed logging of all operations</li>
+                <li><strong>Network Tracking:</strong> Shows how many devices were assigned to networks</li>
+                <li><strong>Skip Logic:</strong> Skips generic devices (routers, switches, APs)</li>
+                <li><strong>Update Logic:</strong> Only updates devices when necessary</li>
+              </ul>
+              
+              <form method="post" onsubmit="return confirm('Do you want to import DHCP clients? This may update existing records.');">
                 <button type="submit" name="import_dhcp" class="btn btn-primary">
-                  <i class="bi bi-upload"></i> Run Import
+                  <i class="bi bi-upload"></i> Import DHCP Clients
+                </button>
+              </form>
+              <form method="post" class="d-inline-block ms-2" onsubmit="return confirm('Are you sure you want to delete ALL clients? This cannot be undone!');">
+                <button type="submit" name="clear_clients" class="btn btn-danger">
+                  <i class="bi bi-trash"></i> Clear All Clients
+                </button>
+              </form>
+              <form method="post" class="d-inline-block ms-2" onsubmit="return confirm('Are you sure you want to delete ALL devices? This cannot be undone!');">
+                <button type="submit" name="clear_devices" class="btn btn-danger">
+                  <i class="bi bi-trash"></i> Clear All Devices
                 </button>
               </form>
             </div>
           </div>
+          
           <!-- Results -->
           <?php if (!empty($success_message)): ?>
             <div class="alert alert-success mt-3">
               <i class="bi bi-check-circle"></i> <?= htmlspecialchars($success_message) ?>
             </div>
           <?php endif; ?>
+          
           <?php if (!empty($errors)): ?>
             <div class="alert alert-danger mt-3">
               <h6><i class="bi bi-exclamation-triangle"></i> Errors during import:</h6>
@@ -299,44 +381,7 @@ ob_start();
               </ul>
             </div>
           <?php endif; ?>
-          <!-- Preview Table -->
-          <?php if (!empty($preview_table)): ?>
-            <div class="card mt-3">
-              <div class="card-header">
-                <h6 class="mb-0">Preview / Import Actions</h6>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-sm">
-                    <thead>
-                      <tr>
-                        <th>Device</th>
-                        <th>MAC</th>
-                        <th>IP</th>
-                        <th>Comment</th>
-                        <th>Client Action</th>
-                        <th>Device Action</th>
-                        <th>Network ID</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php foreach ($preview_table as $row): ?>
-                        <tr>
-                          <td><?= htmlspecialchars($row['device']) ?></td>
-                          <td><?= htmlspecialchars($row['mac']) ?></td>
-                          <td><?= htmlspecialchars($row['ip']) ?></td>
-                          <td><?= htmlspecialchars($row['comment']) ?></td>
-                          <td><?= htmlspecialchars($row['client_action']) ?></td>
-                          <td><?= htmlspecialchars($row['device_action']) ?></td>
-                          <td><?= htmlspecialchars($row['network_id']) ?></td>
-                        </tr>
-                      <?php endforeach; ?>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          <?php endif; ?>
+          
           <!-- Debug Information -->
           <?php if (!empty($debug_info)): ?>
             <div class="card mt-3">
@@ -352,6 +397,43 @@ ob_start();
               </div>
             </div>
           <?php endif; ?>
+          
+          <?php if (!empty($import_results)): ?>
+            <div class="card mt-3">
+              <div class="card-header">
+                <h6 class="mb-0">Import Details</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Device</th>
+                        <th>Status</th>
+                        <th>Message</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php foreach ($import_results as $result): ?>
+                        <tr>
+                          <td><?= htmlspecialchars($result['device']) ?></td>
+                          <td>
+                            <?php if ($result['status'] === 'success'): ?>
+                              <span class="badge bg-success">Success</span>
+                            <?php else: ?>
+                              <span class="badge bg-danger">Error</span>
+                            <?php endif; ?>
+                          </td>
+                          <td><?= htmlspecialchars($result['message']) ?></td>
+                        </tr>
+                      <?php endforeach; ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
+          
           <!-- Quick Actions -->
           <div class="row mt-4">
             <div class="col-md-6">
@@ -376,6 +458,7 @@ ob_start();
     </div>
   </div>
 </div>
+
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../partials/layout.php';

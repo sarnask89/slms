@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💻 Generator Kodu AI - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        
+        .language-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .lang-btn {
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            color: #2c3e50;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .lang-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+        
+        .code-generator {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .input-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .generate-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .generate-btn:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+        
+        .generate-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .code-output {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            min-height: 300px;
+            display: none;
+        }
+        
+        .code-output.show {
+            display: block;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .code-title {
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .copy-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .sidebar-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .quick-templates {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .template-btn {
+            background: #ecf0f1;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .template-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .language-info {
+            margin-bottom: 20px;
+        }
+        
+        .language-info h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .language-info p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .features-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .features-list li {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .features-list li:before {
+            content: "✓";
+            color: #27ae60;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #f39c12;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #ecf0f1;
+            border-top: 3px solid #f39c12;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .language-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💻 Generator Kodu AI</h1>
+            <p>Generuj kod w różnych językach programowania z pomocą sztucznej inteligencji</p>
+            
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="php">
+                    🐘 PHP
+                </button>
+                <button class="lang-btn" data-lang="java">
+                    ☕ Java
+                </button>
+                <button class="lang-btn" data-lang="python">
+                    🐍 Python
+                </button>
+                <button class="lang-btn" data-lang="javascript">
+                    🟨 JavaScript
+                </button>
+                <button class="lang-btn" data-lang="bash">
+                    🐚 Bash/Shell
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="code-generator">
+                <div class="input-section">
+                    <h3>📝 Opis kodu do wygenerowania</h3>
+                    
+                    <div class="form-group">
+                        <label for="code-description">Opis funkcjonalności:</label>
+                        <textarea id="code-description" placeholder="Opisz dokładnie, co ma robić kod. Na przykład: 'Klasa PHP do obsługi użytkowników z bazą danych, walidacją i logowaniem'"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="code-requirements">Dodatkowe wymagania (opcjonalnie):</label>
+                        <input type="text" id="code-requirements" placeholder="np. database, validation, logging, security">
+                    </div>
+                    
+                    <button class="generate-btn" id="generate-btn">🚀 Wygeneruj kod</button>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Generuję kod...</p>
+                </div>
+                
+                <div class="error-message" id="error-message"></div>
+                
+                <div class="code-output" id="code-output">
+                    <div class="code-header">
+                        <span class="code-title" id="code-title">Wygenerowany kod</span>
+                        <button class="copy-btn" id="copy-btn">📋 Kopiuj</button>
+                    </div>
+                    <div id="code-content"></div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="sidebar-card">
+                    <h3>📋 Szybkie szablony</h3>
+                    <div class="quick-templates">
+                        <button class="template-btn" onclick="loadTemplate('php', 'Klasa PHP do obsługi użytkowników z bazą danych')">
+                            🐘 Klasa PHP - Użytkownicy
+                        </button>
+                        <button class="template-btn" onclick="loadTemplate('java', 'Klasa Java do połączenia z API REST')">
+                            ☕ Klasa Java - API REST
+                        </button>
+                        <button class="template-btn" onclick="loadTemplate('python', 'Skrypt Python do analizy danych')">
+                            🐍 Skrypt Python - Analiza danych
+                        </button>
+                        <button class="template-btn" onclick="loadTemplate('javascript', 'Klasa JavaScript do obsługi formularzy')">
+                            🟨 JavaScript - Formularze
+                        </button>
+                        <button class="template-btn" onclick="loadTemplate('bash', 'Skrypt bash do backupu bazy danych')">
+                            🐚 Bash - Backup bazy danych
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3>ℹ️ Informacje o języku</h3>
+                    <div class="language-info" id="language-info">
+                        <h4>PHP</h4>
+                        <p>Język skryptowy do tworzenia aplikacji webowych i skryptów automatyzacji.</p>
+                        <ul class="features-list">
+                            <li>Klasy i obiekty</li>
+                            <li>Połączenia z bazą danych</li>
+                            <li>API REST</li>
+                            <li>Walidacja danych</li>
+                            <li>Logowanie błędów</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3>🔗 Przydatne linki</h3>
+                    <div class="quick-templates">
+                        <a href="polski_model_ml_demo.html" class="template-btn" style="text-decoration: none;">
+                            🤖 Polski Demo AI
+                        </a>
+                        <a href="ml_model_chat_demo.html" class="template-btn" style="text-decoration: none;">
+                            💬 Demo Czatu ML
+                        </a>
+                        <a href="api_documentation.html" class="template-btn" style="text-decoration: none;">
+                            📚 Dokumentacja API
+                        </a>
+                        <a href="automation_dashboard.html" class="template-btn" style="text-decoration: none;">
+                            ⚙️ Panel Automatyzacji
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'php';
+        
+        // Language configurations
+        const languages = {
+            'php': {
+                name: 'PHP',
+                description: 'Język skryptowy do tworzenia aplikacji webowych i skryptów automatyzacji.',
+                features: ['Klasy i obiekty', 'Połączenia z bazą danych', 'API REST', 'Walidacja danych', 'Logowanie błędów']
+            },
+            'java': {
+                name: 'Java',
+                description: 'Język programowania obiektowego do tworzenia aplikacji enterprise.',
+                features: ['Klasy i interfejsy', 'Połączenia z bazą danych', 'Obsługa wyjątków', 'Aplikacje webowe', 'API REST']
+            },
+            'python': {
+                name: 'Python',
+                description: 'Język programowania do automatyzacji, analizy danych i aplikacji webowych.',
+                features: ['Klasy i funkcje', 'Analiza danych', 'Automatyzacja', 'Web scraping', 'API']
+            },
+            'javascript': {
+                name: 'JavaScript',
+                description: 'Język skryptowy do tworzenia interaktywnych aplikacji webowych.',
+                features: ['Klasy ES6', 'Async/await', 'DOM manipulation', 'API calls', 'Event handling']
+            },
+            'bash': {
+                name: 'Bash/Shell',
+                description: 'Język skryptowy do automatyzacji zadań systemowych.',
+                features: ['Automatyzacja', 'System administration', 'File operations', 'Process management', 'Logging']
+            }
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLanguageSelector();
+            updateLanguageInfo();
+        });
+        
+        function initializeLanguageSelector() {
+            const langButtons = document.querySelectorAll('.lang-btn');
+            
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    switchLanguage(lang);
+                    
+                    // Update active button
+                    langButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+        
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            updateLanguageInfo();
+        }
+        
+        function updateLanguageInfo() {
+            const lang = languages[currentLanguage];
+            const infoDiv = document.getElementById('language-info');
+            
+            infoDiv.innerHTML = `
+                <h4>${lang.name}</h4>
+                <p>${lang.description}</p>
+                <ul class="features-list">
+                    ${lang.features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            `;
+        }
+        
+        function loadTemplate(lang, description) {
+            switchLanguage(lang);
+            document.getElementById('code-description').value = description;
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+        }
+        
+        // Generate code
+        document.getElementById('generate-btn').addEventListener('click', generateCode);
+        
+        async function generateCode() {
+            const description = document.getElementById('code-description').value.trim();
+            const requirements = document.getElementById('code-requirements').value.trim();
+            
+            if (!description) {
+                showError('Opis kodu jest wymagany!');
+                return;
+            }
+            
+            showLoading(true);
+            hideError();
+            
+            try {
+                const response = await fetch('ai_assistant_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'generate_code',
+                        language: currentLanguage,
+                        description: description,
+                        requirements: requirements ? requirements.split(',').map(r => r.trim()) : []
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayCode(data.data);
+                } else {
+                    showError('Błąd generowania kodu: ' + data.error);
+                }
+                
+            } catch (error) {
+                showError('Błąd połączenia: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function displayCode(data) {
+            const output = document.getElementById('code-output');
+            const content = document.getElementById('code-content');
+            const title = document.getElementById('code-title');
+            
+            title.textContent = `Kod ${languages[currentLanguage].name}`;
+            content.textContent = data.code;
+            
+            output.classList.add('show');
+            output.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const btn = document.getElementById('generate-btn');
+            
+            if (show) {
+                loading.classList.add('show');
+                btn.disabled = true;
+            } else {
+                loading.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+        
+        function hideError() {
+            document.getElementById('error-message').classList.remove('show');
+        }
+        
+        // Copy code functionality
+        document.getElementById('copy-btn').addEventListener('click', copyCode);
+        
+        function copyCode() {
+            const codeContent = document.getElementById('code-content').textContent;
+            
+            navigator.clipboard.writeText(codeContent).then(function() {
+                const btn = document.getElementById('copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Skopiowano!';
+                btn.style.background = '#27ae60';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#3498db';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Błąd kopiowania: ', err);
+            });
+        }
+        
+        // Enter key to generate
+        document.getElementById('code-description').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                generateCode();
+            }
+        });
+    </script>
+</body>
+</html> 
